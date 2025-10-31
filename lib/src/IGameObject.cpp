@@ -4,3 +4,4 @@ IGameObject::IGameObject(sf::Texture texture) : sprite(texture)
 {
 
 }
+

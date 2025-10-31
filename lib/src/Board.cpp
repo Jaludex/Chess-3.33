@@ -19,7 +19,7 @@ void Board::update(float dt)
 {
     for (auto e : elements)
     {
-        e.update(dt);
+        e->update(dt);
     }
 }
 
@@ -30,14 +30,15 @@ void Board::render(sf::RenderWindow& window)
     
     for(int i = 0; i < Board::side_lenght * Board::side_lenght; i++)
     {
-        cell.setFillColor( (i % 2 == 0) ? Board::white : Board::black);
-        cell.setPosition({(float)(i % Board::side_lenght * Board::Cell_Lenght),(float)(i / Board::side_lenght * Board::Cell_Lenght)});
+        cell.setFillColor( ((i + i/Board::side_lenght) % 2 == 0) ? sf::Color::White : sf::Color::Black);        
+        auto pos = sf::Vector2<float>({(float)(i % Board::side_lenght * Board::cell_lenght),(float)(i / Board::side_lenght * Board::cell_lenght)});
+        cell.setPosition(origin + pos);
         window.draw(cell);
     }
 
     for (auto e : elements)
     {
-        e.render(window);
+        e->render(window);
     }
 }
 

@@ -3,8 +3,6 @@
 #include <cstdint>
 #include <IGameObject.hpp>
 
-using PiecePtr = std::shared_ptr<IPiece>;
-
 struct Position
 {
     uint8_t x, y;
@@ -41,3 +39,5 @@ protected:
     bool team;
     PieceType type;
 };
+
+using PiecePtr = std::shared_ptr<IPiece>;
