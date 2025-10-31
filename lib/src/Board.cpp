@@ -15,14 +15,20 @@ Board::Board(const Board& _board) : IGameObject(_board.sprite.getTexture()), ele
     //empty
 }
 
-void update()
+void update(float dt)
 {
-
+    for (auto e : elements)
+    {
+        e.update(dt)
+    }
 }
 
 void render(sf::RenderWindow window)
 {
-
+    for (auto e : elements)
+    {
+        e.update(dt)
+    }
 }
 
 size_t Board::size()

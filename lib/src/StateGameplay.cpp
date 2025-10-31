@@ -32,7 +32,7 @@ void StateGameplay::update(float dt)
     //update board, its pieces should be update
 }
 
-void StateGameplay::render()
+void StateGameplay::render(sf::RenderWindow window)
 {
     //board.render(window)
 }

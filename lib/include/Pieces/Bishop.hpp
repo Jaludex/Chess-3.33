@@ -11,6 +11,8 @@ public:
     virtual ~Bishop() = default;
     virtual bool verify_position(int x, int y) override;
     virtual void move(int x, int y) override;
+    virtual void update(float dt) override;
+    virtual void render(sf::RenderWindow window) override;
 
 
 private:
