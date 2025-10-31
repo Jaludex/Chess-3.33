@@ -1,3 +1,4 @@
+set(CMAKE_CXX_COMPILER g++)
 cmake_minimum_required(VERSION 3.28)
 project(CMakeSFMLProject LANGUAGES CXX)
 
@@ -12,6 +13,8 @@ FetchContent_Declare(SFML
     SYSTEM)
 FetchContent_MakeAvailable(SFML)
 
-add_executable(main src/main.cpp)
+set(gamefiles src/main.cpp lib/src/Board.cpp lib/src/IGameObject.cpp lib/src/IPiece.cpp)
+add_executable(main ${gamefiles})
+include_directories(main PRIVATE lib/include)
 target_compile_features(main PRIVATE cxx_std_17)
 target_link_libraries(main PRIVATE SFML::Graphics)
