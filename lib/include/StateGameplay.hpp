@@ -2,19 +2,19 @@
 
 #include <IGameState.hpp>
 #include <Board.hpp>
+#include <memory>
 
-class StateGameplay : public IGameState
+class StateGameplay : IGameState
 {
 private:
-
+    std::shared_ptr<IPiece> selected;
     Board board;
     sf::Clock elapsed_time;
     long score;
     // Challenges
     
-
 public:
-    StateGameplay(/* args */);
+    StateGameplay(sf::Texture texture);
     ~StateGameplay();
 
     void init() override;                // inicializar aspectos del gamestate
