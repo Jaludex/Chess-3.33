@@ -17,9 +17,9 @@ Board::Board(const Board& _board) : IGameObject(_board.sprite.getTexture()), ele
 
 void Board::update(float dt)
 {
-    for (auto e : elements)
+    for (auto element : elements)
     {
-        e->update(dt);
+        element->update(dt);
     }
 }
 
@@ -36,9 +36,9 @@ void Board::render(sf::RenderWindow& window)
         window.draw(cell);
     }
 
-    for (auto e : elements)
+    for (auto element : elements)
     {
-        e->render(window);
+        element->render(window);
     }
 }
 
@@ -62,11 +62,11 @@ PiecePtr Board::get_position(short x, short y)
 
 PiecePtr Board::clicked_piece(sf::Vector2i mouse_position)
 {
-    if (sprite.getGlobalBounds().contains({mouse_position.x, mouse_position.y}))
+    if (sprite.getGlobalBounds().contains({(float)mouse_position.x, (float)mouse_position.y}))
     {
         for (auto piece : elements)
         {
-            if (piece->get_sprite().getGlobalBounds().contains({mouse_position.x, mouse_position.y}))
+            if (piece->get_sprite().getGlobalBounds().contains({(float)mouse_position.x, (float)mouse_position.y}))
             {
                 return piece;
             }
@@ -88,12 +88,17 @@ void Board::drop_piece(PiecePtr piece)
     }
 
     auto objetive_position = piece->get_position();
-
-    piece->set_sprite_position({(objetive_position.x * Board::cell_lenght) + 50, (objetive_position.y * Board::cell_lenght) + 50});
+    auto board_position = sprite.getPosition();
+    auto offset = sf::Vector2f({(float)((objetive_position.x * Board::cell_lenght) + 50), (float)((objetive_position.y * Board::cell_lenght) + 50)});
+    piece->set_sprite_position(board_position + offset);
 }
 
 void Board::add_piece(PiecePtr piece)
 {
     elements.push_back(piece);
+    auto objetive_position = piece->get_position();
+    auto board_position = sprite.getPosition();
+    auto offset = sf::Vector2f({(float)((objetive_position.x * Board::cell_lenght) + 50), (float)((objetive_position.y * Board::cell_lenght) + 50)});
+    piece->set_sprite_position(board_position + offset);
 }
 

@@ -1,7 +1,5 @@
 #include "Bishop.hpp"
 
-const float TILE_SIZE = 64.f; 
-
 Bishop::Bishop(bool team, int startX, int startY)
 {
     set_team(team);
@@ -33,10 +31,10 @@ void Bishop::update(float dt)
 
 void Bishop::render(sf::RenderWindow& window)
 {
-    auto triangle = sf::CircleShape(45,3);
+    auto triangle = sf::CircleShape(45,(size_t)3);
     triangle.setOrigin({45.f,45.f});
-    triangle.setRotation(sf::degrees(90));
-    triangle.setOrigin({1.f,2.f});
+    //triangle.setRotation(sf::degrees());
+    triangle.setScale({1.f,2.f});
     triangle.setPosition(this->sprite.getPosition());
     triangle.setFillColor(sf::Color::Blue);
     window.draw(triangle);

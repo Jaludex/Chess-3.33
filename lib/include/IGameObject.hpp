@@ -8,6 +8,7 @@ protected:
 
 public:
     IGameObject(sf::Texture texture);
+    IGameObject();
     sf::Sprite get_sprite() const;
     void set_sprite_position(const sf::Vector2f& position);
     virtual void update(float dt) = 0;

@@ -30,6 +30,7 @@ public:
     PieceType get_piece_type() const;
     void set_team(bool team);
     void set_piece_type(PieceType type);
+    IPiece();
     virtual ~IPiece() = default;
     virtual bool verify_position(int x, int y) = 0;
     virtual void move(int x, int y) = 0;

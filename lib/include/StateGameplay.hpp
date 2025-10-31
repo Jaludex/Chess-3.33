@@ -17,7 +17,7 @@ private:
     // Challenges
     
 public:
-    StateGameplay(sf::Texture texture, sf::RenderWindow& _window);
+    StateGameplay(sf::RenderWindow& _window);
     ~StateGameplay();
 
     void init() override;                // inicializar aspectos del gamestate

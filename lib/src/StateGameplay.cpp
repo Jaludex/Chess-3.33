@@ -1,6 +1,7 @@
 #include <StateGameplay.hpp>
 
-StateGameplay::StateGameplay(sf::Texture texture, sf::RenderWindow& _window) : board(texture)
+StateGameplay::StateGameplay(sf::RenderWindow& _window) : board(sf::Texture ({(unsigned int)(Board::side_lenght * Board::cell_lenght),
+                                                                              (unsigned int)(Board::side_lenght * Board::cell_lenght)}))
 {
     window = &_window;
 }
@@ -8,6 +9,11 @@ StateGameplay::~StateGameplay(){}
 
 void StateGameplay::init()
 {
+    float halfboard_lenght = Board::side_lenght * Board::cell_lenght / 2;
+    auto pos = sf::Vector2<float>((float)(window->getSize().x/2 - halfboard_lenght),
+                                  (float)(window->getSize().y/2 - halfboard_lenght));
+    board.set_sprite_position(pos);
+
     board.add_piece(std::make_shared<Bishop>(true, 1, 5));
 }
 
@@ -35,7 +41,7 @@ void StateGameplay::drag()
         auto mouse_position = get_relative_mouse_position();
         if (selected)
         {
-            selected->set_sprite_position({mouse_position.x, mouse_position.y});
+            selected->set_sprite_position({(float)mouse_position.x, (float)mouse_position.y});
         }
         else
         {
@@ -52,5 +58,5 @@ void StateGameplay::drag()
 
 void StateGameplay::render(sf::RenderWindow& window)
 {
-    //board.render(window)
+    board.render(window);
 }

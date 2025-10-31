@@ -13,7 +13,7 @@ FetchContent_Declare(SFML
     SYSTEM)
 FetchContent_MakeAvailable(SFML)
 
-set(gamefiles src/main.cpp lib/src/Board.cpp lib/src/IGameObject.cpp lib/src/IPiece.cpp)
+set(gamefiles src/main.cpp lib/src/Bishop.cpp lib/src/Board.cpp lib/src/IGameObject.cpp lib/src/IGameState.cpp lib/src/IPiece.cpp lib/src/StateGameplay.cpp)
 add_executable(main ${gamefiles})
 include_directories(main PRIVATE lib/include)
 target_compile_features(main PRIVATE cxx_std_17)
