@@ -25,8 +25,11 @@ public:
 
     size_t size();
     PiecePtr get_position(short x, short y);
+    PiecePtr clicked_piece(sf::Vector2i mouse_position);
+    void drop_piece(PiecePtr piece);
     void update(float dt) override;
     void render(sf::RenderWindow& window) override;
     void add_piece(PiecePtr piece);
+
 };
 

@@ -60,6 +60,38 @@ PiecePtr Board::get_position(short x, short y)
     return nullptr;
 }
 
+PiecePtr Board::clicked_piece(sf::Vector2i mouse_position)
+{
+    if (sprite.getGlobalBounds().contains({mouse_position.x, mouse_position.y}))
+    {
+        for (auto piece : elements)
+        {
+            if (piece->get_sprite().getGlobalBounds().contains({mouse_position.x, mouse_position.y}))
+            {
+                return piece;
+            }
+            
+        }
+    }
+
+    return nullptr;
+}
+
+void Board::drop_piece(PiecePtr piece)
+{
+    if (sprite.getGlobalBounds().contains(piece->get_sprite().getPosition()))
+    {
+        sf::Vector2f relative_position = sprite.getPosition() - piece->get_sprite().getPosition();
+        
+        piece->move(relative_position.x / Board::cell_lenght, relative_position.y / Board::cell_lenght);
+        
+    }
+
+    auto objetive_position = piece->get_position();
+
+    piece->set_sprite_position({(objetive_position.x * Board::cell_lenght) + 50, (objetive_position.y * Board::cell_lenght) + 50});
+}
+
 void Board::add_piece(PiecePtr piece)
 {
     elements.push_back(piece);

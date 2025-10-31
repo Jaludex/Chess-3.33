@@ -13,10 +13,11 @@ private:
     Board board;
     sf::Clock elapsed_time;
     long score;
+    sf::RenderWindow* window;
     // Challenges
     
 public:
-    StateGameplay(sf::Texture texture);
+    StateGameplay(sf::Texture texture, sf::RenderWindow& _window);
     ~StateGameplay();
 
     void init() override;                // inicializar aspectos del gamestate
@@ -24,6 +25,7 @@ public:
 	void update(float dt) override;
 	void render(sf::RenderWindow& window) override;
 
+    sf::Vector2i get_relative_mouse_position();
     void drag();
 };
 

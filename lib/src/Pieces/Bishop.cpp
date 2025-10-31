@@ -27,7 +27,9 @@ void Bishop::move(int x, int y)
 }
 
 void Bishop::update(float dt)
-{}
+{
+    
+}
 
 void Bishop::render(sf::RenderWindow& window)
 {
