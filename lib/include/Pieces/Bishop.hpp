@@ -1,7 +1,6 @@
 #pragma once
 
-#include "IPiece.hpp"
-#include <SFML/Graphics.hpp>
+#include <IPiece.hpp>
 
 class Bishop : public IPiece
 {

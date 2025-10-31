@@ -25,5 +25,6 @@ public:
     PiecePtr get_position(short x, short y);
     void update() override;
     void render(sf::RenderWindow window) override;
+    void add_piece(PiecePtr piece);
 };
 

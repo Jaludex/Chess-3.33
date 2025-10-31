@@ -7,7 +7,7 @@ StateGameplay::~StateGameplay(){}
 
 void StateGameplay::init()
 {
-    //instanciar una pieza cualquiera y añadirla al board
+    board.add_piece(std::make_shared<Bishop>(true, 1, 5));
 }
 
 void StateGameplay::terminate()
@@ -30,6 +30,18 @@ void StateGameplay::update(float dt)
         //then selected = null
 
     //update board, its pieces should be update
+
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+    {
+        auto mouse_position = sf::Mouse::getPosition();
+        //Call check_pressed de board
+        if (selected)
+        {
+            
+        }
+        
+    }
+    
 }
 
 void StateGameplay::render()

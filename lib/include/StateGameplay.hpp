@@ -4,6 +4,8 @@
 #include <Board.hpp>
 #include <memory>
 
+#include <Bishop.hpp>
+
 class StateGameplay : IGameState
 {
 private:
@@ -21,6 +23,8 @@ public:
     void terminate() override;           // eliminar memoria reservada dinámicamente o cosas que se tengan que manejar al final de ese estado de juego.
 	void update(float dt) override;
 	void render() override;
+
+    void drag();
 };
 
 

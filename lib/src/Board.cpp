@@ -43,4 +43,8 @@ PiecePtr Board::get_position(short x, short y)
     return nullptr;
 }
 
+void Board::add_piece(PiecePtr piece)
+{
+    elements.push_back(piece);
+}
 
