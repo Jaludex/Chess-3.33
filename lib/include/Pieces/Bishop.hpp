@@ -6,13 +6,13 @@
 class Bishop : public IPiece
 {
 public:
-    Bishop(bool team, int startX, int startY, const sf::Texture& texture);
+    Bishop(bool team, int startX, int startY);
 
     virtual ~Bishop() = default;
     virtual bool verify_position(int x, int y) override;
     virtual void move(int x, int y) override;
-    virtual void render(sf::RenderWindow& window) override;
+
 
 private:
-    sf::Sprite m_sprite;
+ 
 };

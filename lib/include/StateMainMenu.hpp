@@ -2,7 +2,7 @@
 
 #include <IGameState.hpp>
 
-class StateMainMenu : IGameState
+class StateMainMenu : public IGameState
 {
 private:
     

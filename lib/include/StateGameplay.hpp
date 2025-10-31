@@ -3,7 +3,7 @@
 #include <IGameState.hpp>
 #include <Board.hpp>
 
-class StateGameplay : IGameState
+class StateGameplay : public IGameState
 {
 private:
 
