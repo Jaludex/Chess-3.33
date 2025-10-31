@@ -1,5 +1,6 @@
 #include <Board.hpp>
 
+#include <iostream>
 Board::Board(sf::Texture texture) : IGameObject(texture)
 {
     //empty
@@ -62,11 +63,11 @@ PiecePtr Board::get_position(short x, short y)
 
 PiecePtr Board::clicked_piece(sf::Vector2i mouse_position)
 {
-    if (sprite.getGlobalBounds().contains({(float)mouse_position.x, (float)mouse_position.y}))
+    if (sprite.getGlobalBounds().contains({mouse_position.x, mouse_position.y}))
     {
         for (auto piece : elements)
         {
-            if (piece->get_sprite().getGlobalBounds().contains({(float)mouse_position.x, (float)mouse_position.y}))
+            if (piece->get_sprite().getGlobalBounds().contains({mouse_position.x, mouse_position.y}))
             {
                 return piece;
             }
@@ -81,7 +82,7 @@ void Board::drop_piece(PiecePtr piece)
 {
     if (sprite.getGlobalBounds().contains(piece->get_sprite().getPosition()))
     {
-        sf::Vector2f relative_position = sprite.getPosition() - piece->get_sprite().getPosition();
+        sf::Vector2f relative_position = piece->get_sprite().getPosition() - sprite.getPosition();
         
         piece->move(relative_position.x / Board::cell_lenght, relative_position.y / Board::cell_lenght);
         
@@ -89,7 +90,7 @@ void Board::drop_piece(PiecePtr piece)
 
     auto objetive_position = piece->get_position();
     auto board_position = sprite.getPosition();
-    auto offset = sf::Vector2f({(float)((objetive_position.x * Board::cell_lenght) + 50), (float)((objetive_position.y * Board::cell_lenght) + 50)});
+    auto offset = sf::Vector2f({(float)(objetive_position.x * Board::cell_lenght), (float)(objetive_position.y * Board::cell_lenght)});
     piece->set_sprite_position(board_position + offset);
 }
 
@@ -98,7 +99,7 @@ void Board::add_piece(PiecePtr piece)
     elements.push_back(piece);
     auto objetive_position = piece->get_position();
     auto board_position = sprite.getPosition();
-    auto offset = sf::Vector2f({(float)((objetive_position.x * Board::cell_lenght) + 50), (float)((objetive_position.y * Board::cell_lenght) + 50)});
+    auto offset = sf::Vector2f({(float)(objetive_position.x * Board::cell_lenght), (float)(objetive_position.y * Board::cell_lenght)});
     piece->set_sprite_position(board_position + offset);
 }
 

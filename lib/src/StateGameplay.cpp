@@ -40,7 +40,7 @@ void StateGameplay::drag()
     {
         auto mouse_position = get_relative_mouse_position();
         if (selected)
-        {
+        {   
             selected->set_sprite_position({(float)mouse_position.x, (float)mouse_position.y});
         }
         else

@@ -3,6 +3,7 @@
 #include <SFML/Graphics.hpp>
 #include <SFML/System.hpp>
 #include <IPiece.hpp>
+#include <Board.hpp>
 
 class Bishop : public IPiece
 {
