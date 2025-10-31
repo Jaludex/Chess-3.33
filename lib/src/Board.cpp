@@ -19,7 +19,7 @@ void Board::update(float dt)
 {
     for (auto e : elements)
     {
-        e.update(dt);
+        e->update(dt);
     }
 }
 
@@ -37,7 +37,7 @@ void Board::render(sf::RenderWindow& window)
 
     for (auto e : elements)
     {
-        e.render(window);
+        e->render(window);
     }
 }
 
@@ -57,6 +57,36 @@ PiecePtr Board::get_position(short x, short y)
     }
     
     return nullptr;
+}
+
+PiecePtr Board::clicked_piece(sf::Vector2i mouse_position)
+{
+    if (sprite.getGlobalBounds().contains({mouse_position.x, mouse_position.y}))
+    {
+        for (auto piece : elements)
+        {
+            if (piece->get_sprite().getGlobalBounds().contains({mouse_position.x, mouse_position.y}))
+            {
+                return piece;
+            }
+            
+        }
+    }
+
+    return nullptr;
+}
+
+void Board::drop_piece(PiecePtr piece)
+{
+    if (sprite.getGlobalBounds().contains(piece->get_sprite().getPosition()))
+    {
+        sf::Vector2f relative_position = sprite.getPosition() - piece->get_sprite().getPosition();
+        Position new_position;
+        new_position.x = (relative_position.x / Board::cell_lenght);
+        new_position.y = (relative_position.y / Board::cell_lenght);
+
+        piece->move(new_position.x, new_position.y);
+    }
 }
 
 void Board::add_piece(PiecePtr piece)
