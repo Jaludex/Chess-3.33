@@ -23,8 +23,18 @@ void Board::update(float dt)
     }
 }
 
-void Board::render(sf::RenderWindow window)
+void Board::render(sf::RenderWindow& window)
 {
+    sf::RectangleShape cell({(float)(Board::cell_lenght),(float)(Board::cell_lenght)});
+    auto origin = this->sprite.getPosition();
+    
+    for(int i = 0; i < Board::side_lenght * Board::side_lenght; i++)
+    {
+        cell.setFillColor( (i % 2 == 0) ? Board::white : Board::black);
+        cell.setPosition({(float)(i % Board::side_lenght * Board::Cell_Lenght),(float)(i / Board::side_lenght * Board::Cell_Lenght)});
+        window.draw(cell);
+    }
+
     for (auto e : elements)
     {
         e.render(window);

@@ -9,6 +9,8 @@ int main()
     sf::Time delta_time = sf::Time::Zero;
     const sf::Time target_time = sf::seconds(1)/60.f;
 
+    const sf::Color Cerulean(160,160,200,255);
+
     while (window.isOpen())
     {
         while (const std::optional event = window.pollEvent())
@@ -26,7 +28,7 @@ int main()
             //GAMESTATE.update((delta_time/target_time).asSeconds());
             delta_time = sf::Time::Zero;
 
-            window.clear();
+            window.clear(Cerulean);
             //GAMESTATE.render(window);
             window.display();
         }

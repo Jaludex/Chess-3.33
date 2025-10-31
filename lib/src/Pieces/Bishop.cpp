@@ -43,7 +43,7 @@ void Bishop::update(float dt)
     //update board, its pieces should be update
 }
 
-void Bishop::render(sf::RenderWindow window)
+void Bishop::render(sf::RenderWindow& window)
 {
     //board.render(window)
 }

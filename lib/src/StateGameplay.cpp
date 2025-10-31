@@ -48,7 +48,7 @@ void StateGameplay::drag()
     }
 }
 
-void StateGameplay::render(sf::RenderWindow window)
+void StateGameplay::render(sf::RenderWindow& window)
 {
     //board.render(window)
 }
