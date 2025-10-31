@@ -15,19 +15,19 @@ Board::Board(const Board& _board) : IGameObject(_board.sprite.getTexture()), ele
     //empty
 }
 
-void update(float dt)
+void Board::update(float dt)
 {
     for (auto e : elements)
     {
-        e.update(dt)
+        e.update(dt);
     }
 }
 
-void render(sf::RenderWindow window)
+void Board::render(sf::RenderWindow window)
 {
     for (auto e : elements)
     {
-        e.update(dt)
+        e.render(window);
     }
 }
 

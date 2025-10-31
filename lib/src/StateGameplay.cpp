@@ -30,7 +30,12 @@ void StateGameplay::update(float dt)
         //then selected = null
 
     //update board, its pieces should be update
+    drag();
+    
+}
 
+void StateGameplay::drag()
+{
     if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
     {
         auto mouse_position = sf::Mouse::getPosition();
@@ -41,7 +46,6 @@ void StateGameplay::update(float dt)
         }
         
     }
-    
 }
 
 void StateGameplay::render(sf::RenderWindow window)
