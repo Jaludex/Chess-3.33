@@ -7,7 +7,7 @@
 class StateGameplay : IGameState
 {
 private:
-    std::shared_ptr<IPiece> selected;
+    PiecePtr selected;
     Board board;
     sf::Clock elapsed_time;
     long score;
