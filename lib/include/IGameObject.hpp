@@ -9,7 +9,7 @@ protected:
 
 public:
     IGameObject(sf::Texture texture);
-    virtual void update() = 0;
+    virtual void update(float dt) = 0;
     virtual void render(sf::RenderWindow window) = 0;
 };
 

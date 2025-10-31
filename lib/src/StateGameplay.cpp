@@ -44,7 +44,7 @@ void StateGameplay::update(float dt)
     
 }
 
-void StateGameplay::render()
+void StateGameplay::render(sf::RenderWindow window)
 {
     //board.render(window)
 }
