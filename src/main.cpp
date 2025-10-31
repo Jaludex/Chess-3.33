@@ -2,8 +2,12 @@
 
 int main()
 {
-    auto window = sf::RenderWindow(sf::VideoMode({1920u, 1080u}), "CMake SFML Project");
+    auto window = sf::RenderWindow(sf::VideoMode({1080u, 810u}), "CMake SFML Project");
     window.setFramerateLimit(144);
+    sf::Clock clock; 
+    sf::Time last_time = clock.getElapsedTime();
+    sf::Time delta_time = sf::Time::Zero;
+    const sf::Time target_time = sf::seconds(1)/60.f;
 
     while (window.isOpen())
     {
@@ -15,7 +19,22 @@ int main()
             }
         }
 
-        window.clear();
-        window.display();
+        auto now = clock.getElapsedTime();
+        delta_time += now - last_time;
+        if (delta_time >= target_time)
+        {
+            //GAMESTATE.update((delta_time/target_time).asSeconds());
+            delta_time = sf::Time::Zero;
+
+            window.clear();
+            //GAMESTATE.render(window);
+            window.display();
+        }
+        last_time = now;
     }
 }
+
+
+
+
+
