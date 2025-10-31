@@ -81,12 +81,14 @@ void Board::drop_piece(PiecePtr piece)
     if (sprite.getGlobalBounds().contains(piece->get_sprite().getPosition()))
     {
         sf::Vector2f relative_position = sprite.getPosition() - piece->get_sprite().getPosition();
-        Position new_position;
-        new_position.x = (relative_position.x / Board::cell_lenght);
-        new_position.y = (relative_position.y / Board::cell_lenght);
-
-        piece->move(new_position.x, new_position.y);
+        
+        piece->move(relative_position.x / Board::cell_lenght, relative_position.y / Board::cell_lenght);
+        
     }
+
+    auto objetive_position = piece->get_position();
+
+    piece->set_sprite_position({(objetive_position.x * Board::cell_lenght) + 50, (objetive_position.y * Board::cell_lenght) + 50});
 }
 
 void Board::add_piece(PiecePtr piece)
