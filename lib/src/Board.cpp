@@ -20,6 +20,7 @@ void Board::update(float dt)
 {
     for (auto element : elements)
     {
+        element->set_valid_moves(elements);
         element->update(dt);
     }
 }
@@ -70,6 +71,8 @@ PiecePtr Board::clicked_piece(sf::Vector2i mouse_position)
         {
             if (piece->get_sprite().getGlobalBounds().contains({mouse_position.x, mouse_position.y}))
             {
+                //Aqui se deberia realizar el hightlight
+
                 return piece;
             }
             
@@ -93,9 +96,30 @@ void Board::drop_piece(PiecePtr piece)
     if (sprite.getGlobalBounds().contains(piece->get_sprite().getPosition()))
     {
         sf::Vector2f relative_position = piece->get_sprite().getPosition() - sprite.getPosition();
-        
-        piece->move(Position(relative_position.x / Board::cell_lenght, relative_position.y / Board::cell_lenght));
-        
+        Position position_on_board(relative_position.x / Board::cell_lenght, relative_position.y / Board::cell_lenght);
+        auto valid_moves = piece->get_valid_moves();
+
+        bool it_moves = false;
+
+        for (auto move : valid_moves)
+        {
+            if (move.relative_positiion == position_on_board)
+            {
+                if (move.occupant)
+                {
+                    if (move.occupant->hurt(piece))
+                    {
+                        it_moves = move.moves_piece;
+                        std::remove(elements.begin(), elements.end(), move.occupant);
+                    }
+                }
+                else it_moves = true;
+
+                break;
+            }
+        }
+
+        if (it_moves) piece->move(position_on_board);
     }
 
     set_piece_sprite(piece);

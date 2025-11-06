@@ -44,30 +44,28 @@ void Bishop::render(sf::RenderWindow& window)
     window.draw(triangle);
 }
 
-std::vector<Move> Bishop::get_valid_moves(std::vector<std::shared_ptr<IPiece>> pieces)
+std::vector<Move> Bishop::set_valid_moves(const std::vector<PiecePtr>& pieces)
 {
+    valid_moves.erase(valid_moves.begin(), valid_moves.end());
     const uint8_t lenght = Board::side_lenght;
 
-    for (size_t i = 0; i < 4; i++)
+    for (auto direction : directions)
     {
-        int delta_x = directions[i].x;
-        int delta_y = directions[i].y;
-        for (size_t k = 1; k < lenght && k <= 3; k++)
+        int delta_x = direction.x;
+        int delta_y = direction.y;
+        for (size_t k = 1; k <= 2; k++)
         {
             uint8_t tile_x = current.x + (k * delta_x);
             uint8_t tile_y = current.y + (k * delta_y);
 
-            if (tile_x >= lenght || tile_y >= lenght)
-            {
-                break;
-            }
+            if (tile_x >= lenght || tile_y >= lenght) break;
 
             Position target_move(tile_x, tile_y);
             PiecePtr piece_at_cell = nullptr;
             
             for(auto const& piece : pieces)
             {
-                if (piece->get_position().x == tile_x && piece->get_position().y == tile_y)
+                if (piece->get_position() == target_move)
                 {
                     piece_at_cell = piece;
                     break;
@@ -78,16 +76,21 @@ std::vector<Move> Bishop::get_valid_moves(std::vector<std::shared_ptr<IPiece>> p
             {
                 if (piece_at_cell->get_team() != this->get_team())
                 {
-                    valid_moves.push_back(Move(target_move, false, false));
+                    valid_moves.push_back(Move(target_move, true, piece_at_cell));
                 }
                 break;
             }
             else
             {
-                valid_moves.push_back(Move(target_move, false, false));
+                valid_moves.push_back(Move(target_move, true, piece_at_cell));
             }
         }
         
     }
     return valid_moves;    
+}
+
+bool Bishop::hurt(PiecePtr attacker)
+{
+    return true;
 }
