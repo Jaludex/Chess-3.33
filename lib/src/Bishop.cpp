@@ -38,3 +38,8 @@ void Bishop::render(sf::RenderWindow& window)
     triangle.setFillColor(sf::Color::Blue);
     window.draw(triangle);
 }
+
+std::vector<Position> Bishop::get_valid_moves(std::vector<std::shared_ptr<IPiece>> pieces)
+{
+
+}

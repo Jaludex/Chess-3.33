@@ -42,7 +42,7 @@ public:
     void set_team(bool team);
     void set_piece_type(PieceType type);
     virtual bool verify_position(Position pos) = 0;
-    virtual std::vector<Position> get_valid_moves(Board& board) = 0;
+    virtual std::vector<Position> get_valid_moves(std::vector<std::shared_ptr<IPiece>> pieces) = 0;
     virtual void move(Position pos) = 0;
 
     IPiece();
