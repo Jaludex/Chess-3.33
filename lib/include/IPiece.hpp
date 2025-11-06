@@ -44,7 +44,6 @@ public:
     virtual bool verify_position(Position pos) = 0;
     virtual std::vector<Move> get_valid_moves(std::vector<std::shared_ptr<IPiece>> pieces) = 0;
     virtual void move(Position pos) = 0;
-
     IPiece();
     virtual ~IPiece() = default;
 

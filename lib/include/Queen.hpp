@@ -18,5 +18,5 @@ class Queen : public IPiece
     virtual std::vector<Move> get_valid_moves(std::vector<PiecePtr> pieces) override;
 
 private:
- 
+    const static std::vector<Position> directions;
 };

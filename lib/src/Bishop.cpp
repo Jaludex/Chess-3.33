@@ -1,5 +1,7 @@
 #include "Bishop.hpp"
 
+const std::vector<Position> Bishop::directions = {Position(1, -1), Position(1, 1), Position(-1, 1), Position(-1, -1)};
+
 Bishop::Bishop(bool team, int startX, int startY)
 {
     set_team(team);
@@ -45,7 +47,6 @@ void Bishop::render(sf::RenderWindow& window)
 std::vector<Move> Bishop::get_valid_moves(std::vector<std::shared_ptr<IPiece>> pieces)
 {
     const uint8_t lenght = Board::side_lenght;
-    const std::vector<Position> directions = {Position(1, -1), Position(1, 1), Position(-1, 1), Position(-1, -1)};
 
     for (size_t i = 0; i < 4; i++)
     {
@@ -62,20 +63,18 @@ std::vector<Move> Bishop::get_valid_moves(std::vector<std::shared_ptr<IPiece>> p
             }
 
             Position target_move(tile_x, tile_y);
-            bool occupied = false;
-
             PiecePtr piece_at_cell = nullptr;
+            
             for(auto const& piece : pieces)
             {
                 if (piece->get_position().x == tile_x && piece->get_position().y == tile_y)
                 {
                     piece_at_cell = piece;
-                    occupied = true;
                     break;
                 }
             }
 
-            if (occupied)
+            if (piece_at_cell)
             {
                 if (piece_at_cell->get_team() != this->get_team())
                 {
