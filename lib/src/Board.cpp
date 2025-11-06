@@ -61,6 +61,7 @@ PiecePtr Board::get_position(short x, short y)
     return nullptr;
 }
 
+//Ahora este metodo debe hacer el highlight de las casillas a las que se peude mover la pieza
 PiecePtr Board::clicked_piece(sf::Vector2i mouse_position)
 {
     if (sprite.getGlobalBounds().contains({mouse_position.x, mouse_position.y}))
@@ -78,28 +79,31 @@ PiecePtr Board::clicked_piece(sf::Vector2i mouse_position)
     return nullptr;
 }
 
-void Board::drop_piece(PiecePtr piece)
+void Board::set_piece_sprite(PiecePtr piece)
 {
-    if (sprite.getGlobalBounds().contains(piece->get_sprite().getPosition()))
-    {
-        sf::Vector2f relative_position = piece->get_sprite().getPosition() - sprite.getPosition();
-        
-        piece->move(relative_position.x / Board::cell_lenght, relative_position.y / Board::cell_lenght);
-        
-    }
-
     auto objetive_position = piece->get_position();
     auto board_position = sprite.getPosition();
     auto offset = sf::Vector2f({(float)(objetive_position.x * Board::cell_lenght), (float)(objetive_position.y * Board::cell_lenght)});
     piece->set_sprite_position(board_position + offset);
 }
 
+//Este metodo debe eliminar el hightlight a posiciones validas, la logica de si el movimiento es valido o no se ha de manejar desde piece.move()
+void Board::drop_piece(PiecePtr piece)
+{
+    if (sprite.getGlobalBounds().contains(piece->get_sprite().getPosition()))
+    {
+        sf::Vector2f relative_position = piece->get_sprite().getPosition() - sprite.getPosition();
+        
+        piece->move(Position(relative_position.x / Board::cell_lenght, relative_position.y / Board::cell_lenght));
+        
+    }
+
+    set_piece_sprite(piece);
+}
+
 void Board::add_piece(PiecePtr piece)
 {
     elements.push_back(piece);
-    auto objetive_position = piece->get_position();
-    auto board_position = sprite.getPosition();
-    auto offset = sf::Vector2f({(float)(objetive_position.x * Board::cell_lenght), (float)(objetive_position.y * Board::cell_lenght)});
-    piece->set_sprite_position(board_position + offset);
+    set_piece_sprite(piece);
 }
 

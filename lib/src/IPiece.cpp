@@ -1,6 +1,7 @@
 #include <IPiece.hpp>
 
-IPiece::IPiece() : IGameObject(sf::Texture(sf::Texture ({(unsigned int)(100),(unsigned int)(100)})))
+
+IPiece::IPiece() : IGameObject(sf::Texture(sf::Texture ({(unsigned int)(100),(unsigned int)(100)}))), current(0, 0)
 {}
 
 void IPiece::set_piece_type(PieceType type)

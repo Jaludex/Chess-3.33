@@ -30,6 +30,7 @@ public:
     void update(float dt) override;
     void render(sf::RenderWindow& window) override;
     void add_piece(PiecePtr piece);
+    void set_piece_sprite(PiecePtr piece);
 
 };
 
