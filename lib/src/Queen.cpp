@@ -9,18 +9,18 @@ Queen::Queen(bool team, int startX, int startY)
     current.y = startY;
 }
 
-bool Queen::verify_position(int x, int y)
+bool Queen::verify_position(Position pos)
 {
-    int dx = std::abs(x - current.x);
-    int dy = std::abs(y - current.y);
+    int dx = std::abs(pos.x - current.x);
+    int dy = std::abs(pos.y - current.y);
 
     return (dx == dy) && (dx > 0);
 }
 
-void Queen::move(int x, int y)
+void Queen::move(Position pos)
 {
-    current.x = x;
-    current.y = y;
+    current.x = pos.x;
+    current.y = pos.y;
 
 }
 
@@ -38,4 +38,9 @@ void Queen::render(sf::RenderWindow& window)
     triangle.setPosition(this->sprite.getPosition() + offset);
     triangle.setFillColor(sf::Color::Yellow);
     window.draw(triangle);
+}
+
+std::vector<Move> Queen::get_valid_moves(std::vector<PiecePtr> pieces) 
+{
+
 }

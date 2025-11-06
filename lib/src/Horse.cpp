@@ -9,18 +9,18 @@ Horse::Horse(bool team, int startX, int startY)
     current.y = startY;
 }
 
-bool Horse::verify_position(int x, int y)
+bool Horse::verify_position(Position pos)
 {
-    int dx = std::abs(x - current.x);
-    int dy = std::abs(y - current.y);
+    int dx = std::abs(pos.x - current.x);
+    int dy = std::abs(pos.y - current.y);
 
     return (dx == dy) && (dx > 0);
 }
 
-void Horse::move(int x, int y)
+void Horse::move(Position pos)
 {
-    current.x = x;
-    current.y = y;
+    current.x = pos.x;
+    current.y = pos.y;
 
 }
 
@@ -38,4 +38,9 @@ void Horse::render(sf::RenderWindow& window)
     triangle.setPosition(this->sprite.getPosition() + offset);
     triangle.setFillColor(sf::Color::Magenta);
     window.draw(triangle);
+}
+
+std::vector<Move> Horse::get_valid_moves(std::vector<PiecePtr> pieces) 
+{
+
 }

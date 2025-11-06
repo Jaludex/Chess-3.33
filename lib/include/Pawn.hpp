@@ -11,11 +11,11 @@ class Pawn : public IPiece
     Pawn(bool team, int startX, int startY);
 
     virtual ~Pawn() = default;
-    virtual bool verify_position(int x, int y) override;
-    virtual void move(int x, int y) override;
+    virtual bool verify_position(Position pos) override;
+    virtual void move(Position pos) override;
     virtual void update(float dt) override;
     virtual void render(sf::RenderWindow& window) override;
-
+    virtual std::vector<Move> get_valid_moves(std::vector<PiecePtr> pieces) override;
 
 private:
  
