@@ -4,6 +4,7 @@
 #include <IPiece.hpp>
 #include <vector>
 #include <memory>
+#include <algorithm>
 #include <stdexcept>
 
 
@@ -25,6 +26,7 @@ public:
 
     size_t size();
     PiecePtr get_position(short x, short y);
+    void remove_by_position(short x, short y);
     PiecePtr clicked_piece(sf::Vector2i mouse_position);
     void drop_piece(PiecePtr piece);
     void update(float dt) override;
