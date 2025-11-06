@@ -1,7 +1,7 @@
 #include <StateGameplay.hpp>
 
 StateGameplay::StateGameplay(sf::RenderWindow& _window) : board(sf::Texture ({(unsigned int)(Board::side_lenght * Board::cell_lenght),
-                                                                              (unsigned int)(Board::side_lenght * Board::cell_lenght)}))
+                                                                              (unsigned int)(Board::side_lenght * Board::cell_lenght)})), playerTurn(true)
 {
     window = &_window;
 }
@@ -59,4 +59,6 @@ void StateGameplay::drag()
 void StateGameplay::render(sf::RenderWindow& window)
 {
     board.render(window);
+    if (selected) board.render_highlights(window, selected->get_valid_moves());
+    board.render_pieces(window);
 }

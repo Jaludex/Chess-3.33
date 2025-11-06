@@ -4,7 +4,7 @@
 
 int main()
 {
-    auto window = sf::RenderWindow(sf::VideoMode({1080u, 810u}), "CMake SFML Project");
+    auto window = sf::RenderWindow(sf::VideoMode({1080u, 810u}), "Chess 3.33 Alpha");
     window.setFramerateLimit(144);
     sf::Clock clock; 
     sf::Time last_time = clock.getElapsedTime();

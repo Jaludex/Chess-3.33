@@ -31,6 +31,8 @@ public:
     void drop_piece(PiecePtr piece);
     void update(float dt) override;
     void render(sf::RenderWindow& window) override;
+    void render_highlights(sf::RenderWindow& window, const std::vector<Move>& valid_moves); 
+    void render_pieces(sf::RenderWindow& window);
     void add_piece(PiecePtr piece);
     void set_piece_sprite(PiecePtr piece);
 

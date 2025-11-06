@@ -37,7 +37,25 @@ void Board::render(sf::RenderWindow& window)
         cell.setPosition(origin + pos);
         window.draw(cell);
     }
+}
 
+void Board::render_highlights(sf::RenderWindow& window, const std::vector<Move>& valid_moves)
+{
+    sf::RectangleShape cell({(float)(Board::cell_lenght),(float)(Board::cell_lenght)});
+    auto origin = this->sprite.getPosition();
+
+    for (auto move : valid_moves)
+    {
+        cell.setFillColor( (move.occupant) ? sf::Color::Red : sf::Color::Cyan );
+        auto pos = sf::Vector2<float>({(float)(move.relative_positiion.x * Board::cell_lenght), (float)(move.relative_positiion.y * Board::cell_lenght)});
+        cell.setPosition(origin + pos);
+        window.draw(cell);
+    }
+
+}
+
+void Board::render_pieces(sf::RenderWindow& window)
+{
     for (auto element : elements)
     {
         element->render(window);
@@ -62,17 +80,15 @@ PiecePtr Board::get_position(short x, short y)
     return nullptr;
 }
 
-//Ahora este metodo debe hacer el highlight de las casillas a las que se peude mover la pieza
 PiecePtr Board::clicked_piece(sf::Vector2i mouse_position)
 {
-    if (sprite.getGlobalBounds().contains({mouse_position.x, mouse_position.y}))
+    sf::Vector2f pos((float)(mouse_position.x), (float)(mouse_position.y));
+    if (sprite.getGlobalBounds().contains(pos))
     {
         for (auto piece : elements)
         {
-            if (piece->get_sprite().getGlobalBounds().contains({mouse_position.x, mouse_position.y}))
+            if (piece->get_sprite().getGlobalBounds().contains(pos))
             {
-                //Aqui se deberia realizar el hightlight
-
                 return piece;
             }
             
@@ -90,7 +106,6 @@ void Board::set_piece_sprite(PiecePtr piece)
     piece->set_sprite_position(board_position + offset);
 }
 
-//Este metodo debe eliminar el hightlight a posiciones validas, la logica de si el movimiento es valido o no se ha de manejar desde piece.move()
 void Board::drop_piece(PiecePtr piece)
 {
     if (sprite.getGlobalBounds().contains(piece->get_sprite().getPosition()))
