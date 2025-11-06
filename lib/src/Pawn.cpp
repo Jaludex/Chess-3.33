@@ -40,7 +40,49 @@ void Pawn::render(sf::RenderWindow& window)
     window.draw(triangle);
 }
 
-std::vector<Move> Pawn::get_valid_moves(std::vector<PiecePtr> pieces) 
+std::vector<Move> Pawn::set_valid_moves(const std::vector<PiecePtr>& pieces) 
 {
+    valid_moves.erase(valid_moves.begin(), valid_moves.end());
+    Position advance(current.x, current.y - 1);
+    Position left_diagonal(current.x - 1, current.y - 1);
+    Position right_diagonal(current.x + 1, current.y - 1);
+    PiecePtr front_piece = nullptr;
+    PiecePtr attack_left = nullptr;
+    PiecePtr attack_right = nullptr;
+    for (auto piece : pieces)
+    {
+        if(piece->get_position() == advance)
+        {
+            front_piece = piece;
+        }
+        else if (piece->get_position() == left_diagonal && piece->get_team() != this->get_team())
+        {
+            attack_left = piece;
+        }
+        else if (piece->get_position() == right_diagonal && piece->get_team() != this->get_team())
+        {
+            attack_right = piece;
+        }
+    }
+    
+    if (!front_piece)
+    {
+        valid_moves.push_back(Move(advance, true, front_piece));
+    }
 
+    if (attack_left)
+    {
+        valid_moves.push_back(Move(left_diagonal, true, attack_left));
+    }
+
+    if (attack_right)
+    {
+        valid_moves.push_back(Move(right_diagonal, true, attack_right));
+    }
+    return valid_moves;    
+}
+
+bool Pawn::hurt(PiecePtr attacker)
+{
+    return true;
 }

@@ -41,50 +41,53 @@ void Tower::render(sf::RenderWindow& window)
     window.draw(triangle);
 }
 
-std::vector<Move> Tower::get_valid_moves(std::vector<PiecePtr> pieces) 
+std::vector<Move> Tower::set_valid_moves(const std::vector<PiecePtr>& pieces) 
 {
+    valid_moves.erase(valid_moves.begin(), valid_moves.end());
     const uint8_t lenght = Board::side_lenght;
 
-    for (size_t i = 0; i < 4; i++)
+    for (auto direction : directions)
     {
-        int delta_x = directions[i].x;
-        int delta_y = directions[i].y;
-        for (size_t k = 0; k < lenght && k <= 3; k++)
+        int delta_x = direction.x;
+        int delta_y = direction.y;
+        for (size_t k = 1; k <= 2; k++)
         {
-            int translation_x = current.x + (k * delta_x);
-            int translation_y = current.y + (k * delta_y);
+            uint8_t tile_x = current.x + (k * delta_x);
+            uint8_t tile_y = current.y + (k * delta_y);
 
-            if (translation_x >= lenght || translation_y >= lenght)
-            {
-                break;
-            }
+            if (tile_x >= lenght || tile_y >= lenght) break;
+
+            Position target_move(tile_x, tile_y);
+            PiecePtr piece_at_cell = nullptr;
             
-            Position target_move(translation_x,translation_y);
-            PiecePtr piece_in_cell = nullptr;
-
-            for(auto piece : pieces)
+            for(auto const& piece : pieces)
             {
-                if (piece->get_position().x == target_move.x && piece->get_position().y == target_move.y)
+                if (piece->get_position() == target_move)
                 {
-                    piece_in_cell = piece;
+                    piece_at_cell = piece;
                     break;
                 }
             }
 
-            if (piece_in_cell)
+            if (piece_at_cell)
             {
-                if (piece_in_cell->get_team() != this->get_team())
+                if (piece_at_cell->get_team() != this->get_team())
                 {
-                    valid_moves.push_back(Move(target_move, false, false));
+                    valid_moves.push_back(Move(target_move, true, piece_at_cell));
                 }
                 break;
             }
             else
             {
-                valid_moves.push_back(Move(target_move, false, false));
+                valid_moves.push_back(Move(target_move, true, piece_at_cell));
             }
         }
         
     }
-    return valid_moves;   
+    return valid_moves;    
+}
+
+bool Tower::hurt(PiecePtr attacker)
+{
+    return true;
 }

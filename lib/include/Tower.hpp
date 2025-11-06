@@ -15,7 +15,8 @@ class Tower : public IPiece
     virtual void move(Position pos) override;
     virtual void update(float dt) override;
     virtual void render(sf::RenderWindow& window) override;
-    virtual std::vector<Move> get_valid_moves(std::vector<PiecePtr> pieces) override;
+    virtual std::vector<Move> set_valid_moves(const std::vector<PiecePtr>& pieces) override;
+    virtual bool hurt(PiecePtr attacker) override;
 
 private:
     const static std::vector<Position> directions;
