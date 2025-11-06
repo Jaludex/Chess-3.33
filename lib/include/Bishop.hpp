@@ -15,7 +15,7 @@ public:
     virtual void move(Position pos) override;
     virtual void update(float dt) override;
     virtual void render(sf::RenderWindow& window) override;
-    virtual std::vector<Position> get_valid_moves(std::vector<PiecePtr> pieces) override;
+    virtual std::vector<Move> get_valid_moves(std::vector<PiecePtr> pieces) override;
 
 
 private:

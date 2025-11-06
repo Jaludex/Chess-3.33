@@ -19,6 +19,9 @@ bool Bishop::verify_position(Position pos)
 
 void Bishop::move(Position pos)
 {
+    //Validar si movimiento es valido
+
+    //Si si lo es hace el movimiento
     current.x = pos.x;
     current.y = pos.y;
 }
@@ -39,7 +42,53 @@ void Bishop::render(sf::RenderWindow& window)
     window.draw(triangle);
 }
 
-std::vector<Position> Bishop::get_valid_moves(std::vector<std::shared_ptr<IPiece>> pieces)
+std::vector<Move> Bishop::get_valid_moves(std::vector<std::shared_ptr<IPiece>> pieces)
 {
+    const uint8_t lenght = Board::side_lenght;
+    const std::vector<Position> directions = {Position(1, -1), Position(1, 1), Position(-1, 1), Position(-1, -1)};
 
+    for (size_t i = 0; i < 4; i++)
+    {
+        int delta_x = directions[i].x;
+        int delta_y = directions[i].y;
+        for (size_t k = 1; k < lenght && k <= 3; k++)
+        {
+            uint8_t tile_x = current.x + (k * delta_x);
+            uint8_t tile_y = current.y + (k * delta_y);
+
+            if (tile_x >= lenght || tile_y >= lenght)
+            {
+                break;
+            }
+
+            Position target_move(tile_x, tile_y);
+            bool occupied = false;
+
+            PiecePtr piece_at_cell = nullptr;
+            for(auto const& piece : pieces)
+            {
+                if (piece->get_position().x == tile_x && piece->get_position().y == tile_y)
+                {
+                    piece_at_cell = piece;
+                    occupied = true;
+                    break;
+                }
+            }
+
+            if (occupied)
+            {
+                if (piece_at_cell->get_team() != this->get_team())
+                {
+                    valid_moves.push_back(Move(target_move, false, false));
+                }
+                break;
+            }
+            else
+            {
+                valid_moves.push_back(Move(target_move, false, false));
+            }
+        }
+        
+    }
+    return valid_moves;    
 }
