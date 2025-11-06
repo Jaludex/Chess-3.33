@@ -52,6 +52,7 @@ protected:
     Position current;
     bool team;
     PieceType type;
+    std::vector<Position> moves;
 };
 
 using PiecePtr = std::shared_ptr<IPiece>;
