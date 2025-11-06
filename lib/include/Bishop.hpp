@@ -20,5 +20,5 @@ public:
 
 
 private:
- 
+    const static std::vector<Position> directions;
 };
