@@ -2,7 +2,7 @@
 
 #include <IGameState.hpp>
 
-class StateMainMenu : IGameState
+class StateMainMenu : public IGameState
 {
 private:
     
@@ -14,7 +14,7 @@ public:
     void init() override;                // inicializar aspectos del gamestate
     void terminate() override;           // eliminar memoria reservada dinámicamente o cosas que se tengan que manejar al final de ese estado de juego.
 	void update(float dt) override;
-	void render() override;
+	void render(sf::RenderWindow& window) override;
 };
 
 StateMainMenu::StateMainMenu(/* args */)
