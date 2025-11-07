@@ -90,8 +90,7 @@ PiecePtr Board::clicked_piece(sf::Vector2i mouse_position)
             if (piece->get_sprite().getGlobalBounds().contains(pos))
             {
                 return piece;
-            }
-            
+            }   
         }
     }
 

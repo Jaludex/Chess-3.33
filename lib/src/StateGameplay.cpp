@@ -14,6 +14,32 @@ void StateGameplay::init()
                                   (float)(window->getSize().y/2 - halfboard_lenght));
     board.set_sprite_position(pos);
 
+    float xmargin = Board::cell_lenght;
+    float ymargin = Board::cell_lenght * 2;
+    float xoffset = Board::cell_lenght * 1.2f;
+    float yoffset = Board::cell_lenght * 1.2f;
+    float width = (float)window->getSize().x;
+    
+    instantiators.add(std::make_shared<PieceInstantiator>(PieceType::Pawn, true, sf::Vector2f(x_margin, ymargin)));
+    instantiators.add(std::make_shared<PieceInstantiator>(PieceType::Horse, true, sf::Vector2f(x_margin, ymargin + yoffset)));
+    instantiators.add(std::make_shared<PieceInstantiator>(PieceType::Bishop, true, sf::Vector2f(x_margin, ymargin + 2*yoffset)));
+    instantiators.add(std::make_shared<PieceInstantiator>(PieceType::Tower, true, sf::Vector2f(x_margin, ymargin + 3*yoffset)));
+    instantiators.add(std::make_shared<PieceInstantiator>(PieceType::Queen, true, sf::Vector2f(x_margin, ymargin + 4*yoffset)));
+    instantiators.add(std::make_shared<PieceInstantiator>(PieceType::Trapper, true, sf::Vector2f(x_margin + xoffset, ymargin + yoffset)));
+    instantiators.add(std::make_shared<PieceInstantiator>(PieceType::Crook, true, sf::Vector2f(x_margin + xoffset, ymargin + 2*yoffset)));
+    instantiators.add(std::make_shared<PieceInstantiator>(PieceType::Archer, true, sf::Vector2f(x_margin + xoffset, ymargin + 3*yoffset)));
+    instantiators.add(std::make_shared<PieceInstantiator>(PieceType::Portal, true, sf::Vector2f(x_margin + xoffset, ymargin + 4*yoffset)));
+
+    instantiators.add(std::make_shared<PieceInstantiator>(PieceType::Pawn, false, sf::Vector2f(width - x_margin, ymargin)));
+    instantiators.add(std::make_shared<PieceInstantiator>(PieceType::Horse, false, sf::Vector2f(width - x_margin, ymargin + yoffset)));
+    instantiators.add(std::make_shared<PieceInstantiator>(PieceType::Bishop, false, sf::Vector2f(width - x_margin, ymargin + 2*yoffset)));
+    instantiators.add(std::make_shared<PieceInstantiator>(PieceType::Tower, false, sf::Vector2f(width - x_margin, ymargin + 3*yoffset)));
+    instantiators.add(std::make_shared<PieceInstantiator>(PieceType::Queen, false, sf::Vector2f(width - x_margin, ymargin + 4*yoffset)));
+    instantiators.add(std::make_shared<PieceInstantiator>(PieceType::Trapper, false, sf::Vector2f(width - x_margin - xoffset, ymargin + yoffset)));
+    instantiators.add(std::make_shared<PieceInstantiator>(PieceType::Crook, false, sf::Vector2f(width - x_margin - xoffset, ymargin + 2*yoffset)));
+    instantiators.add(std::make_shared<PieceInstantiator>(PieceType::Archer, false, sf::Vector2f(width - x_margin - xoffset, ymargin + 3*yoffset)));
+    instantiators.add(std::make_shared<PieceInstantiator>(PieceType::Portal, false, sf::Vector2f(width - x_margin - xoffset, ymargin + 4*yoffset)));
+
     board.add_piece(std::make_shared<Crook>(true, 1, 5));
     board.add_piece(std::make_shared<Queen>(true, 1, 0));
     board.add_piece(std::make_shared<Trapper>(false, 4, 2));
@@ -54,16 +80,36 @@ void StateGameplay::drag()
         else
         {
             selected = board.clicked_piece(mouse_position);
+            
             if (selected)
             {
-                if (selected->get_team() != player_turn) selected = nullptr;                
-            } 
+                auto piece = 
+                if (piece->get_team() != player_turn) selected = nullptr;                
+            }
+
+            selected = clicked_instantiator(mouse_position);
         }
     }
     else if (selected)
     {
-        if (board.drop_piece(selected)) player_turn = !player_turn;
+        PiecePtr piece = std::dynamic_pointer_cast<IPiece>(selected);
+        
+        if(PiecePtr)
+        {
+            if (board.drop_piece(selected))      
+               player_turn = !player_turn;
+        }
 
+        std::shared_ptr<PieceInstantiator> instantiator = std::dynamic_pointer_cast<PieceInstantiator>(selected);
+        
+        if(instantiator)
+        {
+            if(instantiator)//here we have to check if mouse is inside board
+                board.add_piece(instantiator->make_piece(/*TODO FILL HERE WITH COORDS*/)));
+            
+            Instantiator->return_to_origin();
+        }
+        
         selected = nullptr;
     }
 }
@@ -73,4 +119,19 @@ void StateGameplay::render(sf::RenderWindow& window)
     board.render(window);
     if (selected) board.render_highlights(window, selected->get_valid_moves());
     board.render_pieces(window);
+}
+
+std::shared_ptr<PieceInstantiator> StateGameplay::clicked_instantiator(sf::Vector2i mouse_position)
+{
+    sf::Vector2f pos((float)(mouse_position.x), (float)(mouse_position.y));
+    
+    for (instantiator : instantiators)
+    {
+        if (instantiator->get_sprite().getGlobalBounds().contains(pos))
+        {
+            return instantiator;
+        }
+    }
+
+    return nullptr;
 }
