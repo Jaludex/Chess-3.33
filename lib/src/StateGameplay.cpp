@@ -53,7 +53,10 @@ void StateGameplay::drag()
         else
         {
             selected = board.clicked_piece(mouse_position);
-            if (selected && selected->get_team() != player_turn) selected = nullptr;
+            if (selected)
+            {
+                if (selected->get_team() != player_turn) selected = nullptr;                
+            } 
         }
     }
     else if (selected)

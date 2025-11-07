@@ -125,7 +125,11 @@ bool Board::drop_piece(PiecePtr piece)
                     if (move.occupant->hurt(piece))
                     {
                         it_moves = move.moves_piece;
-                        std::remove(elements.begin(), elements.end(), move.occupant);
+                        auto it = std::find(elements.begin(), elements.end(), move.occupant);
+                        if (it != elements.end())
+                        {
+                            elements.erase(it);
+                        }
                     }
                 }
                 else it_moves = true;
