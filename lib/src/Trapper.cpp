@@ -1,0 +1,140 @@
+#include "Trapper.hpp"
+
+const std::vector<Position> Trapper::directions = {Position(0, 2), Position(0, -2), Position(-2, 0), Position(2, 0)};
+Bomb::Bomb(bool team, int startX, int startY)
+{
+    set_team(team);
+    set_piece_type(PieceType::Pawn);
+    
+    current.x = startX;
+    current.y = startY;
+}
+
+bool Bomb::verify_position(Position pos)
+{
+    int dx = std::abs(pos.x - current.x);
+    int dy = std::abs(pos.y - current.y);
+
+    return (dx == dy) && (dx > 0);
+}
+
+void Bomb::move(Position pos)
+{
+    //empty
+}
+
+void Bomb::update(float dt)
+{
+    
+}
+
+void Bomb::render(sf::RenderWindow& window)
+{
+    auto triangle = sf::CircleShape(45,(size_t)3);
+    triangle.setOrigin({45.f,45.f});
+    triangle.setScale({1.f,2.f});
+    auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
+    triangle.setPosition(this->sprite.getPosition() + offset);
+    triangle.setFillColor(sf::Color::Magenta);
+    window.draw(triangle);
+}
+
+std::vector<Move> Bomb::set_valid_moves(const std::vector<PiecePtr>& pieces) 
+{
+   valid_moves.erase(valid_moves.begin(),valid_moves.end());
+   return valid_moves;    
+}
+
+bool Bomb::hurt(PiecePtr attacker)
+{
+    attacker->hurt(std::make_shared<Bomb>(team,current.x,current.y));
+    return true;
+}
+
+Trapper::Trapper(bool team, int startX, int startY)
+{
+    set_team(team);
+    set_piece_type(PieceType::Trapper);
+    
+    current.x = startX;
+    current.y = startY;
+}
+
+bool Trapper::verify_position(Position pos)
+{
+    int dx = std::abs(pos.x - current.x);
+    int dy = std::abs(pos.y - current.y);
+
+    return (dx == dy) && (dx > 0);
+}
+
+void Trapper::move(Position pos)
+{
+    std::shared_ptr<Bomb> The_bomb = std::make_shared<Bomb>(team,current.x,current.y);
+    current.x = pos.x;
+    current.y = pos.y;
+    board->add_piece(The_bomb);
+}
+
+void Trapper::update(float dt)
+{
+    
+}
+
+void Trapper::render(sf::RenderWindow& window)
+{
+    auto triangle = sf::CircleShape(45,(size_t)3);
+    triangle.setOrigin({45.f,45.f});
+    triangle.setScale({1.f,2.f});
+    auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
+    triangle.setPosition(this->sprite.getPosition() + offset);
+    triangle.setFillColor(sf::Color::Blue);
+    window.draw(triangle);
+}
+
+std::vector<Move> Trapper::set_valid_moves(const std::vector<PiecePtr>& pieces)
+{
+     valid_moves.erase(valid_moves.begin(), valid_moves.end());
+    const uint8_t lenght = Board::side_lenght;
+
+    for (auto direction : directions)
+    {
+        int new_x = current.x + direction.x;
+        int new_y = current.y + direction.y;
+
+        if (new_x > Board::side_lenght || new_y > Board::side_lenght)
+        {
+            break;
+        }
+
+        Position target_position(new_x,new_y);
+        PiecePtr target_piece = nullptr;
+        for (auto piece : pieces)
+        {
+            if (piece->get_position() == current)
+            {
+                target_piece = piece;
+                break;
+            }
+        }
+        
+        if (target_piece)
+        {
+            if(target_piece->get_team() != team)
+            {
+                valid_moves.push_back(Move(target_position, true, target_piece));
+            }
+        }
+        else
+        {
+            valid_moves.push_back(Move(target_position, true, target_piece));
+        }
+        
+    }
+    return valid_moves;     
+}
+
+bool Trapper::hurt(PiecePtr attacker)
+{
+    return true;
+}
