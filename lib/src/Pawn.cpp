@@ -1,12 +1,12 @@
 #include"Pawn.hpp"
 
 
-Pawn::white = sf::Color(200,200,200,255);
-Pawn::black = sf::Color(100,100,100,255);
+sf::Color Pawn::white = sf::Color(200,200,200,255);
+sf::Color Pawn::black = sf::Color(100,100,100,255);
 
-Pawn::get_color()
+sf::Color Pawn::get_color(bool _team)
 {
-return (team)? Pawn::white : Pawn::black;
+return (_team)? Pawn::white : Pawn::black;
 }
 
 Pawn::Pawn(bool team, int startX, int startY)
@@ -47,7 +47,7 @@ void Pawn::render(sf::RenderWindow& window)
     triangle.setScale({1.f,2.f});
     auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
     triangle.setPosition(this->sprite.getPosition() + offset);
-    triangle.setFillColor(get_color());
+    triangle.setFillColor(get_color(team));
     window.draw(triangle);
 }
 

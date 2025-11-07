@@ -2,12 +2,12 @@
 
 const std::vector<Position> Bishop::directions = {Position(1, -1), Position(1, 1), Position(-1, 1), Position(-1, -1)};
 
-Bishop::white = sf::Color(150,150,250,255);
-Bishop::black = sf::Color(50,50,150,255);
+sf::Color Bishop::white = sf::Color(150,150,250,255);
+sf::Color Bishop::black = sf::Color(50,50,150,255);
 
-Bishop::get_color()
+sf::Color Bishop::get_color(bool _team)
 {
-return (team)? Bishop::white : Bishop::black;
+return (_team)? Bishop::white : Bishop::black;
 }
 
 Bishop::Bishop(bool team, int startX, int startY)
@@ -49,7 +49,7 @@ void Bishop::render(sf::RenderWindow& window)
     triangle.setScale({1.f,2.f});
     auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
     triangle.setPosition(this->sprite.getPosition() + offset);
-    triangle.setFillColor(get_color());
+    triangle.setFillColor(get_color(team));
     window.draw(triangle);
 }
 

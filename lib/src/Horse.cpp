@@ -3,12 +3,12 @@
 const std::vector<Position> Horse::directions = {Position(0, -2), Position(1, -1), Position(2, 0), Position(1, 1), 
                                                     Position(0, 2), Position(-1, 1), Position(-2, 0), Position(-1, -1)};
 
-Horse::white = sf::Color(150,230,150,255);
-Horse::black = sf::Color(50,130,50,255);
-
-Horse::get_color()
+sf::Color Horse::white = sf::Color(150,230,150,255);
+sf::Color Horse::black = sf::Color(50,130,50,255);
+ 
+sf::Color Horse::get_color(bool _team)
 {
-return (team)? Horse::white : Horse::black;
+return (_team)? Horse::white : Horse::black;
 }
 
 Horse::Horse(bool team, int startX, int startY)
@@ -51,7 +51,7 @@ void Horse::render(sf::RenderWindow& window)
     triangle.setScale({1.f,2.f});
     auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
     triangle.setPosition(this->sprite.getPosition() + offset);
-    triangle.setFillColor(get_color());
+    triangle.setFillColor(get_color(team));
     window.draw(triangle);
 }
 

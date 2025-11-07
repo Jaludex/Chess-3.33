@@ -18,6 +18,7 @@ public:
     virtual std::vector<Move> set_valid_moves(const std::vector<PiecePtr>& pieces) override;
     virtual bool hurt(PiecePtr attacker) override;
 
+    sf::Color get_color(bool);
     static sf::Color white;
     static sf::Color black;
 
@@ -38,9 +39,9 @@ public:
     virtual void render(sf::RenderWindow& window) override;
     virtual std::vector<Move> set_valid_moves(const std::vector<PiecePtr>& pieces) override;
     virtual bool hurt(PiecePtr attacker) override;
-
-private:    
+    
+    sf::Color get_color(bool);
     static sf::Color white;
     static sf::Color black;
-
+private:    
 };

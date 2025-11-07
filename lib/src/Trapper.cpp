@@ -2,12 +2,12 @@
 
 const std::vector<Position> Trapper::directions = {Position(0, 2), Position(0, -2), Position(-2, 0), Position(2, 0)};
 
-Bomb::white = sf::Color(120,120,20,255);
-Bomb::black = sf::Color(20,20,0,255);
+sf::Color Bomb::white = sf::Color(120,120,20,255);
+sf::Color Bomb::black = sf::Color(20,20,0,255);
 
-Bomb::get_color()
+sf::Color Bomb::get_color(bool _team)
 {
-return (team)? Bomb::white : Bomb::black;
+return (_team)? Bomb::white : Bomb::black;
 }
 
 Bomb::Bomb(bool team, int startX, int startY)
@@ -43,7 +43,7 @@ void Bomb::render(sf::RenderWindow& window)
     triangle.setScale({1.f,2.f});
     auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
     triangle.setPosition(this->sprite.getPosition() + offset);
-    triangle.setFillColor(get_color());
+    triangle.setFillColor(get_color(team));
     window.draw(triangle);
 }
 
@@ -106,7 +106,7 @@ void Trapper::render(sf::RenderWindow& window)
     triangle.setScale({1.f,2.f});
     auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
     triangle.setPosition(this->sprite.getPosition() + offset);
-    triangle.setFillColor(get_color());
+    triangle.setFillColor(get_color(team));
     window.draw(triangle);
 }
 

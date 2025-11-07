@@ -22,7 +22,7 @@ void PieceInstantiator::render(sf::RenderWindow& window)
             triangle.setScale({1.f,2.f});
             auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
             triangle.setPosition(this->sprite.getPosition() + offset);
-            triangle.setFillColor(sf::Color::Magenta);
+            triangle.setFillColor(Pawn::get_color(team));
             window.draw(triangle);
             }
             break;
@@ -34,7 +34,7 @@ void PieceInstantiator::render(sf::RenderWindow& window)
             triangle.setScale({1.f,2.f});
             auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
             triangle.setPosition(sprite.getPosition() + offset);
-            triangle.setFillColor(sf::Color::Cyan);
+            triangle.setFillColor(Horse::get_color(team));
             window.draw(triangle);
             }
             break;
@@ -46,7 +46,7 @@ void PieceInstantiator::render(sf::RenderWindow& window)
             triangle.setScale({1.f,2.f});
             auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
             triangle.setPosition(this->sprite.getPosition() + offset);
-            triangle.setFillColor(sf::Color::Blue);
+            triangle.setFillColor(Bishop::get_color(team));
             window.draw(triangle);
             }
             break;
@@ -58,7 +58,7 @@ void PieceInstantiator::render(sf::RenderWindow& window)
             triangle.setScale({1.f,2.f});
             auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
             triangle.setPosition(this->sprite.getPosition() + offset);
-            triangle.setFillColor(sf::Color::Green);
+            triangle.setFillColor(Tower::get_color(team));
             window.draw(triangle);
             }
             break;
@@ -70,7 +70,7 @@ void PieceInstantiator::render(sf::RenderWindow& window)
             triangle.setScale({1.f,2.f});
             auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
             triangle.setPosition(this->sprite.getPosition() + offset);
-            triangle.setFillColor(sf::Color::Yellow);
+            triangle.setFillColor(Queen::get_color(team));
             window.draw(triangle);
             }
             break;
@@ -82,7 +82,7 @@ void PieceInstantiator::render(sf::RenderWindow& window)
             triangle.setScale({1.f,2.f});
             auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
             triangle.setPosition(this->sprite.getPosition() + offset);
-            triangle.setFillColor(sf::Color::Blue);
+            triangle.setFillColor(Trapper::get_color(team));
             window.draw(triangle);
             }
             break;
@@ -94,7 +94,7 @@ void PieceInstantiator::render(sf::RenderWindow& window)
             triangle.setScale({1.f,2.f});
             auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
             triangle.setPosition(this->sprite.getPosition() + offset);
-            triangle.setFillColor(sf::Color::Green);
+            triangle.setFillColor(Crook::get_color(team));
             window.draw(triangle);
             }
             break;
@@ -106,7 +106,7 @@ void PieceInstantiator::render(sf::RenderWindow& window)
             triangle.setScale({1.f,2.f});
             auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
             triangle.setPosition(this->sprite.getPosition() + offset);
-            triangle.setFillColor(sf::Color::Blue);
+            triangle.setFillColor(Archer::get_color(team));
             window.draw(triangle);
             }
             break;
@@ -118,7 +118,7 @@ void PieceInstantiator::render(sf::RenderWindow& window)
             triangle.setScale({1.f,2.f});
             auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
             triangle.setPosition(this->sprite.getPosition() + offset);
-            triangle.setFillColor(sf::Color::Red);
+            triangle.setFillColor(Portal::get_color(team));
             window.draw(triangle);
             }            
             break;

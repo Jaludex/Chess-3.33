@@ -18,6 +18,7 @@ class Portal : public IPiece
     virtual std::vector<Move> set_valid_moves(const std::vector<PiecePtr>& pieces) override;
     virtual bool hurt(PiecePtr attacker) override;
 
+    sf::Color get_color(bool);
     static sf::Color white;
     static sf::Color black;
 

@@ -19,6 +19,7 @@ class Queen : public IPiece
     virtual bool hurt(PiecePtr attacker) override;
     void swap(Position pos);
 
+    sf::Color get_color(bool);
     static sf::Color white;
     static sf::Color black;
 
