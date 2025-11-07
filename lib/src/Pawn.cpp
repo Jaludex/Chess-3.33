@@ -19,8 +19,12 @@ bool Pawn::verify_position(Position pos)
 
 void Pawn::move(Position pos)
 {
-    current.x = pos.x;
-    current.y = pos.y;
+    if (is_valid(pos))
+    {
+        current.x = pos.x;
+        current.y = pos.y;
+    }
+
 
 }
 
@@ -31,7 +35,7 @@ void Pawn::update(float dt)
 
 void Pawn::render(sf::RenderWindow& window)
 {
-    auto triangle = sf::CircleShape(45,(size_t)3);
+    auto triangle = sf::CircleShape(45,(size_t)12);
     triangle.setOrigin({45.f,45.f});
     triangle.setScale({1.f,2.f});
     auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
@@ -43,6 +47,7 @@ void Pawn::render(sf::RenderWindow& window)
 std::vector<Move> Pawn::set_valid_moves(const std::vector<PiecePtr>& pieces) 
 {
     valid_moves.erase(valid_moves.begin(), valid_moves.end());
+    
     Position advance(current.x, current.y - 1);
     Position left_diagonal(current.x - 1, current.y - 1);
     Position right_diagonal(current.x + 1, current.y - 1);
@@ -65,7 +70,7 @@ std::vector<Move> Pawn::set_valid_moves(const std::vector<PiecePtr>& pieces)
         }
     }
     
-    if (!front_piece && advance.x <= 6, advance.y <= 6)
+    if (!front_piece && advance.x <= 5, advance.y <= 5)
     {
         valid_moves.push_back(Move(advance, true, front_piece));
     }

@@ -21,11 +21,11 @@ bool Archer::verify_position(Position pos)
 
 void Archer::move(Position pos)
 {
-    //Validar si movimiento es valido
-
-    //Si si lo es hace el movimiento
-    current.x = pos.x;
-    current.y = pos.y;
+    if (is_valid(pos))
+    {
+        current.x = pos.x;
+        current.y = pos.y;
+    }
 }
 
 void Archer::update(float dt)
@@ -35,7 +35,7 @@ void Archer::update(float dt)
 
 void Archer::render(sf::RenderWindow& window)
 {
-    auto triangle = sf::CircleShape(45,(size_t)3);
+    auto triangle = sf::CircleShape(45,(size_t)5);
     triangle.setOrigin({45.f,45.f});
     triangle.setScale({1.f,2.f});
     auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
@@ -46,7 +46,7 @@ void Archer::render(sf::RenderWindow& window)
 
 std::vector<Move> Archer::set_valid_moves(const std::vector<PiecePtr>& pieces)
 {
-    valid_moves.erase(valid_moves.begin(), valid_moves.end());
+    valid_moves.clear();
 
     Position advance = current + directions[0];
     Position right_diagonal_1 = current + directions[1];
@@ -84,7 +84,7 @@ std::vector<Move> Archer::set_valid_moves(const std::vector<PiecePtr>& pieces)
         }
     }
     
-    if (!front_piece && advance.x <= 6 && advance.y <= 6)
+    if (!front_piece && advance.x <= 5 && advance.y <= 5 && advance.x >= 0 && advance.y >= 0)
     {
         valid_moves.push_back(Move(advance, true, front_piece));
     }

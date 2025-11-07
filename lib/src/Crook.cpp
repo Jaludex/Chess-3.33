@@ -21,11 +21,11 @@ bool Crook::verify_position(Position pos)
 
 void Crook::move(Position pos)
 {
-    //Validar si movimiento es valido
-
-    //Si si lo es hace el movimiento
-    current.x = pos.x;
-    current.y = pos.y;
+   if (is_valid(pos))
+    {
+        current.x = pos.x;
+        current.y = pos.y;
+    }
 }
 
 void Crook::update(float dt)
@@ -40,13 +40,13 @@ void Crook::render(sf::RenderWindow& window)
     triangle.setScale({1.f,2.f});
     auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
     triangle.setPosition(this->sprite.getPosition() + offset);
-    triangle.setFillColor(sf::Color::Blue);
+    triangle.setFillColor(sf::Color::Green);
     window.draw(triangle);
 }
 
 std::vector<Move> Crook::set_valid_moves(const std::vector<PiecePtr>& pieces)
 {
-    valid_moves.erase(valid_moves.begin(), valid_moves.end());
+    valid_moves.clear();
 
     Position advance = current + directions[0];
     Position right_diagonal = current + directions[1];
@@ -72,7 +72,7 @@ std::vector<Move> Crook::set_valid_moves(const std::vector<PiecePtr>& pieces)
         }
     }
     
-    if (!front_piece && advance.x <= 6 && advance.y <= 6 && advance.x >= 0 && advance.y >= 0)
+    if (!front_piece && advance.x <= 5 && advance.y <= 5 && advance.x >= 0 && advance.y >= 0)
     {
         valid_moves.push_back(Move(advance, true, front_piece));
     }

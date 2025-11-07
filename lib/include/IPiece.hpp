@@ -5,9 +5,9 @@
 
 struct Position
 {
-    uint8_t x, y;
+    int8_t x, y;
 
-    Position(uint8_t _x, uint8_t _y);
+    Position(int8_t _x, int8_t _y);
     bool operator==(const Position& right);
     Position operator+(Position it);
 };
@@ -35,7 +35,8 @@ enum class PieceType
     Trapper,
     Crook,
     Archer,
-    Portal
+    Portal,
+    Bomb
 };
 
 class IPiece : public IGameObject
@@ -52,7 +53,7 @@ public:
     virtual void move(Position pos) = 0;
     //Retorna si mata o no a la pieza, pues hay piezas con mas vida
     virtual bool hurt(PiecePtr attacker) = 0;
-
+    bool is_valid(Position pos);
     IPiece();
     virtual ~IPiece() = default;
 

@@ -1,6 +1,6 @@
 #include <IPiece.hpp>
 
-Position::Position(uint8_t _x, uint8_t _y) : x(_x), y(_y) {}
+Position::Position(int8_t _x, int8_t _y) : x(_x), y(_y) {}
 
 bool Position::operator==(const Position& right)
 {
@@ -42,4 +42,17 @@ Position IPiece::get_position() const
 std::vector<Move> IPiece::get_valid_moves()
 {
     return valid_moves;
+}
+bool IPiece::is_valid(Position pos)
+{
+    bool is_valid = false;
+    for (auto move : valid_moves)
+    {
+        if (move.relative_positiion == pos)
+        {
+            is_valid = true;
+            break;
+        }
+    }
+    return is_valid;   
 }

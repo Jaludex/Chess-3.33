@@ -21,8 +21,12 @@ bool Queen::verify_position(Position pos)
 
 void Queen::move(Position pos)
 {
-    current.x = pos.x;
-    current.y = pos.y;
+    if (is_valid(pos))
+    {
+        current.x = pos.x;
+        current.y = pos.y;
+    }
+
 
 }
 

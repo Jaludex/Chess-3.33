@@ -1,15 +1,15 @@
 #include "Trapper.hpp"
 
 const std::vector<Position> Trapper::directions = {Position(0, 2), Position(0, -2), Position(-2, 0), Position(2, 0)};
+
 Bomb::Bomb(bool team, int startX, int startY)
 {
     set_team(team);
-    set_piece_type(PieceType::Pawn);
+    set_piece_type(PieceType::Bomb);
     
     current.x = startX;
     current.y = startY;
 }
-
 bool Bomb::verify_position(Position pos)
 {
     int dx = std::abs(pos.x - current.x);
@@ -70,10 +70,11 @@ bool Trapper::verify_position(Position pos)
 
 void Trapper::move(Position pos)
 {
-    std::shared_ptr<Bomb> The_bomb = std::make_shared<Bomb>(team,current.x,current.y);
-    current.x = pos.x;
-    current.y = pos.y;
-    board->add_piece(The_bomb);
+    if(is_valid(pos))
+    {
+        current.x = pos.x;
+        current.y = pos.y;
+    }
 }
 
 void Trapper::update(float dt)
@@ -94,24 +95,24 @@ void Trapper::render(sf::RenderWindow& window)
 
 std::vector<Move> Trapper::set_valid_moves(const std::vector<PiecePtr>& pieces)
 {
-     valid_moves.erase(valid_moves.begin(), valid_moves.end());
+    valid_moves.erase(valid_moves.begin(), valid_moves.end());
     const uint8_t lenght = Board::side_lenght;
 
-    for (auto direction : directions)
+    for (auto direction : Trapper::directions)
     {
         int new_x = current.x + direction.x;
         int new_y = current.y + direction.y;
 
-        if (new_x > Board::side_lenght || new_y > Board::side_lenght)
+        if (new_x < 0 || new_x >= Board::side_lenght || new_y < 0 || new_y >= Board::side_lenght)
         {
-            break;
+            continue;
         }
 
-        Position target_position(new_x,new_y);
+        Position target_position((int8_t)new_x, (int8_t)new_y);
         PiecePtr target_piece = nullptr;
         for (auto piece : pieces)
         {
-            if (piece->get_position() == current)
+            if (piece->get_position() == target_position)
             {
                 target_piece = piece;
                 break;

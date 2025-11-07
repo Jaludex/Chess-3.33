@@ -4,6 +4,14 @@
 #include <Board.hpp>
 #include <memory>
 
+#include "Archer.hpp"
+#include "Crook.hpp"
+#include "Horse.hpp"
+#include "Pawn.hpp"
+#include "Portal.hpp"
+#include"Queen.hpp"
+#include"Tower.hpp"
+#include"Trapper.hpp"
 #include <Bishop.hpp>
 
 class StateGameplay : IGameState

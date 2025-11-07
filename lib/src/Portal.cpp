@@ -19,6 +19,14 @@ bool Portal::verify_position(Position pos)
 
 void Portal::move(Position pos)
 {
+    for (auto move : valid_moves)
+    {
+        if (move.occupant->get_position() == pos)
+        {
+            move.occupant->move(current);
+            break;
+        }
+    }    
     current.x = pos.x;
     current.y = pos.y;
 
@@ -36,7 +44,7 @@ void Portal::render(sf::RenderWindow& window)
     triangle.setScale({1.f,2.f});
     auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
     triangle.setPosition(this->sprite.getPosition() + offset);
-    triangle.setFillColor(sf::Color::Magenta);
+    triangle.setFillColor(sf::Color::Red);
     window.draw(triangle);
 }
 

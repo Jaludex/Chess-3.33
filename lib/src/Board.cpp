@@ -1,5 +1,5 @@
 #include <Board.hpp>
-
+#include "Trapper.hpp"
 #include <iostream>
 Board::Board(sf::Texture texture) : IGameObject(texture)
 {
@@ -138,9 +138,18 @@ bool Board::drop_piece(PiecePtr piece)
             }
         }
 
-        if (it_moves) piece->move(position_on_board);
+        if (piece->get_piece_type() == PieceType::Trapper)
+        {
+            Position bomb_pos = piece->get_position(); 
+            add_piece(std::make_shared<Bomb>(piece->get_team(), bomb_pos.x, bomb_pos.y));
+        }
+    
+    piece->move(position_on_board);
     }
-
+    bool team_of_bombs_to_remove = !piece->get_team(); 
+    elements.erase(std::remove_if(elements.begin(), elements.end(),
+            [team_of_bombs_to_remove](PiecePtr element) {
+                return element->get_piece_type() == PieceType::Bomb && element->get_team() == team_of_bombs_to_remove;}), elements.end());
     set_piece_sprite(piece);
 
     return it_moves;

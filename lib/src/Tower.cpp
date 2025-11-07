@@ -20,8 +20,11 @@ bool Tower::verify_position(Position pos)
 
 void Tower::move(Position pos)
 {
-    current.x = pos.x;
-    current.y = pos.y;
+    if (is_valid(pos))
+    {
+        current.x = pos.x;
+        current.y = pos.y;
+    }
 
 }
 
@@ -32,7 +35,7 @@ void Tower::update(float dt)
 
 void Tower::render(sf::RenderWindow& window)
 {
-    auto triangle = sf::CircleShape(45,(size_t)3);
+    auto triangle = sf::CircleShape(45,(size_t)7);
     triangle.setOrigin({45.f,45.f});
     triangle.setScale({1.f,2.f});
     auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});

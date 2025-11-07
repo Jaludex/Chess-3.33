@@ -21,8 +21,12 @@ bool Bishop::verify_position(Position pos)
 
 void Bishop::move(Position pos)
 {
-    current.x = pos.x;
-    current.y = pos.y;
+   if (is_valid(pos))
+    {
+        current.x = pos.x;
+        current.y = pos.y;
+    }
+
 }
 
 void Bishop::update(float dt)
@@ -43,8 +47,8 @@ void Bishop::render(sf::RenderWindow& window)
 
 std::vector<Move> Bishop::set_valid_moves(const std::vector<PiecePtr>& pieces)
 {
-    valid_moves.erase(valid_moves.begin(), valid_moves.end());
-    const uint8_t lenght = Board::side_lenght;
+    valid_moves.clear();
+    const int8_t lenght = Board::side_lenght;
 
     for (auto direction : directions)
     {

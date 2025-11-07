@@ -1,7 +1,7 @@
 #include"Horse.hpp"
 
-const std::vector<Position> Horse::directions = {Position(0, -2), Position(1, -1), Position(0, 2), Position(1, 1),
-                                                    Position(0, 2), Position(-1, 1), Position(-2, 0), Position(-1, -1),};
+const std::vector<Position> Horse::directions = {Position(0, -2), Position(1, -1), Position(2, 0), Position(1, 1), 
+                                                    Position(0, 2), Position(-1, 1), Position(-2, 0), Position(-1, -1)};
 
 Horse::Horse(bool team, int startX, int startY)
 {
@@ -22,8 +22,12 @@ bool Horse::verify_position(Position pos)
 
 void Horse::move(Position pos)
 {
-    current.x = pos.x;
-    current.y = pos.y;
+   if (is_valid(pos))
+    {
+        current.x = pos.x;
+        current.y = pos.y;
+    }
+
 
 }
 
@@ -45,7 +49,7 @@ void Horse::render(sf::RenderWindow& window)
 
 std::vector<Move> Horse::set_valid_moves(const std::vector<PiecePtr>& pieces) 
 {
-    valid_moves.erase(valid_moves.begin(), valid_moves.end());
+    valid_moves.clear();
     const uint8_t lenght = Board::side_lenght;
 
     for (auto direction : directions)
@@ -53,16 +57,16 @@ std::vector<Move> Horse::set_valid_moves(const std::vector<PiecePtr>& pieces)
         int new_x = current.x + direction.x;
         int new_y = current.y + direction.y;
 
-        if (new_x > Board::side_lenght || new_y > Board::side_lenght)
+        if (new_x < 0 || new_x >= Board::side_lenght || new_y < 0 || new_y >= Board::side_lenght)
         {
-            break;
+            continue;
         }
 
-        Position target_position(new_x,new_y);
+        Position target_position((int8_t)new_x, (int8_t)new_y);
         PiecePtr target_piece = nullptr;
         for (auto piece : pieces)
         {
-            if (piece->get_position() == current)
+            if (piece->get_position() == target_position)
             {
                 target_piece = piece;
                 break;
