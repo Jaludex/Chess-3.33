@@ -60,12 +60,12 @@ bool Bomb::hurt(PiecePtr attacker)
 }
 
 
-Trapper::white = sf::Color(170,170,70,255);
-Trapper::black = sf::Color(70,70,0,255);
+sf::Color Trapper::white = sf::Color(170,170,70,255);
+sf::Color Trapper::black = sf::Color(70,70,0,255);
 
-Trapper::get_color()
+sf::Color Trapper::get_color(bool _team)
 {
-return (team)? Trapper::white : Trapper::black;
+return (_team)? Trapper::white : Trapper::black;
 }
 
 Trapper::Trapper(bool team, int startX, int startY)

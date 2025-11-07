@@ -1,6 +1,7 @@
 #include"Queen.hpp"
 
-const std::vector<Position> Queen::directions = {Position(1, 0), Position(-1, 0), Position(0, 1), Position(0, -1), 
+const std::vector<Position> Queen::directions = {Position(1, 0), Position(-1, 0), Position(0, 1), Position(0, -1),
+                                                    Position(1, -1), Position(1, 1), Position(-1, 1), Position(-1, -1)};
 
 sf::Color Queen::white = sf::Color(255,130,130,255);
 sf::Color Queen::black = sf::Color(155,30,30,255);
@@ -9,7 +10,8 @@ sf::Color Queen::get_color(bool _team)
 {
 return (_team)? Queen::white : Queen::black;
 }
-                                                    Position(1, -1), Position(1, 1), Position(-1, 1), Position(-1, -1)};
+                                                    
+
 Queen::Queen(bool team, int startX, int startY)
 {
     set_team(team);
