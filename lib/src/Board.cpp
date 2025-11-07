@@ -67,6 +67,19 @@ size_t Board::size()
     return elements.size();
 }
 
+bool Board::check_winner()
+{
+    uint8_t count_P1, count_P2;
+
+    for (auto piece : elements)
+    {
+        (piece->get_team()) ? count_P1++ : count_P2++;
+    }
+
+    if (count_P1 == 0 || count_P2 == 0) return true;
+    return false;
+}
+
 PiecePtr Board::get_position(short x, short y)
 {
     if ((x >= Board::side_lenght) || (y >= Board::side_lenght)) throw std::invalid_argument("Coordinate outside of board");

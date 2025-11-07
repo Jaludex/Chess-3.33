@@ -24,10 +24,12 @@ void StateGameplay::terminate()
 }
 
 void StateGameplay::update(float dt)
-{
+{    
     drag();
     
     board.update(dt);
+
+    return GameStateSignal::None;
 }
 
 sf::Vector2i StateGameplay::get_relative_mouse_position()

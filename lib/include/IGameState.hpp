@@ -1,6 +1,16 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 
+enum class GameStateSignal
+{
+    None,
+    SwitchToMainMenu,
+    SwitchToGameplay,
+    SwitchToShop,
+    SwitchToConfig,
+    SwitchToExit,
+};
+
 class IGameState
 {
 private:

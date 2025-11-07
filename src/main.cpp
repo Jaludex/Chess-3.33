@@ -1,6 +1,9 @@
 #include <SFML/Graphics.hpp>
 #include <StateGameplay.hpp>
+#include <StateMainMenu.hpp>
 #include <Board.hpp>
+
+using StatePtr = std::shared_ptr<IGameState>;
 
 int main()
 {
@@ -13,8 +16,8 @@ int main()
 
     const sf::Color Cerulean = sf::Color(130,130,200,255);
 
-    StateGameplay gamestate(window);
-    gamestate.init();
+    StatePtr gamestate = std::make_unique<StateMainMenu>();
+    gamestate->init();
 
     while (window.isOpen())
     {
@@ -28,14 +31,33 @@ int main()
 
         auto now = clock.getElapsedTime();
         delta_time += now - last_time;
+        auto dt = delta_time/target_time;
         if (delta_time >= target_time)
         {
-            gamestate.update(delta_time/target_time);
+            switch (gamestate->update(dt))
+            {
+            case GameStateSignal::SwitchToGameplay:
+                gamestate = std::make_shared<StateGameplay>(window);
+                gamestate->init();
+                break;
+            case GameStateSignal::SwitchToMainMenu:
+                gamestate = std::make_shared<StateMainMenu>(window);
+                gamestate->init();
+                break;
+
+            //Mas casos aca
+            
+            case GameStateSignal::None:
+            default:
+                window.clear(Cerulean);
+                gamestate->render(window);
+                window.display();
+                break;
+            }
+
             delta_time = sf::Time::Zero;
 
-            window.clear(Cerulean);
-            gamestate.render(window);
-            window.display();
+            
         }
         last_time = now;
     }

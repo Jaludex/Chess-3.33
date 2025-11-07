@@ -6,7 +6,7 @@
 
 #include <Bishop.hpp>
 
-class StateGameplay : IGameState
+class StateGameplay : public IGameState
 {
 private:
     PiecePtr selected;
@@ -25,7 +25,6 @@ public:
     void terminate() override;           // eliminar memoria reservada dinámicamente o cosas que se tengan que manejar al final de ese estado de juego.
 	void update(float dt) override;
 	void render(sf::RenderWindow& window) override;
-
     sf::Vector2i get_relative_mouse_position();
     void drag();
 };

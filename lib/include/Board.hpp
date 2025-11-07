@@ -35,6 +35,7 @@ public:
     void render_pieces(sf::RenderWindow& window);
     void add_piece(PiecePtr piece);
     void set_piece_sprite(PiecePtr piece);
+    bool check_winner();
 
 };
 
