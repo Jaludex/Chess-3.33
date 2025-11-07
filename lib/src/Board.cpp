@@ -82,12 +82,11 @@ PiecePtr Board::get_position(short x, short y)
 
 PiecePtr Board::clicked_piece(sf::Vector2i mouse_position)
 {
-    sf::Vector2f pos((float)(mouse_position.x), (float)(mouse_position.y));
-    if (sprite.getGlobalBounds().contains(pos))
+    if (this->is_touching_mouse(mouse_position))
     {
         for (auto piece : elements)
         {
-            if (piece->get_sprite().getGlobalBounds().contains(pos))
+            if (piece->is_touching_mouse(mouse_position))
             {
                 return piece;
             }
@@ -106,14 +105,19 @@ void Board::set_piece_sprite(PiecePtr piece)
     piece->set_sprite_position(board_position + offset);
 }
 
+Position Board::get_square_by_coords(sf::Vector2i mouse_position)
+{
+    sf::Vector2f relative_position = static_cast<sf::Vector2f>(mouse_position) - sprite.getPosition();
+    return Position(relative_position.x / Board::cell_lenght, relative_position.y / Board::cell_lenght);
+}
+
 //Retorna si la pieza se movio en el tablero
 bool Board::drop_piece(PiecePtr piece)
 {
     bool it_moves = false;
     if (sprite.getGlobalBounds().contains(piece->get_sprite().getPosition()))
     {
-        sf::Vector2f relative_position = piece->get_sprite().getPosition() - sprite.getPosition();
-        Position position_on_board(relative_position.x / Board::cell_lenght, relative_position.y / Board::cell_lenght);
+        Position position_on_board = get_square_by_coords(static_cast<sf::Vector2i>(piece->get_sprite().getPosition()));
         auto valid_moves = piece->get_valid_moves();
         PiecePtr swapped_piece = nullptr;
         for (auto move : valid_moves)
