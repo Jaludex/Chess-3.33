@@ -3,26 +3,30 @@
 #include <IGameState.hpp>
 #include <Board.hpp>
 #include <memory>
-
+#include <vector>
+#include "IPiece.hpp"
 #include "Archer.hpp"
 #include "Crook.hpp"
 #include "Horse.hpp"
 #include "Pawn.hpp"
 #include "Portal.hpp"
-#include"Queen.hpp"
-#include"Tower.hpp"
-#include"Trapper.hpp"
-#include <Bishop.hpp>
+#include "Queen.hpp"
+#include "Tower.hpp"
+#include "Trapper.hpp"
+#include "Bishop.hpp"
 
 class StateGameplay : IGameState
 {
 private:
-    PiecePtr selected;
+    std::shared_ptr<IGameObject> selected;
     Board board;
     sf::Clock elapsed_time;
     long score;
     sf::RenderWindow* window;
     bool player_turn;
+    std::vector<PieceInstantiator> instantiators;
+
+    std::shared_ptr<IGameObject> clicked_instantiator(sf::Vector2i mouse_position)
     // Challenges
     
 public:

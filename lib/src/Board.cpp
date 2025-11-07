@@ -89,8 +89,7 @@ PiecePtr Board::clicked_piece(sf::Vector2i mouse_position)
             if (piece->is_touching_mouse(mouse_position))
             {
                 return piece;
-            }
-            
+            }   
         }
     }
 
