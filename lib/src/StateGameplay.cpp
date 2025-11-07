@@ -86,8 +86,7 @@ void StateGameplay::drag()
                 auto piece = std::dynamic_pointer_cast<IPiece>(selected);
                 if (piece && piece->get_team() != player_turn) selected = nullptr;                
             }
-
-            selected = clicked_instantiator(mouse_position);
+            else selected = clicked_instantiator(mouse_position);
         }
     }
     else if (selected)
@@ -123,6 +122,11 @@ void StateGameplay::render(sf::RenderWindow& window)
     auto piece = std::dynamic_pointer_cast<IPiece>(selected);
     if (piece) board.render_highlights(window, piece->get_valid_moves());
     board.render_pieces(window);
+
+    for (auto inst : instantiators)
+    {
+        inst->render(window);
+    }
 }
 
 PieceInstantPtr StateGameplay::clicked_instantiator(sf::Vector2i mouse_position)
