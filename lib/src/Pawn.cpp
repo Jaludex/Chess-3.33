@@ -47,10 +47,11 @@ void Pawn::render(sf::RenderWindow& window)
 std::vector<Move> Pawn::set_valid_moves(const std::vector<PiecePtr>& pieces) 
 {
     valid_moves.erase(valid_moves.begin(), valid_moves.end());
-    
-    Position advance(current.x, current.y - 1);
-    Position left_diagonal(current.x - 1, current.y - 1);
-    Position right_diagonal(current.x + 1, current.y - 1);
+    int8_t mirror = (team) ? -1 : 1;
+
+    Position advance(current.x, current.y + mirror);
+    Position left_diagonal(current.x + mirror, current.y + mirror);
+    Position right_diagonal(current.x - mirror, current.y + mirror);
     PiecePtr front_piece = nullptr;
     PiecePtr attack_left = nullptr;
     PiecePtr attack_right = nullptr;

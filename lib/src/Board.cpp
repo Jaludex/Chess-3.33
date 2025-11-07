@@ -82,12 +82,11 @@ PiecePtr Board::get_position(short x, short y)
 
 PiecePtr Board::clicked_piece(sf::Vector2i mouse_position)
 {
-    sf::Vector2f pos((float)(mouse_position.x), (float)(mouse_position.y));
-    if (sprite.getGlobalBounds().contains(pos))
+    if (this->is_touching_mouse(mouse_position))
     {
         for (auto piece : elements)
         {
-            if (piece->get_sprite().getGlobalBounds().contains(pos))
+            if (piece->is_touching_mouse(mouse_position))
             {
                 return piece;
             }   
@@ -105,14 +104,19 @@ void Board::set_piece_sprite(PiecePtr piece)
     piece->set_sprite_position(board_position + offset);
 }
 
+Position Board::get_square_by_coords(sf::Vector2i mouse_position)
+{
+    sf::Vector2f relative_position = static_cast<sf::Vector2f>(mouse_position) - sprite.getPosition();
+    return Position(relative_position.x / Board::cell_lenght, relative_position.y / Board::cell_lenght);
+}
+
 //Retorna si la pieza se movio en el tablero
 bool Board::drop_piece(PiecePtr piece)
 {
     bool it_moves = false;
     if (sprite.getGlobalBounds().contains(piece->get_sprite().getPosition()))
     {
-        sf::Vector2f relative_position = piece->get_sprite().getPosition() - sprite.getPosition();
-        Position position_on_board(relative_position.x / Board::cell_lenght, relative_position.y / Board::cell_lenght);
+        Position position_on_board = get_square_by_coords(static_cast<sf::Vector2i>(piece->get_sprite().getPosition()));
         auto valid_moves = piece->get_valid_moves();
         PiecePtr swapped_piece = nullptr;
         for (auto move : valid_moves)
@@ -133,7 +137,7 @@ bool Board::drop_piece(PiecePtr piece)
                     else if (move.occupant->hurt(piece))
                     {
                         it_moves = move.moves_piece;
-                        auto it = std::find(elements.begin(), elements.end(), move.occupant);
+                        auto it = std::find(elements.begin(), elements.end(), (move.occupant->get_piece_type() == PieceType::Bomb) ? piece : move.occupant);
                         if (it != elements.end())
                         {
                             elements.erase(it);
@@ -146,14 +150,15 @@ bool Board::drop_piece(PiecePtr piece)
             }
         }
 
-        if (piece->get_piece_type() == PieceType::Trapper)
+        if (it_moves && piece->get_piece_type() == PieceType::Trapper)
         {
             Position bomb_pos = piece->get_position(); 
             add_piece(std::make_shared<Bomb>(piece->get_team(), bomb_pos.x, bomb_pos.y));
         }
     
-    piece->move(position_on_board);
+        piece->move(position_on_board);
     }
+
     bool team_of_bombs_to_remove = !piece->get_team(); 
     elements.erase(std::remove_if(elements.begin(), elements.end(),
             [team_of_bombs_to_remove](PiecePtr element) {

@@ -42,7 +42,7 @@ void StateGameplay::init()
 
     board.add_piece(std::make_shared<Crook>(true, 1, 5));
     board.add_piece(std::make_shared<Queen>(true, 1, 0));
-    board.add_piece(std::make_shared<Trapper>(false, 4, 2));
+    board.add_piece(std::make_shared<Trapper>(false, 4, 1));
 }
 
 void StateGameplay::terminate()
