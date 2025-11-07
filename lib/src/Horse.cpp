@@ -39,7 +39,7 @@ void Horse::render(sf::RenderWindow& window)
     triangle.setScale({1.f,2.f});
     auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
     triangle.setPosition(this->sprite.getPosition() + offset);
-    triangle.setFillColor(sf::Color::Magenta);
+    triangle.setFillColor(sf::Color::Cyan);
     window.draw(triangle);
 }
 

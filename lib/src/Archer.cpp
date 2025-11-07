@@ -84,7 +84,7 @@ std::vector<Move> Archer::set_valid_moves(const std::vector<PiecePtr>& pieces)
         }
     }
     
-    if (!front_piece)
+    if (!front_piece && advance.x <= 6 && advance.y <= 6)
     {
         valid_moves.push_back(Move(advance, true, front_piece));
     }

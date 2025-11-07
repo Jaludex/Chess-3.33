@@ -72,7 +72,7 @@ std::vector<Move> Crook::set_valid_moves(const std::vector<PiecePtr>& pieces)
         }
     }
     
-    if (!front_piece)
+    if (!front_piece && advance.x <= 6 && advance.y <= 6 && advance.x >= 0 && advance.y >= 0)
     {
         valid_moves.push_back(Move(advance, true, front_piece));
     }
@@ -85,7 +85,7 @@ std::vector<Move> Crook::set_valid_moves(const std::vector<PiecePtr>& pieces)
     if (attack_right)
     {
         valid_moves.push_back(Move(right_diagonal, true, attack_right));
-    }
+    } 
     return valid_moves;    
 }
 

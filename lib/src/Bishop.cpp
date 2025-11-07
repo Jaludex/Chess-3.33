@@ -21,9 +21,6 @@ bool Bishop::verify_position(Position pos)
 
 void Bishop::move(Position pos)
 {
-    //Validar si movimiento es valido
-
-    //Si si lo es hace el movimiento
     current.x = pos.x;
     current.y = pos.y;
 }
