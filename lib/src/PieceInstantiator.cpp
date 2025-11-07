@@ -11,7 +11,7 @@ void PieceInstantiator::update(float dt)
     
 }
 
-void PieceInstantiator::::render(sf::RenderWindow& window)
+void PieceInstantiator::render(sf::RenderWindow& window)
 {
     switch(type)
     {
@@ -33,7 +33,7 @@ void PieceInstantiator::::render(sf::RenderWindow& window)
             triangle.setOrigin({45.f,45.f});
             triangle.setScale({1.f,2.f});
             auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
-            triangle.setPosition(this->sprite.getPosition() + offset);
+            triangle.setPosition(sprite.getPosition() + offset);
             triangle.setFillColor(sf::Color::Cyan);
             window.draw(triangle);
             }
@@ -131,7 +131,7 @@ void PieceInstantiator::return_to_origin()
     this->set_sprite_position(originalposition);
 }
 
-PiecePtr PieceInstantiator::make_piece(int startX, int startY)
+PiecePtr PieceInstantiator::make_piece(int startx, int starty)
 {
     switch(type)
     {

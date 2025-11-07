@@ -16,6 +16,8 @@
 #include "Bishop.hpp"
 #include "PieceInstantiator.hpp"
 
+using PieceInstantPtr = std::shared_ptr<PieceInstantiator>;
+
 class StateGameplay : IGameState
 {
 private:
@@ -25,9 +27,9 @@ private:
     long score;
     sf::RenderWindow* window;
     bool player_turn;
-    std::vector<PieceInstantiator> instantiators;
+    std::vector<PieceInstantPtr> instantiators;
 
-    std::shared_ptr<IGameObject> clicked_instantiator(sf::Vector2i mouse_position);
+    PieceInstantPtr clicked_instantiator(sf::Vector2i mouse_position);
     // Challenges
     
 public:

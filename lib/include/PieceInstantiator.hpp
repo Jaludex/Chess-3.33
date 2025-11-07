@@ -5,6 +5,15 @@
 #include <IGameObject.hpp>
 #include <IPiece.hpp>
 #include <Board.hpp>
+#include "Archer.hpp"
+#include "Crook.hpp"
+#include "Horse.hpp"
+#include "Pawn.hpp"
+#include "Portal.hpp"
+#include "Queen.hpp"
+#include "Tower.hpp"
+#include "Trapper.hpp"
+#include "Bishop.hpp"
 
 class PieceInstantiator : public IGameObject
 {
