@@ -134,7 +134,7 @@ bool Board::drop_piece(PiecePtr piece)
                     else if (move.occupant->hurt(piece))
                     {
                         it_moves = move.moves_piece;
-                        auto it = std::find(elements.begin(), elements.end(), move.occupant);
+                        auto it = std::find(elements.begin(), elements.end(), (move.occupant->get_piece_type() == PieceType::Bomb) ? piece : move.occupant);
                         if (it != elements.end())
                         {
                             elements.erase(it);
@@ -147,14 +147,15 @@ bool Board::drop_piece(PiecePtr piece)
             }
         }
 
-        if (piece->get_piece_type() == PieceType::Trapper)
+        if (it_moves && piece->get_piece_type() == PieceType::Trapper)
         {
             Position bomb_pos = piece->get_position(); 
             add_piece(std::make_shared<Bomb>(piece->get_team(), bomb_pos.x, bomb_pos.y));
         }
     
-    piece->move(position_on_board);
+        piece->move(position_on_board);
     }
+
     bool team_of_bombs_to_remove = !piece->get_team(); 
     elements.erase(std::remove_if(elements.begin(), elements.end(),
             [team_of_bombs_to_remove](PiecePtr element) {

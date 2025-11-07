@@ -48,10 +48,10 @@ std::vector<Move> Archer::set_valid_moves(const std::vector<PiecePtr>& pieces)
 {
     valid_moves.clear();
 
-    std::vector<Position> relative_moves(5);
+    std::vector<Position> relative_moves;
     int8_t mirror = (team) ? 1 : -1;
 
-    for (size_t i = 0; i < 5; i++)
+    for (size_t i = 0; i < directions.size(); i++)
     {
         relative_moves.push_back(Position(current.x + directions.at(i).x, current.y + (directions.at(i).y * mirror)));
     }
@@ -59,7 +59,10 @@ std::vector<Move> Archer::set_valid_moves(const std::vector<PiecePtr>& pieces)
     bool free_front = true;
     for (auto piece : pieces)
     {
-        if (relative_moves.at(0) == piece->get_position()) free_front = false;
+        if (relative_moves.at(0) == piece->get_position() &&
+            relative_moves.at(0).x < 0 && relative_moves.at(0).x > 5 && 
+            relative_moves.at(0).y < 0 && relative_moves.at(0).y > 5) free_front = false;
+
         for (size_t i = 1; i < 5; i++)
         {
             if (relative_moves.at(i) == piece->get_position() && this->team != piece->get_team()) valid_moves.push_back(Move(relative_moves.at(i), true, piece));
