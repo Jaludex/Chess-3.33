@@ -5,19 +5,18 @@
 #include <IPiece.hpp>
 #include <Board.hpp>
 
-class Queen : public IPiece
+class Portal : public IPiece
 {
     public:
-    Queen(bool team, int startX, int startY);
+    Portal(bool team, int startX, int startY);
 
-    virtual ~Queen() = default;
+    virtual ~Portal() = default;
     virtual bool verify_position(Position pos) override;
     virtual void move(Position pos) override;
     virtual void update(float dt) override;
     virtual void render(sf::RenderWindow& window) override;
     virtual std::vector<Move> set_valid_moves(const std::vector<PiecePtr>& pieces) override;
     virtual bool hurt(PiecePtr attacker) override;
-    
+
 private:
-    const static std::vector<Position> directions;
 };

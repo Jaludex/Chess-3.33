@@ -9,6 +9,7 @@ struct Position
 
     Position(uint8_t _x, uint8_t _y);
     bool operator==(const Position& right);
+    Position operator+(Position it);
 };
 
 class IPiece;
