@@ -48,67 +48,27 @@ std::vector<Move> Archer::set_valid_moves(const std::vector<PiecePtr>& pieces)
 {
     valid_moves.clear();
 
-    Position advance = current + directions[0];
-    Position right_diagonal_1 = current + directions[1];
-    Position right_diagonal_2 = current + directions[2];
-    Position left_diagonal_1 = current + directions[3];
-    Position left_diagonal_2 = current + directions[4];
+    std::vector<Position> relative_moves(5);
+    int8_t mirror = (team) ? 1 : -1;
 
-    PiecePtr front_piece = nullptr;
-    PiecePtr attack_right_1 = nullptr;
-    PiecePtr attack_right_2 = nullptr;
-    PiecePtr attack_left_1 = nullptr;
-    PiecePtr attack_left_2 = nullptr;
+    for (size_t i = 0; i < 5; i++)
+    {
+        relative_moves.push_back(Position(current.x + directions.at(i).x, current.y + (directions.at(i).y * mirror)));
+    }
 
+    bool free_front = true;
     for (auto piece : pieces)
     {
-        if(piece->get_position() == advance)
+        if (relative_moves.at(0) == piece->get_position()) free_front = false;
+        for (size_t i = 1; i < 5; i++)
         {
-            front_piece = piece;
-        }
-        else if (piece->get_position() == left_diagonal_1 && piece->get_team() != this->get_team())
-        {
-            attack_left_1 = piece;
-        }
-        else if (piece->get_position() == left_diagonal_2 && piece->get_team() != this->get_team())
-        {
-            attack_left_2 = piece;
-        }
-        else if (piece->get_position() == right_diagonal_1 && piece->get_team() != this->get_team())
-        {
-            attack_right_1 = piece;
-        }
-        else if (piece->get_position() == right_diagonal_2 && piece->get_team() != this->get_team())
-        {
-            attack_right_2 = piece;
+            if (relative_moves.at(i) == piece->get_position() && this->team != piece->get_team()) valid_moves.push_back(Move(relative_moves.at(i), true, piece));
         }
     }
+
+    if (free_front) valid_moves.push_back(Move(relative_moves.at(0), true, nullptr));
     
-    if (!front_piece && advance.x <= 5 && advance.y <= 5 && advance.x >= 0 && advance.y >= 0)
-    {
-        valid_moves.push_back(Move(advance, true, front_piece));
-    }
-
-    if (attack_left_1)
-    {
-        valid_moves.push_back(Move(left_diagonal_1, false, attack_left_1));
-    }
-
-    if (attack_left_2)
-    {
-        valid_moves.push_back(Move(left_diagonal_2, false, attack_left_2));
-    }
-
-    if (attack_right_1)
-    {
-        valid_moves.push_back(Move(right_diagonal_1, false, attack_right_1));
-    }
-
-    if (attack_right_2)
-    {
-        valid_moves.push_back(Move(right_diagonal_2, false, attack_right_2));
-    }
-    return valid_moves;    
+    return valid_moves;
 }
 
 bool Archer::hurt(PiecePtr attacker)

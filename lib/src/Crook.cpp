@@ -48,9 +48,11 @@ std::vector<Move> Crook::set_valid_moves(const std::vector<PiecePtr>& pieces)
 {
     valid_moves.clear();
 
-    Position advance = current + directions[0];
-    Position right_diagonal = current + directions[1];
-    Position left_diagonal = current + directions[2];
+    int8_t mirror = (team) ? 1 : -1;
+
+    Position advance(current.x + directions.at(0).x, current.y + (directions.at(0).y * mirror));
+    Position right_diagonal(current.x + directions.at(1).x, current.y + (directions.at(1).y * mirror));
+    Position left_diagonal(current.x + directions.at(2).x, current.y + (directions.at(2).y * mirror));
 
     PiecePtr front_piece = nullptr;
     PiecePtr attack_right = nullptr;
