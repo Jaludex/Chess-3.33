@@ -1,25 +1,25 @@
-#include "Bishop.hpp"
+#include"Tower.hpp"
 
-const std::vector<Position> Bishop::directions = {Position(1, -1), Position(1, 1), Position(-1, 1), Position(-1, -1)};
+const std::vector<Position> Tower::directions = {Position(1, 0), Position(-1, 0), Position(0, 1), Position(0, -1)};
 
-sf::Color Bishop::white = sf::Color(150,150,250,255);
-sf::Color Bishop::black = sf::Color(50,50,150,255);
+sf::Color Tower::white = sf::Color(100,230,230,255);
+sf::Color Tower::black = sf::Color(0,130,130,255);
 
-sf::Color Bishop::get_color(bool _team)
+sf::Color Tower::get_color(bool _team)
 {
-return (_team)? Bishop::white : Bishop::black;
+return (_team)? Tower::white : Tower::black;
 }
 
-Bishop::Bishop(bool team, int startX, int startY)
+Tower::Tower(bool team, int startX, int startY)
 {
     set_team(team);
-    set_piece_type(PieceType::Bishop);
+    set_piece_type(PieceType::Tower);
     
     current.x = startX;
     current.y = startY;
 }
 
-bool Bishop::verify_position(Position pos)
+bool Tower::verify_position(Position pos)
 {
     int dx = std::abs(pos.x - current.x);
     int dy = std::abs(pos.y - current.y);
@@ -27,9 +27,9 @@ bool Bishop::verify_position(Position pos)
     return (dx == dy) && (dx > 0);
 }
 
-void Bishop::move(Position pos)
+void Tower::move(Position pos)
 {
-   if (is_valid(pos))
+    if (is_valid(pos))
     {
         current.x = pos.x;
         current.y = pos.y;
@@ -37,14 +37,14 @@ void Bishop::move(Position pos)
 
 }
 
-void Bishop::update(float dt)
+void Tower::update(float dt)
 {
     
 }
 
-void Bishop::render(sf::RenderWindow& window)
+void Tower::render(sf::RenderWindow& window)
 {
-    auto triangle = sf::CircleShape(45,(size_t)3);
+    auto triangle = sf::CircleShape(45,(size_t)7);
     triangle.setOrigin({45.f,45.f});
     triangle.setScale({1.f,2.f});
     auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
@@ -53,10 +53,10 @@ void Bishop::render(sf::RenderWindow& window)
     window.draw(triangle);
 }
 
-std::vector<Move> Bishop::set_valid_moves(const std::vector<PiecePtr>& pieces)
+std::vector<Move> Tower::set_valid_moves(const std::vector<PiecePtr>& pieces) 
 {
-    valid_moves.clear();
-    const int8_t lenght = Board::side_lenght;
+    valid_moves.erase(valid_moves.begin(), valid_moves.end());
+    const uint8_t lenght = Board::side_lenght;
 
     for (auto direction : directions)
     {
@@ -99,7 +99,7 @@ std::vector<Move> Bishop::set_valid_moves(const std::vector<PiecePtr>& pieces)
     return valid_moves;    
 }
 
-bool Bishop::hurt(PiecePtr attacker)
+bool Tower::hurt(PiecePtr attacker)
 {
     return true;
 }

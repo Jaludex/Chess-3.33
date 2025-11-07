@@ -1,5 +1,5 @@
 #include <Board.hpp>
-
+#include "Trapper.hpp"
 #include <iostream>
 Board::Board(sf::Texture texture) : IGameObject(texture)
 {
@@ -20,6 +20,7 @@ void Board::update(float dt)
 {
     for (auto element : elements)
     {
+        element->set_valid_moves(elements);
         element->update(dt);
     }
 }
@@ -36,7 +37,25 @@ void Board::render(sf::RenderWindow& window)
         cell.setPosition(origin + pos);
         window.draw(cell);
     }
+}
 
+void Board::render_highlights(sf::RenderWindow& window, const std::vector<Move>& valid_moves)
+{
+    sf::RectangleShape cell({(float)(Board::cell_lenght),(float)(Board::cell_lenght)});
+    auto origin = this->sprite.getPosition();
+
+    for (auto move : valid_moves)
+    {
+        cell.setFillColor( (move.occupant) ? sf::Color::Red : sf::Color::Cyan );
+        auto pos = sf::Vector2<float>({(float)(move.relative_positiion.x * Board::cell_lenght), (float)(move.relative_positiion.y * Board::cell_lenght)});
+        cell.setPosition(origin + pos);
+        window.draw(cell);
+    }
+
+}
+
+void Board::render_pieces(sf::RenderWindow& window)
+{
     for (auto element : elements)
     {
         element->render(window);
@@ -63,43 +82,98 @@ PiecePtr Board::get_position(short x, short y)
 
 PiecePtr Board::clicked_piece(sf::Vector2i mouse_position)
 {
-    if (sprite.getGlobalBounds().contains({mouse_position.x, mouse_position.y}))
+    if (this->is_touching_mouse(mouse_position))
     {
         for (auto piece : elements)
         {
-            if (piece->get_sprite().getGlobalBounds().contains({mouse_position.x, mouse_position.y}))
+            if (piece->is_touching_mouse(mouse_position))
             {
                 return piece;
-            }
-            
+            }   
         }
     }
 
     return nullptr;
 }
 
-void Board::drop_piece(PiecePtr piece)
+void Board::set_piece_sprite(PiecePtr piece)
 {
-    if (sprite.getGlobalBounds().contains(piece->get_sprite().getPosition()))
-    {
-        sf::Vector2f relative_position = piece->get_sprite().getPosition() - sprite.getPosition();
-        
-        piece->move(relative_position.x / Board::cell_lenght, relative_position.y / Board::cell_lenght);
-        
-    }
-
     auto objetive_position = piece->get_position();
     auto board_position = sprite.getPosition();
     auto offset = sf::Vector2f({(float)(objetive_position.x * Board::cell_lenght), (float)(objetive_position.y * Board::cell_lenght)});
     piece->set_sprite_position(board_position + offset);
 }
 
+Position Board::get_square_by_coords(sf::Vector2i mouse_position)
+{
+    sf::Vector2f relative_position = static_cast<sf::Vector2f>(mouse_position) - sprite.getPosition();
+    return Position(relative_position.x / Board::cell_lenght, relative_position.y / Board::cell_lenght);
+}
+
+//Retorna si la pieza se movio en el tablero
+bool Board::drop_piece(PiecePtr piece)
+{
+    bool it_moves = false;
+    if (sprite.getGlobalBounds().contains(piece->get_sprite().getPosition()))
+    {
+        Position position_on_board = get_square_by_coords(static_cast<sf::Vector2i>(piece->get_sprite().getPosition()));
+        auto valid_moves = piece->get_valid_moves();
+        PiecePtr swapped_piece = nullptr;
+        for (auto move : valid_moves)
+        {
+            if (move.relative_positiion == position_on_board)
+            {
+                if (move.occupant)
+                {
+                    if (piece->get_piece_type() == PieceType::Portal && piece->get_team() == move.occupant->get_team())
+                    {
+                        swapped_piece = move.occupant; 
+                        Position old_portal_pos = piece->get_position(); 
+                    
+                        move.occupant->swap(old_portal_pos); 
+                        set_piece_sprite(move.occupant);
+                        it_moves = true;
+                    }
+                    else if (move.occupant->hurt(piece))
+                    {
+                        it_moves = move.moves_piece;
+                        auto it = std::find(elements.begin(), elements.end(), (move.occupant->get_piece_type() == PieceType::Bomb) ? piece : move.occupant);
+                        if (it != elements.end())
+                        {
+                            elements.erase(it);
+                        }
+                    }
+                }
+                else it_moves = true;
+
+                break;
+            }
+        }
+
+        if (it_moves && piece->get_piece_type() == PieceType::Trapper)
+        {
+            Position bomb_pos = piece->get_position(); 
+            add_piece(std::make_shared<Bomb>(piece->get_team(), bomb_pos.x, bomb_pos.y));
+        }
+    
+        piece->move(position_on_board);
+    }
+
+    if (it_moves)
+    {
+        bool team_of_bombs_to_remove = !piece->get_team(); 
+        elements.erase(std::remove_if(elements.begin(), elements.end(),
+            [team_of_bombs_to_remove](PiecePtr element) {
+                return element->get_piece_type() == PieceType::Bomb && element->get_team() == team_of_bombs_to_remove;}), elements.end());
+    }
+    
+    set_piece_sprite(piece);
+    return it_moves;
+}
+
 void Board::add_piece(PiecePtr piece)
 {
     elements.push_back(piece);
-    auto objetive_position = piece->get_position();
-    auto board_position = sprite.getPosition();
-    auto offset = sf::Vector2f({(float)(objetive_position.x * Board::cell_lenght), (float)(objetive_position.y * Board::cell_lenght)});
-    piece->set_sprite_position(board_position + offset);
+    set_piece_sprite(piece);
 }
 

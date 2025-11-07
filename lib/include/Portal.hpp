@@ -5,12 +5,12 @@
 #include <IPiece.hpp>
 #include <Board.hpp>
 
-class Bishop : public IPiece
+class Portal : public IPiece
 {
-public:
-    Bishop(bool team, int startX, int startY);
+    public:
+    Portal(bool team, int startX, int startY);
 
-    virtual ~Bishop() = default;
+    virtual ~Portal() = default;
     virtual bool verify_position(Position pos) override;
     virtual void move(Position pos) override;
     virtual void update(float dt) override;
@@ -23,5 +23,4 @@ public:
     static sf::Color black;
 
 private:
-    const static std::vector<Position> directions;
 };

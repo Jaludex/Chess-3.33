@@ -5,12 +5,12 @@
 #include <IPiece.hpp>
 #include <Board.hpp>
 
-class Bishop : public IPiece
+class Horse : public IPiece
 {
-public:
-    Bishop(bool team, int startX, int startY);
+    public:
+    Horse(bool team, int startX, int startY);
 
-    virtual ~Bishop() = default;
+    virtual ~Horse() = default;
     virtual bool verify_position(Position pos) override;
     virtual void move(Position pos) override;
     virtual void update(float dt) override;

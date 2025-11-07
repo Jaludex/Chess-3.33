@@ -1,25 +1,27 @@
-#include "Bishop.hpp"
+#include"Queen.hpp"
 
-const std::vector<Position> Bishop::directions = {Position(1, -1), Position(1, 1), Position(-1, 1), Position(-1, -1)};
+const std::vector<Position> Queen::directions = {Position(1, 0), Position(-1, 0), Position(0, 1), Position(0, -1),
+                                                    Position(1, -1), Position(1, 1), Position(-1, 1), Position(-1, -1)};
 
-sf::Color Bishop::white = sf::Color(150,150,250,255);
-sf::Color Bishop::black = sf::Color(50,50,150,255);
+sf::Color Queen::white = sf::Color(255,130,130,255);
+sf::Color Queen::black = sf::Color(155,30,30,255);
 
-sf::Color Bishop::get_color(bool _team)
+sf::Color Queen::get_color(bool _team)
 {
-return (_team)? Bishop::white : Bishop::black;
+return (_team)? Queen::white : Queen::black;
 }
+                                                    
 
-Bishop::Bishop(bool team, int startX, int startY)
+Queen::Queen(bool team, int startX, int startY)
 {
     set_team(team);
-    set_piece_type(PieceType::Bishop);
+    set_piece_type(PieceType::Queen);
     
     current.x = startX;
     current.y = startY;
 }
 
-bool Bishop::verify_position(Position pos)
+bool Queen::verify_position(Position pos)
 {
     int dx = std::abs(pos.x - current.x);
     int dy = std::abs(pos.y - current.y);
@@ -27,22 +29,25 @@ bool Bishop::verify_position(Position pos)
     return (dx == dy) && (dx > 0);
 }
 
-void Bishop::move(Position pos)
+void Queen::move(Position pos)
 {
-   if (is_valid(pos))
+    if (is_valid(pos))
     {
         current.x = pos.x;
         current.y = pos.y;
     }
-
 }
-
-void Bishop::update(float dt)
+void Queen::swap(Position pos)
+{
+    current.x = pos.x;
+    current.y = pos.y;
+}
+void Queen::update(float dt)
 {
     
 }
 
-void Bishop::render(sf::RenderWindow& window)
+void Queen::render(sf::RenderWindow& window)
 {
     auto triangle = sf::CircleShape(45,(size_t)3);
     triangle.setOrigin({45.f,45.f});
@@ -53,15 +58,16 @@ void Bishop::render(sf::RenderWindow& window)
     window.draw(triangle);
 }
 
-std::vector<Move> Bishop::set_valid_moves(const std::vector<PiecePtr>& pieces)
+std::vector<Move> Queen::set_valid_moves(const std::vector<PiecePtr>& pieces) 
 {
-    valid_moves.clear();
-    const int8_t lenght = Board::side_lenght;
+    valid_moves.erase(valid_moves.begin(), valid_moves.end());
+    const uint8_t lenght = Board::side_lenght;
 
     for (auto direction : directions)
     {
         int delta_x = direction.x;
         int delta_y = direction.y;
+        
         for (size_t k = 1; k <= 2; k++)
         {
             uint8_t tile_x = current.x + (k * delta_x);
@@ -99,7 +105,7 @@ std::vector<Move> Bishop::set_valid_moves(const std::vector<PiecePtr>& pieces)
     return valid_moves;    
 }
 
-bool Bishop::hurt(PiecePtr attacker)
+bool Queen::hurt(PiecePtr attacker)
 {
     return true;
 }
