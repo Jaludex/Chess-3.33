@@ -64,9 +64,9 @@ sf::Vector2i StateGameplay::get_relative_mouse_position()
 
 void StateGameplay::drag()
 {
+    auto mouse_position = get_relative_mouse_position();
     if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
-    {
-        auto mouse_position = get_relative_mouse_position();
+    {        
         if (selected)
         {   
             //Version para moverse dentro de la cuadricula
@@ -104,8 +104,8 @@ void StateGameplay::drag()
         
         if(instantiator)
         {
-            if(instantiator)//here we have to check if mouse is inside board
-                board.add_piece(instantiator->make_piece(/*TODO FILL HERE WITH COORDS*/)));
+            if(board.is_touching_mouse())
+                board.add_piece(instantiator->make_piece(board.get_square_by_coords(mouse_position))));
             
             Instantiator->return_to_origin();
         }

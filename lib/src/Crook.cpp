@@ -2,6 +2,14 @@
 
 const std::vector<Position> Crook::directions = {Position(0, 2), Position(1, -1), Position(-1, -1)};
 
+Crook::white = sf::Color(150,200,230,225);
+Crook::black = sf::Color(50,100,130,225);
+
+Crook::get_color()
+{
+return (team)? Crook::white : Crook::black;
+}
+
 Crook::Crook(bool team, int startX, int startY)
 {
     set_team(team);
@@ -40,7 +48,7 @@ void Crook::render(sf::RenderWindow& window)
     triangle.setScale({1.f,2.f});
     auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
     triangle.setPosition(this->sprite.getPosition() + offset);
-    triangle.setFillColor(sf::Color::Green);
+    triangle.setFillColor(get_color());
     window.draw(triangle);
 }
 

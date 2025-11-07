@@ -2,6 +2,14 @@
 
 const std::vector<Position> Trapper::directions = {Position(0, 2), Position(0, -2), Position(-2, 0), Position(2, 0)};
 
+Bomb::white = sf::Color(120,120,20,255);
+Bomb::black = sf::Color(20,20,0,255);
+
+Bomb::get_color()
+{
+return (team)? Bomb::white : Bomb::black;
+}
+
 Bomb::Bomb(bool team, int startX, int startY)
 {
     set_team(team);
@@ -35,7 +43,7 @@ void Bomb::render(sf::RenderWindow& window)
     triangle.setScale({1.f,2.f});
     auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
     triangle.setPosition(this->sprite.getPosition() + offset);
-    triangle.setFillColor(sf::Color::Magenta);
+    triangle.setFillColor(get_color());
     window.draw(triangle);
 }
 
@@ -49,6 +57,15 @@ bool Bomb::hurt(PiecePtr attacker)
 {
     attacker->hurt(std::make_shared<Bomb>(team,current.x,current.y));
     return true;
+}
+
+
+Trapper::white = sf::Color(170,170,70,255);
+Trapper::black = sf::Color(70,70,0,255);
+
+Trapper::get_color()
+{
+return (team)? Trapper::white : Trapper::black;
 }
 
 Trapper::Trapper(bool team, int startX, int startY)
@@ -89,7 +106,7 @@ void Trapper::render(sf::RenderWindow& window)
     triangle.setScale({1.f,2.f});
     auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
     triangle.setPosition(this->sprite.getPosition() + offset);
-    triangle.setFillColor(sf::Color::Blue);
+    triangle.setFillColor(get_color());
     window.draw(triangle);
 }
 

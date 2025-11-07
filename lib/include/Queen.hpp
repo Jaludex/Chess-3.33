@@ -18,6 +18,10 @@ class Queen : public IPiece
     virtual std::vector<Move> set_valid_moves(const std::vector<PiecePtr>& pieces) override;
     virtual bool hurt(PiecePtr attacker) override;
     void swap(Position pos);
+
+    static sf::Color white;
+    static sf::Color black;
+
 private:
     const static std::vector<Position> directions;
 };

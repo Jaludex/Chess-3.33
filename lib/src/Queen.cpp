@@ -1,6 +1,14 @@
 #include"Queen.hpp"
 
 const std::vector<Position> Queen::directions = {Position(1, 0), Position(-1, 0), Position(0, 1), Position(0, -1), 
+
+Queen::white = sf::Color(255,130,130,255);
+Queen::black = sf::Color(155,30,30,255);
+
+Queen::get_color()
+{
+return (team)? Queen::white : Queen::black;
+}
                                                     Position(1, -1), Position(1, 1), Position(-1, 1), Position(-1, -1)};
 Queen::Queen(bool team, int startX, int startY)
 {
@@ -44,7 +52,7 @@ void Queen::render(sf::RenderWindow& window)
     triangle.setScale({1.f,2.f});
     auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
     triangle.setPosition(this->sprite.getPosition() + offset);
-    triangle.setFillColor(sf::Color::Yellow);
+    triangle.setFillColor(get_color());
     window.draw(triangle);
 }
 

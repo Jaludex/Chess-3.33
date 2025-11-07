@@ -14,6 +14,7 @@
 #include "Tower.hpp"
 #include "Trapper.hpp"
 #include "Bishop.hpp"
+#include "PieceInstantiator.hpp"
 
 class StateGameplay : IGameState
 {
@@ -26,7 +27,7 @@ private:
     bool player_turn;
     std::vector<PieceInstantiator> instantiators;
 
-    std::shared_ptr<IGameObject> clicked_instantiator(sf::Vector2i mouse_position)
+    std::shared_ptr<IGameObject> clicked_instantiator(sf::Vector2i mouse_position);
     // Challenges
     
 public:

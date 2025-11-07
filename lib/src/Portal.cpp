@@ -1,5 +1,14 @@
 #include"Portal.hpp"
 
+
+Portal::white = sf::Color(230,230,150,255);
+Portal::black = sf::Color(150,150,230,255);
+
+Portal::get_color()
+{
+return (team)? Portal::white : Portal::black;
+}
+
 Portal::Portal(bool team, int startX, int startY)
 {
     set_team(team);
@@ -39,7 +48,7 @@ void Portal::render(sf::RenderWindow& window)
     triangle.setScale({1.f,2.f});
     auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
     triangle.setPosition(this->sprite.getPosition() + offset);
-    triangle.setFillColor(sf::Color::Red);
+    triangle.setFillColor(get_color());
     window.draw(triangle);
 }
 

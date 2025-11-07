@@ -1,6 +1,15 @@
 #include"Tower.hpp"
 
 const std::vector<Position> Tower::directions = {Position(1, 0), Position(-1, 0), Position(0, 1), Position(0, -1)};
+
+Tower::white = sf::Color(100,230,230,255);
+Tower::black = sf::Color(0,130,130,255);
+
+Tower::get_color()
+{
+return (team)? Tower::white : Tower::black;
+}
+
 Tower::Tower(bool team, int startX, int startY)
 {
     set_team(team);
@@ -40,7 +49,7 @@ void Tower::render(sf::RenderWindow& window)
     triangle.setScale({1.f,2.f});
     auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
     triangle.setPosition(this->sprite.getPosition() + offset);
-    triangle.setFillColor(sf::Color::Green);
+    triangle.setFillColor(get_color());
     window.draw(triangle);
 }
 

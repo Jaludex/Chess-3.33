@@ -18,5 +18,8 @@ class Pawn : public IPiece
     virtual std::vector<Move> set_valid_moves(const std::vector<PiecePtr>& pieces) override;
     virtual bool hurt(PiecePtr attacker) override;
 
-private:
+    static sf::Color white;
+    static sf::Color black;
+
+private:    
 };
