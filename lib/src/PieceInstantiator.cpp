@@ -1,6 +1,6 @@
-#include"PieceInstantiator.hpp"
+#include "PieceInstantiator.hpp"
 
-PieceInstantiator::PieceInstantiator(PieceType _type, bool _team, sf::Vector2f position) : type{_type}, team{_team}
+PieceInstantiator::PieceInstantiator(PieceType _type, bool _team, sf::Vector2f position) : IGameObject(sf::Texture(sf::Texture ({(unsigned int)(100),(unsigned int)(100)}))), type{_type}, team{_team}
 {
     this->set_sprite_position(position);
     originalposition = position;

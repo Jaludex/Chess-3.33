@@ -57,7 +57,6 @@ public:
     IPiece();
     virtual ~IPiece() = default;
     void swap(Position pos);
-    virtual sf::Color get_color(bool) = 0;
 
 protected:
     Position current;
