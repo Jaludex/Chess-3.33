@@ -20,6 +20,7 @@ void Board::update(float dt)
 {
     for (auto element : elements)
     {
+        element->set_valid_moves(elements);
         element->update(dt);
     }
 }
@@ -36,7 +37,25 @@ void Board::render(sf::RenderWindow& window)
         cell.setPosition(origin + pos);
         window.draw(cell);
     }
+}
 
+void Board::render_highlights(sf::RenderWindow& window, const std::vector<Move>& valid_moves)
+{
+    sf::RectangleShape cell({(float)(Board::cell_lenght),(float)(Board::cell_lenght)});
+    auto origin = this->sprite.getPosition();
+
+    for (auto move : valid_moves)
+    {
+        cell.setFillColor( (move.occupant) ? sf::Color::Red : sf::Color::Cyan );
+        auto pos = sf::Vector2<float>({(float)(move.relative_positiion.x * Board::cell_lenght), (float)(move.relative_positiion.y * Board::cell_lenght)});
+        cell.setPosition(origin + pos);
+        window.draw(cell);
+    }
+
+}
+
+void Board::render_pieces(sf::RenderWindow& window)
+{
     for (auto element : elements)
     {
         element->render(window);
@@ -61,14 +80,14 @@ PiecePtr Board::get_position(short x, short y)
     return nullptr;
 }
 
-//Ahora este metodo debe hacer el highlight de las casillas a las que se peude mover la pieza
 PiecePtr Board::clicked_piece(sf::Vector2i mouse_position)
 {
-    if (sprite.getGlobalBounds().contains({mouse_position.x, mouse_position.y}))
+    sf::Vector2f pos((float)(mouse_position.x), (float)(mouse_position.y));
+    if (sprite.getGlobalBounds().contains(pos))
     {
         for (auto piece : elements)
         {
-            if (piece->get_sprite().getGlobalBounds().contains({mouse_position.x, mouse_position.y}))
+            if (piece->get_sprite().getGlobalBounds().contains(pos))
             {
                 return piece;
             }
@@ -87,18 +106,40 @@ void Board::set_piece_sprite(PiecePtr piece)
     piece->set_sprite_position(board_position + offset);
 }
 
-//Este metodo debe eliminar el hightlight a posiciones validas, la logica de si el movimiento es valido o no se ha de manejar desde piece.move()
-void Board::drop_piece(PiecePtr piece)
+//Retorna si la pieza se movio en el tablero
+bool Board::drop_piece(PiecePtr piece)
 {
+    bool it_moves = false;
     if (sprite.getGlobalBounds().contains(piece->get_sprite().getPosition()))
     {
         sf::Vector2f relative_position = piece->get_sprite().getPosition() - sprite.getPosition();
-        
-        piece->move(Position(relative_position.x / Board::cell_lenght, relative_position.y / Board::cell_lenght));
-        
+        Position position_on_board(relative_position.x / Board::cell_lenght, relative_position.y / Board::cell_lenght);
+        auto valid_moves = piece->get_valid_moves();
+
+        for (auto move : valid_moves)
+        {
+            if (move.relative_positiion == position_on_board)
+            {
+                if (move.occupant)
+                {
+                    if (move.occupant->hurt(piece))
+                    {
+                        it_moves = move.moves_piece;
+                        std::remove(elements.begin(), elements.end(), move.occupant);
+                    }
+                }
+                else it_moves = true;
+
+                break;
+            }
+        }
+
+        if (it_moves) piece->move(position_on_board);
     }
 
     set_piece_sprite(piece);
+
+    return it_moves;
 }
 
 void Board::add_piece(PiecePtr piece)
