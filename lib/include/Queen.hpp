@@ -17,7 +17,7 @@ class Queen : public IPiece
     virtual void render(sf::RenderWindow& window) override;
     virtual std::vector<Move> set_valid_moves(const std::vector<PiecePtr>& pieces) override;
     virtual bool hurt(PiecePtr attacker) override;
-    
+    void swap(Position pos);
 private:
     const static std::vector<Position> directions;
 };

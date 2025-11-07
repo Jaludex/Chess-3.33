@@ -43,6 +43,11 @@ std::vector<Move> IPiece::get_valid_moves()
 {
     return valid_moves;
 }
+void IPiece::swap(Position pos)
+{
+    current.x = pos.x;
+    current.y = pos.y;
+}
 bool IPiece::is_valid(Position pos)
 {
     bool is_valid = false;

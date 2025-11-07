@@ -77,14 +77,20 @@ std::vector<Move> Crook::set_valid_moves(const std::vector<PiecePtr>& pieces)
         valid_moves.push_back(Move(advance, true, front_piece));
     }
 
-    if (attack_left)
+    if (attack_left == nullptr || attack_left->get_team() != this->get_team())
     {
-        valid_moves.push_back(Move(left_diagonal, true, attack_left));
+        if (left_diagonal.x <= 5 && left_diagonal.y <= 5 && left_diagonal.x >= 0 && left_diagonal.y >= 0)
+        {
+            valid_moves.push_back(Move(left_diagonal, true, attack_left));
+        }
     }
 
-    if (attack_right)
+    if (attack_right == nullptr || attack_right->get_team() != this->get_team())
     {
-        valid_moves.push_back(Move(right_diagonal, true, attack_right));
+        if (right_diagonal.x <= 5 && right_diagonal.y <= 5 && right_diagonal.x >= 0 && right_diagonal.y >= 0)
+        {
+            valid_moves.push_back(Move(right_diagonal, true, attack_right));
+        }
     } 
     return valid_moves;    
 }

@@ -56,6 +56,7 @@ public:
     bool is_valid(Position pos);
     IPiece();
     virtual ~IPiece() = default;
+    void swap(Position pos);
 
 protected:
     Position current;

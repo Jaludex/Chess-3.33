@@ -26,10 +26,12 @@ void Queen::move(Position pos)
         current.x = pos.x;
         current.y = pos.y;
     }
-
-
 }
-
+void Queen::swap(Position pos)
+{
+    current.x = pos.x;
+    current.y = pos.y;
+}
 void Queen::update(float dt)
 {
     

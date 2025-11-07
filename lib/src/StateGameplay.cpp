@@ -14,8 +14,9 @@ void StateGameplay::init()
                                   (float)(window->getSize().y/2 - halfboard_lenght));
     board.set_sprite_position(pos);
 
-    board.add_piece(std::make_shared<Trapper>(true, 1, 5));
-    board.add_piece(std::make_shared<Crook>(false, 4, 2));
+    board.add_piece(std::make_shared<Crook>(true, 1, 5));
+    board.add_piece(std::make_shared<Queen>(true, 1, 0));
+    board.add_piece(std::make_shared<Trapper>(false, 4, 2));
 }
 
 void StateGameplay::terminate()

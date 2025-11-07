@@ -115,14 +115,23 @@ bool Board::drop_piece(PiecePtr piece)
         sf::Vector2f relative_position = piece->get_sprite().getPosition() - sprite.getPosition();
         Position position_on_board(relative_position.x / Board::cell_lenght, relative_position.y / Board::cell_lenght);
         auto valid_moves = piece->get_valid_moves();
-
+        PiecePtr swapped_piece = nullptr;
         for (auto move : valid_moves)
         {
             if (move.relative_positiion == position_on_board)
             {
                 if (move.occupant)
                 {
-                    if (move.occupant->hurt(piece))
+                    if (piece->get_piece_type() == PieceType::Portal && piece->get_team() == move.occupant->get_team())
+                    {
+                        swapped_piece = move.occupant; 
+                        Position old_portal_pos = piece->get_position(); 
+                    
+                        move.occupant->swap(old_portal_pos); 
+                        set_piece_sprite(move.occupant);
+                        it_moves = true;
+                    }
+                    else if (move.occupant->hurt(piece))
                     {
                         it_moves = move.moves_piece;
                         auto it = std::find(elements.begin(), elements.end(), move.occupant);
@@ -151,7 +160,6 @@ bool Board::drop_piece(PiecePtr piece)
             [team_of_bombs_to_remove](PiecePtr element) {
                 return element->get_piece_type() == PieceType::Bomb && element->get_team() == team_of_bombs_to_remove;}), elements.end());
     set_piece_sprite(piece);
-
     return it_moves;
 }
 

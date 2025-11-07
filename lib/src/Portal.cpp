@@ -3,7 +3,7 @@
 Portal::Portal(bool team, int startX, int startY)
 {
     set_team(team);
-    set_piece_type(PieceType::Pawn);
+    set_piece_type(PieceType::Portal);
     
     current.x = startX;
     current.y = startY;
@@ -19,16 +19,11 @@ bool Portal::verify_position(Position pos)
 
 void Portal::move(Position pos)
 {
-    for (auto move : valid_moves)
+    if (is_valid(pos))
     {
-        if (move.occupant->get_position() == pos)
-        {
-            move.occupant->move(current);
-            break;
-        }
+        current.x = pos.x;
+        current.y = pos.y;
     }    
-    current.x = pos.x;
-    current.y = pos.y;
 
 }
 
@@ -53,7 +48,7 @@ std::vector<Move> Portal::set_valid_moves(const std::vector<PiecePtr>& pieces)
     valid_moves.erase(valid_moves.begin(), valid_moves.end());
     for (auto piece : pieces)
     {
-        if (piece->get_team() == team)
+        if (piece->get_team() == team && piece->get_piece_type() != PieceType::Portal)
         {
             valid_moves.push_back(Move(piece->get_position(), true, piece));
         }
