@@ -14,7 +14,7 @@ private:
     sf::Clock elapsed_time;
     long score;
     sf::RenderWindow* window;
-    bool playerTurn;
+    bool player_turn;
     // Challenges
     
 public:

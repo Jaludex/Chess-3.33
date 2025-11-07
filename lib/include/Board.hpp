@@ -28,7 +28,7 @@ public:
     PiecePtr get_position(short x, short y);
     void remove_by_position(short x, short y);
     PiecePtr clicked_piece(sf::Vector2i mouse_position);
-    void drop_piece(PiecePtr piece);
+    bool drop_piece(PiecePtr piece);
     void update(float dt) override;
     void render(sf::RenderWindow& window) override;
     void render_highlights(sf::RenderWindow& window, const std::vector<Move>& valid_moves); 

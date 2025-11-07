@@ -106,15 +106,15 @@ void Board::set_piece_sprite(PiecePtr piece)
     piece->set_sprite_position(board_position + offset);
 }
 
-void Board::drop_piece(PiecePtr piece)
+//Retorna si la pieza se movio en el tablero
+bool Board::drop_piece(PiecePtr piece)
 {
+    bool it_moves = false;
     if (sprite.getGlobalBounds().contains(piece->get_sprite().getPosition()))
     {
         sf::Vector2f relative_position = piece->get_sprite().getPosition() - sprite.getPosition();
         Position position_on_board(relative_position.x / Board::cell_lenght, relative_position.y / Board::cell_lenght);
         auto valid_moves = piece->get_valid_moves();
-
-        bool it_moves = false;
 
         for (auto move : valid_moves)
         {
@@ -138,6 +138,8 @@ void Board::drop_piece(PiecePtr piece)
     }
 
     set_piece_sprite(piece);
+
+    return it_moves;
 }
 
 void Board::add_piece(PiecePtr piece)
