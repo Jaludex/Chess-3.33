@@ -159,10 +159,14 @@ bool Board::drop_piece(PiecePtr piece)
         piece->move(position_on_board);
     }
 
-    bool team_of_bombs_to_remove = !piece->get_team(); 
-    elements.erase(std::remove_if(elements.begin(), elements.end(),
+    if (it_moves)
+    {
+        bool team_of_bombs_to_remove = !piece->get_team(); 
+        elements.erase(std::remove_if(elements.begin(), elements.end(),
             [team_of_bombs_to_remove](PiecePtr element) {
                 return element->get_piece_type() == PieceType::Bomb && element->get_team() == team_of_bombs_to_remove;}), elements.end());
+    }
+    
     set_piece_sprite(piece);
     return it_moves;
 }

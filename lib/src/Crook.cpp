@@ -63,46 +63,47 @@ std::vector<Move> Crook::set_valid_moves(const std::vector<PiecePtr>& pieces)
     Position left_diagonal(current.x + directions.at(2).x, current.y + (directions.at(2).y * mirror));
 
     PiecePtr front_piece = nullptr;
-    PiecePtr attack_right = nullptr;
-    PiecePtr attack_left = nullptr;
+    PiecePtr diag_right_piece = nullptr;
+    PiecePtr diag_left_piece = nullptr;
 
     for (auto piece : pieces)
     {
-        if(piece->get_position() == advance)
+        if (piece->get_position() == advance)
         {
             front_piece = piece;
         }
-        else if (piece->get_position() == left_diagonal && piece->get_team() != this->get_team())
+        else if (piece->get_position() == left_diagonal)
         {
-            attack_left = piece;
+            diag_left_piece = piece;
         }
-        else if (piece->get_position() == right_diagonal && piece->get_team() != this->get_team())
+        else if (piece->get_position() == right_diagonal)
         {
-            attack_right = piece;
+            diag_right_piece = piece;
         }
     }
-    
+
     if (!front_piece && advance.x <= 5 && advance.y <= 5 && advance.x >= 0 && advance.y >= 0)
     {
         valid_moves.push_back(Move(advance, true, front_piece));
     }
 
-    if (attack_left == nullptr || attack_left->get_team() != this->get_team())
+    if (left_diagonal.x <= 5 && left_diagonal.y <= 5 && left_diagonal.x >= 0 && left_diagonal.y >= 0)
     {
-        if (left_diagonal.x <= 5 && left_diagonal.y <= 5 && left_diagonal.x >= 0 && left_diagonal.y >= 0)
+        if (diag_left_piece == nullptr || diag_left_piece->get_team() != this->get_team())
         {
-            valid_moves.push_back(Move(left_diagonal, true, attack_left));
+            valid_moves.push_back(Move(left_diagonal, true, diag_left_piece));
         }
     }
 
-    if (attack_right == nullptr || attack_right->get_team() != this->get_team())
+    if (right_diagonal.x <= 5 && right_diagonal.y <= 5 && right_diagonal.x >= 0 && right_diagonal.y >= 0)
     {
-        if (right_diagonal.x <= 5 && right_diagonal.y <= 5 && right_diagonal.x >= 0 && right_diagonal.y >= 0)
+        if (diag_right_piece == nullptr || diag_right_piece->get_team() != this->get_team())
         {
-            valid_moves.push_back(Move(right_diagonal, true, attack_right));
+            valid_moves.push_back(Move(right_diagonal, true, diag_right_piece));
         }
-    } 
-    return valid_moves;    
+    }
+
+    return valid_moves;
 }
 
 bool Crook::hurt(PiecePtr attacker)
