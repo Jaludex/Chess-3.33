@@ -10,30 +10,10 @@ sf::Color Crook::get_color(bool _team)
 return (_team)? Crook::white : Crook::black;
 }
 
-Crook::Crook(bool team, int startX, int startY)
+Crook::Crook(bool team)
 {
     set_team(team);
     set_piece_type(PieceType::Crook);
-    
-    current.x = startX;
-    current.y = startY;
-}
-
-bool Crook::verify_position(Position pos)
-{
-    int dx = std::abs(pos.x - current.x);
-    int dy = std::abs(pos.y - current.y);
-
-    return (dx == dy) && (dx > 0);
-}
-
-void Crook::move(Position pos)
-{
-   if (is_valid(pos))
-    {
-        current.x = pos.x;
-        current.y = pos.y;
-    }
 }
 
 void Crook::update(float dt)
@@ -52,7 +32,7 @@ void Crook::render(sf::RenderWindow& window)
     window.draw(triangle);
 }
 
-std::vector<Move> Crook::set_valid_moves(const std::vector<PiecePtr>& pieces)
+std::vector<BoardObjectPtr> Crook::set_valid_moves(const std::list<BoardObjectPtr>& elements, Position current)
 {
     valid_moves.clear();
 
@@ -62,44 +42,44 @@ std::vector<Move> Crook::set_valid_moves(const std::vector<PiecePtr>& pieces)
     Position right_diagonal(current.x + directions.at(1).x, current.y + (directions.at(1).y * mirror));
     Position left_diagonal(current.x + directions.at(2).x, current.y + (directions.at(2).y * mirror));
 
-    PiecePtr front_piece = nullptr;
-    PiecePtr diag_right_piece = nullptr;
-    PiecePtr diag_left_piece = nullptr;
+    BoardObjectPtr front_piece = std::make_shared<InBoardObject>(advance);
+    BoardObjectPtr diag_right_piece = std::make_shared<InBoardObject>(right_diagonal);
+    BoardObjectPtr diag_left_piece = std::make_shared<InBoardObject>(left_diagonal);
 
-    for (auto piece : pieces)
+    for (auto element : elements)
     {
-        if (piece->get_position() == advance)
+        if (element->pos == advance)
         {
-            front_piece = piece;
+            front_piece = element;
         }
-        else if (piece->get_position() == left_diagonal)
+        else if (element->pos == left_diagonal)
         {
-            diag_left_piece = piece;
+            diag_left_piece = element;
         }
-        else if (piece->get_position() == right_diagonal)
+        else if (element->pos == right_diagonal)
         {
-            diag_right_piece = piece;
+            diag_right_piece = element;
         }
     }
 
-    if (!front_piece && advance.x <= 5 && advance.y <= 5 && advance.x >= 0 && advance.y >= 0)
+    if (!front_piece->piece && advance.x <= 5 && advance.y <= 5 && advance.x >= 0 && advance.y >= 0)
     {
-        valid_moves.push_back(Move(advance, true, front_piece));
+        valid_moves.push_back(std::make_shared<InBoardObject>(advance));
     }
 
     if (left_diagonal.x <= 5 && left_diagonal.y <= 5 && left_diagonal.x >= 0 && left_diagonal.y >= 0)
     {
-        if (diag_left_piece == nullptr || diag_left_piece->get_team() != this->get_team())
+        if (diag_left_piece->piece == nullptr || diag_left_piece->piece->get_team() != this->get_team())
         {
-            valid_moves.push_back(Move(left_diagonal, true, diag_left_piece));
+            valid_moves.push_back(diag_left_piece);
         }
     }
 
     if (right_diagonal.x <= 5 && right_diagonal.y <= 5 && right_diagonal.x >= 0 && right_diagonal.y >= 0)
     {
-        if (diag_right_piece == nullptr || diag_right_piece->get_team() != this->get_team())
+        if (diag_right_piece->piece == nullptr || diag_right_piece->piece->get_team() != this->get_team())
         {
-            valid_moves.push_back(Move(right_diagonal, true, diag_right_piece));
+            valid_moves.push_back(diag_right_piece);
         }
     }
 

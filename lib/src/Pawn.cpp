@@ -9,30 +9,10 @@ sf::Color Pawn::get_color(bool _team)
 return (_team)? Pawn::white : Pawn::black;
 }
 
-Pawn::Pawn(bool team, int startX, int startY)
+Pawn::Pawn(bool team)
 {
     set_team(team);
     set_piece_type(PieceType::Pawn);
-    
-    current.x = startX;
-    current.y = startY;
-}
-
-bool Pawn::verify_position(Position pos)
-{
-    int dx = std::abs(pos.x - current.x);
-    int dy = std::abs(pos.y - current.y);
-
-    return (dx == dy) && (dx > 0);
-}
-
-void Pawn::move(Position pos)
-{
-    if (is_valid(pos))
-    {
-        current.x = pos.x;
-        current.y = pos.y;
-    }
 }
 
 void Pawn::update(float dt)
@@ -51,47 +31,40 @@ void Pawn::render(sf::RenderWindow& window)
     window.draw(triangle);
 }
 
-std::vector<Move> Pawn::set_valid_moves(const std::vector<PiecePtr>& pieces) 
+std::vector<BoardObjectPtr> Pawn::set_valid_moves(const std::list<BoardObjectPtr>& pieces, Position current) 
 {
-    valid_moves.erase(valid_moves.begin(), valid_moves.end());
+    valid_moves.clear();
     int8_t mirror = (team) ? -1 : 1;
 
-    Position advance(current.x, current.y + mirror);
-    Position left_diagonal(current.x + mirror, current.y + mirror);
-    Position right_diagonal(current.x - mirror, current.y + mirror);
-    PiecePtr front_piece = nullptr;
-    PiecePtr attack_left = nullptr;
-    PiecePtr attack_right = nullptr;
-    for (auto piece : pieces)
+    BoardObjectPtr front = std::make_shared<InBoardObject>(Position(current.x, current.y + mirror));
+    BoardObjectPtr left = std::make_shared<InBoardObject>(Position(current.x + mirror, current.y + mirror));
+    BoardObjectPtr right = std::make_shared<InBoardObject>(Position(current.x - mirror, current.y + mirror));
+
+    for (auto object : pieces)
     {
-        if(piece->get_position() == advance)
+        if(object->pos == front->pos)
         {
-            front_piece = piece;
+            front = object;
         }
-        else if (piece->get_position() == left_diagonal && piece->get_team() != this->get_team())
+        else if (object->pos == left->pos && object->piece->get_team() != this->get_team())
         {
-            attack_left = piece;
+            left = object;
         }
-        else if (piece->get_position() == right_diagonal && piece->get_team() != this->get_team())
+        else if (object->pos == right->pos && object->piece->get_team() != this->get_team())
         {
-            attack_right = piece;
+            right = object;
         }
     }
     
-    if (!front_piece && advance.x <= 5, advance.y <= 5)
+    if (!front->piece && front->pos.x <= 5, front->pos.y <= 5)
     {
-        valid_moves.push_back(Move(advance, true, front_piece));
+        valid_moves.push_back(front);
     }
 
-    if (attack_left)
-    {
-        valid_moves.push_back(Move(left_diagonal, true, attack_left));
-    }
+    if (left)   valid_moves.push_back(left);
 
-    if (attack_right)
-    {
-        valid_moves.push_back(Move(right_diagonal, true, attack_right));
-    }
+    if (right)  valid_moves.push_back(right);
+    
     return valid_moves;    
 }
 

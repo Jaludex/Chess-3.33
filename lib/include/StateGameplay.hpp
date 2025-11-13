@@ -21,7 +21,8 @@ using PieceInstantPtr = std::shared_ptr<PieceInstantiator>;
 class StateGameplay : IGameState
 {
 private:
-    std::shared_ptr<IGameObject> selected;
+    BoardObjectPtr selected_piece;
+    PieceInstantPtr selected_inst;
     Board board;
     sf::Clock elapsed_time;
     long score;
