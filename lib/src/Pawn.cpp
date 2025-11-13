@@ -56,14 +56,14 @@ std::vector<BoardObjectPtr> Pawn::set_valid_moves(const std::list<BoardObjectPtr
         }
     }
     
-    if (!front->piece && front->pos.x <= 5, front->pos.y <= 5)
+    if (!front->piece && front->pos.x <= 5 && front->pos.y <= 5 && front->pos.x >= 0 && front->pos.y >= 0)
     {
         valid_moves.push_back(front);
     }
 
-    if (left)   valid_moves.push_back(left);
+    if (left->piece)   valid_moves.push_back(left);
 
-    if (right)  valid_moves.push_back(right);
+    if (right->piece)  valid_moves.push_back(right);
     
     return valid_moves;    
 }

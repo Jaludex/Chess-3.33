@@ -68,6 +68,8 @@ void StateGameplay::drag()
         if (selected_piece)
         {   
             selected_piece->piece->set_sprite_position({(float)mouse_position.x, (float)mouse_position.y});
+            //Version para que la textura se vea en el medio, requiere que se este usando un texture valido hasta donde se
+            //selected_piece->piece->set_sprite_position(sf::Vector2f((float)(mouse_position.x - (selected_piece->piece->get_sprite().getLocalBounds().size.x / 2)), (float)(mouse_position.y - (selected_piece->piece->get_sprite().getLocalBounds().size.y / 2))));
             selected_inst = nullptr;
         }
         else if (selected_inst)
