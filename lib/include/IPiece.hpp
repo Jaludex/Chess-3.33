@@ -22,6 +22,7 @@ struct Move
     PiecePtr occupant;
 
     Move(Position _pos, bool _m, PiecePtr _o) : relative_positiion(_pos), moves_piece(_m), occupant(_o) {}
+    Move() : relative_positiion(Position(0,0)), moves_piece(true),occupant(nullptr) {};
 };
 
 enum class PieceType
