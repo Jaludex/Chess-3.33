@@ -1,32 +1,49 @@
+#pragma once
+
 #include <IPiece.hpp>
-#include <Board.hpp>
-#include<list>
-#include<functional>
+#include <list>
+#include <functional>
 #include <limits>
 #include <algorithm>
+#include <memory>
 
-//Linea momentanea en lo que cuadro con jesus los cambios que debe hacer push pa tener ese struct
-using InBoardObject = Move;
-using BoardL = std::list<std::shared_ptr<InBoardObject>>;
-using GmnNodePtr = std::list<std::shared_ptr<GameNode>>;
+
+using BoardObjectPtr = std::shared_ptr<InBoardObject>;
+using BoardL = std::list<BoardObjectPtr>;
+
+
+struct Jugada
+{
+    BoardObjectPtr moving_piece; 
+    Position destino;             
+    BoardObjectPtr captured_piece; 
+
+    Jugada() : moving_piece(nullptr), destino(0, 0), captured_piece(nullptr) {}
+};
+
 struct GameNode
 {
     BoardL board;
-    InBoardObject dad;
-    GmnNodePtr possible_plays;
+    Jugada dad; 
+    std::list<std::shared_ptr<GameNode>> possible_plays;
     int result_minimax;
 };
+
 class GameTree
 {
 private:
     std::shared_ptr<GameNode> current_board;
+
     std::function<int(const BoardL&)> f_heuristica;
 
     int minimax(std::shared_ptr<GameNode> nodo, int deepness, int alpha, int beta, bool Maximizing);
-    std::list<InBoardObject> generate_all_plays(const BoardL& current, bool bot_turn);
-    BoardL apply_play(const BoardL& original, const InBoardObject& move);
+    
+    std::list<Jugada> generate_all_plays(const BoardL& current, bool bot_turn);
+    
+    BoardL apply_play(const BoardL& original, const Jugada& move);
+
 public:
     GameTree(BoardL, std::function<int(const BoardL&)> heuristica);
-    InBoardObject find_best_play(int deepness);
     
+    Jugada find_best_play(int deepness);
 };

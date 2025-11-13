@@ -24,6 +24,7 @@ struct InBoardObject
 
     InBoardObject(Position _pos, PiecePtr _piece) : pos(_pos), piece(_piece) {}
     InBoardObject(Position _pos) : pos(_pos), piece(nullptr) {}
+    InBoardObject() : pos(Position(0,0)), piece(nullptr) {}
 };
 
 using BoardObjectPtr = std::shared_ptr<InBoardObject>;
