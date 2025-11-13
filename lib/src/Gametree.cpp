@@ -8,20 +8,20 @@ GameTree::GameTree(BoardL beggining, std::function<int(const BoardL&)> f_juego)
 
     this->current_board = std::make_shared<GameNode>();
     this->current_board->board = beggining;
-    this->current_board->dad = Jugada();
+    this->current_board->dad = Play();
     this->current_board->result_minimax = 0;
 }
 
-Jugada GameTree::find_best_play(int deepness)
+Play GameTree::find_best_play(int deepness)
 {
     int best_value = -(std::numeric_limits<int>::max());
-    Jugada best_play;
+    Play best_play;
     int alpha = -(std::numeric_limits<int>::max());
     int beta = std::numeric_limits<int>::max();
 
-    std::list<Jugada> possible_plays = this->generate_all_plays(current_board->board, true);
+    std::list<Play> possible_plays = this->generate_all_plays(current_board->board, true);
 
-    for(const Jugada& play : possible_plays)
+    for(const Play& play : possible_plays)
     {
         BoardL new_state = this->apply_play(current_board->board, play);
 
@@ -55,10 +55,10 @@ int GameTree::minimax(std::shared_ptr<GameNode> node, int deepness, int alpha, i
 
     if(Maximizing)
     {
-        int better_value = -std::numeric_limits<int>::max();
-        auto possible_plays = this->generate_all_plays(node->board, true);
+        int better_value = -(std::numeric_limits<int>::max());
+        auto possible_plays = this->generate_all_plays(node->board, false);
 
-        for(const Jugada& play : possible_plays)
+        for(const Play& play : possible_plays)
         {
             BoardL new_state = this->apply_play(node->board, play);
             auto play_node = std::make_shared<GameNode>();
@@ -83,7 +83,7 @@ int GameTree::minimax(std::shared_ptr<GameNode> node, int deepness, int alpha, i
     else
     {
         int worst_value = std::numeric_limits<int>::max();
-        auto possible_plays = this->generate_all_plays(node->board, false);
+        auto possible_plays = this->generate_all_plays(node->board, true);
 
         for(const auto& play : possible_plays)
         {
@@ -108,20 +108,21 @@ int GameTree::minimax(std::shared_ptr<GameNode> node, int deepness, int alpha, i
     }
 }
 
-std::list<Jugada> GameTree::generate_all_plays(const BoardL& current, bool bot_turn)
+std::list<Play> GameTree::generate_all_plays(const BoardL& current, bool team)
 {
-    std::list<Jugada> all_plays;
+    std::list<Play> all_plays;
 
     for(auto& slot : current)
     {
-        if(slot->piece->get_team() == bot_turn)
+
+        if(slot->piece->get_team() == team)
         {
             auto valid_moves = slot->piece->set_valid_moves(current, slot->pos);
 
             for(auto& move_target : valid_moves)
             {
                 BoardObjectPtr captured_slot = nullptr;
-                if (move_target->piece != nullptr)
+                if (move_target->piece)
                 {
                     for (auto& targeted : current) 
                     {
@@ -133,27 +134,27 @@ std::list<Jugada> GameTree::generate_all_plays(const BoardL& current, bool bot_t
                     }
                 }
 
-                Jugada jugada;
-                jugada.moving_piece = slot;
-                jugada.destino = move_target->pos;
-                jugada.captured_piece = captured_slot; 
+                Play new_play;
+                new_play.moving_piece = slot;
+                new_play.destino = move_target->pos;
+                new_play.captured_piece = captured_slot; 
                 
-                all_plays.push_back(jugada);
+                all_plays.push_back(new_play);
             }
         }
     }
     return all_plays;
 }
 
-BoardL GameTree::apply_play(const BoardL& original, const Jugada& move)
+BoardL GameTree::apply_play(const BoardL& original, const Play& move)
 {
-    BoardL nuevoEstado;
+    BoardL new_state;
     std::map<BoardObjectPtr, BoardObjectPtr> original_to_new_map;
 
     for (auto const& slot_original : original)
     {
         auto nuevo_slot = std::make_shared<InBoardObject>(slot_original->pos, slot_original->piece);
-        nuevoEstado.push_back(nuevo_slot);
+        new_state.push_back(nuevo_slot);
         original_to_new_map[slot_original] = nuevo_slot;
     }
 
@@ -168,7 +169,7 @@ BoardL GameTree::apply_play(const BoardL& original, const Jugada& move)
         }
         else if (new_captured_slot->piece->hurt(new_moving_slot->piece))
         {
-            nuevoEstado.remove(new_captured_slot);
+            new_state.remove(new_captured_slot);
         }
     }
     if (new_moving_slot)
@@ -180,14 +181,14 @@ BoardL GameTree::apply_play(const BoardL& original, const Jugada& move)
     {
         auto new_bomb_piece = std::make_shared<Bomb>(new_moving_slot->piece->get_team()); 
         auto new_bomb_slot = std::make_shared<InBoardObject>(move.moving_piece->pos, new_bomb_piece);
-        nuevoEstado.push_back(new_bomb_slot);
+        new_state.push_back(new_bomb_slot);
     }
     
     bool team_of_bombs_to_remove = !new_moving_slot->piece->get_team(); 
-    nuevoEstado.erase(std::remove_if(nuevoEstado.begin(), nuevoEstado.end(),
+    new_state.erase(std::remove_if(new_state.begin(), new_state.end(),
         [team_of_bombs_to_remove](BoardObjectPtr element) {
-            return element->piece->get_piece_type() == PieceType::Bomb && element->piece->get_team() == team_of_bombs_to_remove;}), nuevoEstado.end());
+            return element->piece->get_piece_type() == PieceType::Bomb && element->piece->get_team() == team_of_bombs_to_remove;}), new_state.end());
 
 
-    return nuevoEstado;
+    return new_state;
 }
