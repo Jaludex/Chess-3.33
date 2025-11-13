@@ -22,7 +22,7 @@ class PieceInstantiator : public IGameObject
     virtual void update(float dt) override;
     virtual void render(sf::RenderWindow& window) override;
     void return_to_origin();
-    PiecePtr make_piece(int startX, int startY);
+    BoardObjectPtr make_piece(int startX, int startY);
     
 private:
     PieceType type;

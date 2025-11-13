@@ -10,25 +10,10 @@ sf::Color Bomb::get_color(bool _team)
 return (_team)? Bomb::white : Bomb::black;
 }
 
-Bomb::Bomb(bool team, int startX, int startY)
+Bomb::Bomb(bool team)
 {
     set_team(team);
     set_piece_type(PieceType::Bomb);
-    
-    current.x = startX;
-    current.y = startY;
-}
-bool Bomb::verify_position(Position pos)
-{
-    int dx = std::abs(pos.x - current.x);
-    int dy = std::abs(pos.y - current.y);
-
-    return (dx == dy) && (dx > 0);
-}
-
-void Bomb::move(Position pos)
-{
-    //empty
 }
 
 void Bomb::update(float dt)
@@ -47,15 +32,15 @@ void Bomb::render(sf::RenderWindow& window)
     window.draw(triangle);
 }
 
-std::vector<Move> Bomb::set_valid_moves(const std::vector<PiecePtr>& pieces) 
+std::vector<BoardObjectPtr> Bomb::set_valid_moves(const std::list<BoardObjectPtr>& pieces, Position current) 
 {
-   valid_moves.erase(valid_moves.begin(),valid_moves.end());
+   valid_moves.clear();
    return valid_moves;    
 }
 
 bool Bomb::hurt(PiecePtr attacker)
 {
-    attacker->hurt(std::make_shared<Bomb>(team,current.x,current.y));
+    attacker->hurt(std::make_shared<Bomb>(this));
     return true;
 }
 
@@ -68,30 +53,10 @@ sf::Color Trapper::get_color(bool _team)
 return (_team)? Trapper::white : Trapper::black;
 }
 
-Trapper::Trapper(bool team, int startX, int startY)
+Trapper::Trapper(bool team)
 {
     set_team(team);
     set_piece_type(PieceType::Trapper);
-    
-    current.x = startX;
-    current.y = startY;
-}
-
-bool Trapper::verify_position(Position pos)
-{
-    int dx = std::abs(pos.x - current.x);
-    int dy = std::abs(pos.y - current.y);
-
-    return (dx == dy) && (dx > 0);
-}
-
-void Trapper::move(Position pos)
-{
-    if(is_valid(pos))
-    {
-        current.x = pos.x;
-        current.y = pos.y;
-    }
 }
 
 void Trapper::update(float dt)
@@ -110,9 +75,9 @@ void Trapper::render(sf::RenderWindow& window)
     window.draw(triangle);
 }
 
-std::vector<Move> Trapper::set_valid_moves(const std::vector<PiecePtr>& pieces)
+std::vector<BoardObjectPtr> Trapper::set_valid_moves(const std::list<BoardObjectPtr>& pieces, Position current)
 {
-    valid_moves.erase(valid_moves.begin(), valid_moves.end());
+    valid_moves.clear();
     const uint8_t lenght = Board::side_lenght;
 
     for (auto direction : Trapper::directions)
@@ -125,27 +90,26 @@ std::vector<Move> Trapper::set_valid_moves(const std::vector<PiecePtr>& pieces)
             continue;
         }
 
-        Position target_position((int8_t)new_x, (int8_t)new_y);
-        PiecePtr target_piece = nullptr;
-        for (auto piece : pieces)
+        auto target = std::make_shared<InBoardObject>(Position(new_x, new_y));
+        for (auto object : pieces)
         {
-            if (piece->get_position() == target_position)
+            if (object->pos == target->pos)
             {
-                target_piece = piece;
+                target = object;
                 break;
             }
         }
         
-        if (target_piece)
+        if (target->piece)
         {
-            if(target_piece->get_team() != team)
+            if(target->piece->get_team() != team)
             {
-                valid_moves.push_back(Move(target_position, true, target_piece));
+                valid_moves.push_back(target);
             }
         }
         else
         {
-            valid_moves.push_back(Move(target_position, true, target_piece));
+            valid_moves.push_back(target);
         }
         
     }

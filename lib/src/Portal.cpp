@@ -9,31 +9,10 @@ sf::Color Portal::get_color(bool _team)
 return (_team)? Portal::white : Portal::black;
 }
 
-Portal::Portal(bool team, int startX, int startY)
+Portal::Portal(bool team)
 {
     set_team(team);
     set_piece_type(PieceType::Portal);
-    
-    current.x = startX;
-    current.y = startY;
-}
-
-bool Portal::verify_position(Position pos)
-{
-    int dx = std::abs(pos.x - current.x);
-    int dy = std::abs(pos.y - current.y);
-
-    return (dx == dy) && (dx > 0);
-}
-
-void Portal::move(Position pos)
-{
-    if (is_valid(pos))
-    {
-        current.x = pos.x;
-        current.y = pos.y;
-    }    
-
 }
 
 void Portal::update(float dt)
@@ -52,14 +31,14 @@ void Portal::render(sf::RenderWindow& window)
     window.draw(triangle);
 }
 
-std::vector<Move> Portal::set_valid_moves(const std::vector<PiecePtr>& pieces) 
+std::vector<BoardObjectPtr> Portal::set_valid_moves(const std::list<BoardObjectPtr>& pieces, Position current) 
 {
     valid_moves.erase(valid_moves.begin(), valid_moves.end());
-    for (auto piece : pieces)
+    for (auto object : pieces)
     {
-        if (piece->get_team() == team && piece->get_piece_type() != PieceType::Portal)
+        if (object->piece->get_team() == team && object->piece->get_piece_type() != PieceType::Portal)
         {
-            valid_moves.push_back(Move(piece->get_position(), true, piece));
+            valid_moves.push_back(object);
         }
     }
     

@@ -8,14 +8,12 @@
 class Trapper : public IPiece
 {
 public:
-    Trapper(bool team, int startX, int startY);
+    Trapper(bool team);
 
     virtual ~Trapper() = default;
-    virtual bool verify_position(Position pos) override;
-    virtual void move(Position pos) override;
     virtual void update(float dt) override;
     virtual void render(sf::RenderWindow& window) override;
-    virtual std::vector<Move> set_valid_moves(const std::vector<PiecePtr>& pieces) override;
+    virtual std::vector<BoardObjectPtr> set_valid_moves(const std::list<BoardObjectPtr>& elements, Position current) override;
     virtual bool hurt(PiecePtr attacker) override;
 
     static sf::Color get_color(bool);
@@ -24,20 +22,17 @@ public:
 
 private:
     const static std::vector<Position> directions;
-    std::shared_ptr<Board> board;
 };
 
 class Bomb : public IPiece
 {
 public:
-    Bomb(bool team, int startX, int startY);
+    Bomb(bool team);
 
     virtual ~Bomb() = default;
-    virtual bool verify_position(Position pos) override;
-    virtual void move(Position pos) override;
     virtual void update(float dt) override;
     virtual void render(sf::RenderWindow& window) override;
-    virtual std::vector<Move> set_valid_moves(const std::vector<PiecePtr>& pieces) override;
+    virtual std::vector<BoardObjectPtr> set_valid_moves(const std::list<BoardObjectPtr>& elements, Position current) override;
     virtual bool hurt(PiecePtr attacker) override;
     
     sf::Color get_color(bool);

@@ -11,32 +11,10 @@ sf::Color Horse::get_color(bool _team)
 return (_team)? Horse::white : Horse::black;
 }
 
-Horse::Horse(bool team, int startX, int startY)
+Horse::Horse(bool team)
 {
     set_team(team);
     set_piece_type(PieceType::Horse);
-    
-    current.x = startX;
-    current.y = startY;
-}
-
-bool Horse::verify_position(Position pos)
-{
-    int dx = std::abs(pos.x - current.x);
-    int dy = std::abs(pos.y - current.y);
-
-    return (dx == dy) && (dx > 0);
-}
-
-void Horse::move(Position pos)
-{
-   if (is_valid(pos))
-    {
-        current.x = pos.x;
-        current.y = pos.y;
-    }
-
-
 }
 
 void Horse::update(float dt)
@@ -55,7 +33,7 @@ void Horse::render(sf::RenderWindow& window)
     window.draw(triangle);
 }
 
-std::vector<Move> Horse::set_valid_moves(const std::vector<PiecePtr>& pieces) 
+std::vector<BoardObjectPtr> Horse::set_valid_moves(const std::list<BoardObjectPtr>& pieces, Position current) 
 {
     valid_moves.clear();
     const uint8_t lenght = Board::side_lenght;
@@ -70,27 +48,27 @@ std::vector<Move> Horse::set_valid_moves(const std::vector<PiecePtr>& pieces)
             continue;
         }
 
-        Position target_position((int8_t)new_x, (int8_t)new_y);
-        PiecePtr target_piece = nullptr;
-        for (auto piece : pieces)
+        auto target = std::make_shared<InBoardObject>(Position((int8_t)new_x, (int8_t)new_y));
+
+        for (auto object : pieces)
         {
-            if (piece->get_position() == target_position)
+            if (object->pos == target->pos)
             {
-                target_piece = piece;
+                target = object;
                 break;
             }
         }
         
-        if (target_piece)
+        if (target->piece)
         {
-            if(target_piece->get_team() != team)
+            if(target->piece->get_team() != this->team)
             {
-                valid_moves.push_back(Move(target_position, true, target_piece));
+                valid_moves.push_back(target);
             }
         }
         else
         {
-            valid_moves.push_back(Move(target_position, true, target_piece));
+            valid_moves.push_back(target);
         }
         
     }

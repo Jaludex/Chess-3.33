@@ -8,14 +8,12 @@
 class Tower : public IPiece
 {
     public:
-    Tower(bool team, int startX, int startY);
+    Tower(bool team);
 
     virtual ~Tower() = default;
-    virtual bool verify_position(Position pos) override;
-    virtual void move(Position pos) override;
     virtual void update(float dt) override;
     virtual void render(sf::RenderWindow& window) override;
-    virtual std::vector<Move> set_valid_moves(const std::vector<PiecePtr>& pieces) override;
+    virtual std::vector<BoardObjectPtr> set_valid_moves(const std::list<BoardObjectPtr>& elements, Position current) override;
     virtual bool hurt(PiecePtr attacker) override;
 
     static sf::Color get_color(bool);

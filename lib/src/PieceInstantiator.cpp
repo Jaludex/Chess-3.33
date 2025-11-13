@@ -131,28 +131,28 @@ void PieceInstantiator::return_to_origin()
     this->set_sprite_position(originalposition);
 }
 
-PiecePtr PieceInstantiator::make_piece(int startx, int starty)
+BoardObjectPtr PieceInstantiator::make_piece(int startx, int starty)
 {
     switch(type)
     {
         case PieceType::Pawn :
-            return std::make_shared<Pawn>(team, startx, starty);
+            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Pawn>(team));
         case PieceType::Horse :
-            return std::make_shared<Horse>(team, startx, starty);
+            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Horse>(team));
         case PieceType::Bishop :
-            return std::make_shared<Bishop>(team, startx, starty);
+            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Bishop>(team));
         case PieceType::Tower :
-            return std::make_shared<Tower>(team, startx, starty);
+            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Tower>(team));
         case PieceType::Queen :
-            return std::make_shared<Queen>(team, startx, starty);
+            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Queen>(team));
         case PieceType::Trapper :
-            return std::make_shared<Trapper>(team, startx, starty);
+            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Trapper>(team));
         case PieceType::Crook :
-            return std::make_shared<Crook>(team, startx, starty);
+            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Crook>(team));
         case PieceType::Archer :
-            return std::make_shared<Archer>(team, startx, starty);
+            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Archer>(team));
         case PieceType::Portal :
-            return std::make_shared<Portal>(team, startx, starty);
+            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Portal>(team));
         default :
             return nullptr;
     }
