@@ -8,7 +8,7 @@
 class Portal : public IPiece
 {
     public:
-    Portal(bool team);
+    Portal(bool team, sf::Texture texture);
 
     virtual ~Portal() = default;
     virtual void update(float dt) override;

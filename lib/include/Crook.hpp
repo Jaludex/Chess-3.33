@@ -8,7 +8,7 @@
 class Crook : public IPiece
 {
 public:
-    Crook(bool team);
+    Crook(bool team, sf::Texture texture);
 
     virtual ~Crook() = default;
     virtual void update(float dt) override;

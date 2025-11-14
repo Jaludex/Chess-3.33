@@ -60,7 +60,6 @@ void Board::render_pieces(sf::RenderWindow& window)
         element->piece->render(window);
     }
 }
-
 size_t Board::size()
 {
     return elements.size();
@@ -150,7 +149,7 @@ bool Board::drop_piece(BoardObjectPtr element)
         
         if (element->piece->get_piece_type() == PieceType::Trapper)
         {
-            add_piece(std::make_shared<InBoardObject>(old_pos, std::make_shared<Bomb>(element->piece->get_team())));
+            add_piece(std::make_shared<InBoardObject>(old_pos, std::make_shared<Bomb>(element->piece->get_team(), element->piece->get_sprite().getTexture())));
         }
         
         bool team_of_bombs_to_remove = !element->piece->get_team(); 

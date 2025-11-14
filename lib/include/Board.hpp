@@ -16,8 +16,7 @@ private:
 public:
 
     static const uint8_t side_lenght = 6;
-    static const u_int cell_lenght = 100;
-
+    static const uint8_t cell_lenght = 100;
     Board(sf::Texture texture);
     Board(sf::Texture texture, std::list<BoardObjectPtr> _elements);
     Board(const Board& _board);

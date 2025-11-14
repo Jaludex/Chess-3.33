@@ -8,7 +8,7 @@
 class Trapper : public IPiece
 {
 public:
-    Trapper(bool team);
+    Trapper(bool team, sf::Texture texture);
 
     virtual ~Trapper() = default;
     virtual void update(float dt) override;
@@ -27,7 +27,7 @@ private:
 class Bomb : public IPiece
 {
 public:
-    Bomb(bool team);
+    Bomb(bool team, sf::Texture texture);
 
     virtual ~Bomb() = default;
     virtual void update(float dt) override;
