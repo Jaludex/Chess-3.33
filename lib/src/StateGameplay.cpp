@@ -19,7 +19,7 @@ void StateGameplay::init()
     float xoffset = Board::cell_lenght * 1.2f;
     float yoffset = Board::cell_lenght * 1.2f;
     float width = (float)window->getSize().x;
-    
+
     load_texture_piece("white_pawn", "bin/assets/WhitePawn.png");
     load_texture_piece("white_rook", "bin/assets/WhiteRook.png");
     load_texture_piece("white_bishop", "bin/assets/WhiteBishop.png");
@@ -61,8 +61,21 @@ void StateGameplay::init()
     instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Crook, false, sf::Vector2f(width - xmargin - xoffset, ymargin + 2*yoffset), get_piece_texture("black_crook")));
     instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Archer, false, sf::Vector2f(width - xmargin - xoffset, ymargin + 3*yoffset), get_piece_texture("black_archer")));
     instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Portal, false, sf::Vector2f(width - xmargin - xoffset, ymargin + 4*yoffset), get_piece_texture("black_portal")));
-}
 
+}
+void StateGameplay::load_texture_piece(std::string type, std::string file)
+{
+    sf::Texture texture;
+    if (!texture.loadFromFile(file))
+    {
+        throw(std::runtime_error("Texture not found: " + file));
+    }
+        texture_map[type] = texture;
+}
+const sf::Texture& StateGameplay::get_piece_texture(std::string type)
+{
+    return texture_map.at(type);
+}
 void StateGameplay::terminate()
 {
     //si usamos shared pointers entonces no necesitamos eliminar la pieza creada en init
@@ -88,8 +101,6 @@ void StateGameplay::drag()
         if (selected_piece)
         {   
             selected_piece->piece->set_sprite_position({(float)mouse_position.x, (float)mouse_position.y});
-            //Version para que la textura se vea en el medio, requiere que se este usando un texture valido hasta donde se
-            selected_piece->piece->set_sprite_position(sf::Vector2f((float)(mouse_position.x - (selected_piece->piece->get_sprite().getLocalBounds().size.x / 2)), (float)(mouse_position.y - (selected_piece->piece->get_sprite().getLocalBounds().size.y / 2))));
             selected_inst = nullptr;
         }
         else if (selected_inst)
@@ -140,19 +151,6 @@ void StateGameplay::render(sf::RenderWindow& window)
     {
         inst->render(window);
     }
-}
-void StateGameplay::load_texture_piece(std::string type, std::string file)
-{
-    sf::Texture texture;
-    if (!texture.loadFromFile(file))
-    {
-        throw(std::runtime_error("Texture not found: " + file));
-    }
-        texture_map[type] = texture;
-}
-const sf::Texture& StateGameplay::get_piece_texture(std::string type)
-{
-    return texture_map.at(type);
 }
 
 PieceInstantPtr StateGameplay::clicked_instantiator(sf::Vector2i mouse_position)
