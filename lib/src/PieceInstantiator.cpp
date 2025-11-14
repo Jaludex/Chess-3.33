@@ -23,7 +23,7 @@ void PieceInstantiator::return_to_origin()
 
 BoardObjectPtr PieceInstantiator::make_piece(int startx, int starty)
 {
-    sf::Texture texture = this->sprite.getTexture();
+    sf::Texture texture = this->texture;
     switch(type)
     {
         case PieceType::Pawn :

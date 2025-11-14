@@ -1,6 +1,6 @@
 #include <IGameObject.hpp>
 const float CELL_LENGHT = 100.0f;
-IGameObject::IGameObject(sf::Texture r_texture) : texture(r_texture), sprite(sf::Sprite(this->texture))
+IGameObject::IGameObject(sf::Texture r_texture) : texture(r_texture), sprite((this->texture))
 {
     sf::Vector2u texture_size = this->texture.getSize();
     float scale_x = CELL_LENGHT / static_cast<float>(texture_size.x);

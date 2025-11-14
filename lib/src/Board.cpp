@@ -112,6 +112,7 @@ bool Board::drop_piece(BoardObjectPtr element)
 {
     bool it_moves = false;
     auto old_pos = element->pos;
+    
     if (sprite.getGlobalBounds().contains(element->piece->get_sprite().getPosition()))
     {
         Position position_on_board = get_square_by_coords(static_cast<sf::Vector2i>(element->piece->get_sprite().getPosition()));
