@@ -1,11 +1,8 @@
-#include "Gametree.hpp"
-#include "Board.hpp" 
-#include "Trapper.hpp"
-#include <map>
-GameTree::GameTree(BoardL beggining, std::function<int(const BoardL&)> f_juego)
-{
-    this->f_heuristica = f_juego;
+#include <Gametree.hpp>
 
+GameTree::GameTree(BoardL beggining, GameEvaluator _heuristica)
+{
+    this->heuristica = _heuristica;
     this->current_board = std::make_shared<GameNode>();
     this->current_board->board = beggining;
     this->current_board->dad = Play();
@@ -48,7 +45,7 @@ int GameTree::minimax(std::shared_ptr<GameNode> node, int deepness, int alpha, i
     //Nos falta meterle que verifique fin de juego, pa eso necesito al augusto
     if (deepness == 0)
     {
-        int score = this->f_heuristica(node->board);
+        int score = this->heuristica.eval(node->board);
         node->result_minimax = score;
         return score;
     }  

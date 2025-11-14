@@ -6,6 +6,7 @@ bool Position::operator==(const Position& right)
 {
     return (x == right.x) && (y == right.y);
 }
+
 Position Position::operator+(Position it)
 {
     return Position(x + it.x, y + it.y);

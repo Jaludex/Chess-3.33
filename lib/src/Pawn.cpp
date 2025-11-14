@@ -1,6 +1,5 @@
 #include"Pawn.hpp"
 
-
 sf::Color Pawn::white = sf::Color(200,200,200,255);
 sf::Color Pawn::black = sf::Color(100,100,100,255);
 
@@ -71,4 +70,15 @@ std::vector<BoardObjectPtr> Pawn::set_valid_moves(const std::list<BoardObjectPtr
 bool Pawn::hurt(PiecePtr attacker)
 {
     return true;
+}
+
+int Pawn::get_material_value() const
+{
+    return 1;
+}
+
+
+int Pawn::get_max_mobility() const
+{
+    return 1;
 }

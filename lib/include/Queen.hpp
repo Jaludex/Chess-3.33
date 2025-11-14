@@ -15,6 +15,8 @@ class Queen : public IPiece
     virtual void render(sf::RenderWindow& window) override;
     virtual std::vector<BoardObjectPtr> set_valid_moves(const std::list<BoardObjectPtr>& elements, Position current) override;
     virtual bool hurt(PiecePtr attacker) override;
+    virtual int get_material_value() const override;
+    virtual int get_max_mobility() const override;
     void swap(Position pos);
 
     static sf::Color get_color(bool);

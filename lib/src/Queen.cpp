@@ -84,3 +84,14 @@ bool Queen::hurt(PiecePtr attacker)
 {
     return true;
 }
+
+
+int Queen::get_material_value() const
+{
+    return 9;
+}
+
+int Queen::get_max_mobility() const
+{
+    return 16;
+}

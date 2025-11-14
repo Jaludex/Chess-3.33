@@ -6,12 +6,15 @@
 #include <stdexcept>
 #include "Trapper.hpp"
 
+using BoardObjectPtr = std::shared_ptr<InBoardObject>;
+using BoardL = std::list<BoardObjectPtr>;
+
 class Board : public IGameObject
 {
 private:
     //static const sf::Color black{70,50,50,255};
     //static const sf::Color white{220,200,200,255}; 
-    std::list<BoardObjectPtr> elements;
+    BoardL elements;
 
 public:
 

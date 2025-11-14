@@ -21,10 +21,11 @@ struct InBoardObject
 {
     Position pos;
     PiecePtr piece;
+    bool leader;
 
-    InBoardObject(Position _pos, PiecePtr _piece) : pos(_pos), piece(_piece) {}
-    InBoardObject(Position _pos) : pos(_pos), piece(nullptr) {}
-    InBoardObject() : pos(Position(0,0)), piece(nullptr) {}
+    InBoardObject(Position _pos, PiecePtr _piece) : pos(_pos), piece(_piece), leader(false) {}
+    InBoardObject(Position _pos) : pos(_pos), piece(nullptr), leader(false) {}
+    InBoardObject() : pos(Position(0,0)), piece(nullptr), leader(false) {}
 };
 
 using BoardObjectPtr = std::shared_ptr<InBoardObject>;
@@ -56,6 +57,8 @@ public:
     //Retorna si mata o no a la pieza, pues hay piezas con mas vida
     virtual bool hurt(PiecePtr attacker) = 0;
     bool is_valid(Position pos);
+    virtual int get_material_value() const = 0;
+    virtual int get_max_mobility() const = 0;
     IPiece();
     virtual ~IPiece() = default;
 

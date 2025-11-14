@@ -81,3 +81,14 @@ bool Tower::hurt(PiecePtr attacker)
 {
     return true;
 }
+
+
+int Tower::get_material_value() const
+{
+    return 7;
+}
+
+int Tower::get_max_mobility() const
+{
+    return 8;
+}

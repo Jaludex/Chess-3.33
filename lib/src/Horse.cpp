@@ -79,3 +79,15 @@ bool Horse::hurt(PiecePtr attacker)
 {
     return true;
 }
+
+
+int Horse::get_material_value() const
+{
+    return 5;
+}
+
+
+int Horse::get_max_mobility() const
+{
+    return 8;
+}

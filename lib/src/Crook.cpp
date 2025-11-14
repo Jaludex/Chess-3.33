@@ -90,3 +90,13 @@ bool Crook::hurt(PiecePtr attacker)
 {
     return true;
 }
+
+int Crook::get_material_value() const
+{
+    return 3;
+}
+
+int Crook::get_max_mobility() const
+{
+    return 3;
+}

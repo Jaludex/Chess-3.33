@@ -1,15 +1,16 @@
 #pragma once
 
-#include <IPiece.hpp>
+#include <GameEvaluator.hpp>
+#include <Board.hpp>
 #include <list>
 #include <functional>
 #include <limits>
 #include <algorithm>
 #include <memory>
-
-
-using BoardObjectPtr = std::shared_ptr<InBoardObject>;
-using BoardL = std::list<BoardObjectPtr>;
+#include "Gametree.hpp"
+#include "Board.hpp" 
+#include "Trapper.hpp"
+#include <map>
 
 
 struct Play
@@ -33,8 +34,8 @@ class GameTree
 {
 private:
     std::shared_ptr<GameNode> current_board;
-
-    std::function<int(const BoardL&)> f_heuristica;
+    
+    GameEvaluator heuristica;
 
     int minimax(std::shared_ptr<GameNode> nodo, int deepness, int alpha, int beta, bool Maximizing);
     
@@ -43,7 +44,7 @@ private:
     BoardL apply_play(const BoardL& original, const Play& move);
 
 public:
-    GameTree(BoardL, std::function<int(const BoardL&)> heuristica);
+    GameTree(BoardL beggining, GameEvaluator heuristica);
     
     Play find_best_play(int deepness);
 };

@@ -74,3 +74,13 @@ bool Archer::hurt(PiecePtr attacker)
 {
     return true;
 }
+
+int Archer::get_material_value() const
+{
+    return 6;
+}
+
+int Archer::get_max_mobility() const
+{
+    return 2;
+}
