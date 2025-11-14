@@ -1,6 +1,6 @@
 #include "Crook.hpp"
 
-const std::vector<Position> Crook::directions = {Position(0, 2), Position(1, -1), Position(-1, -1)};
+const std::vector<Position> Crook::directions = {Position(0, 1), Position(1, -1), Position(-1, -1)};
 
 sf::Color Crook::white = sf::Color(150,200,230,225);
 sf::Color Crook::black = sf::Color(50,100,130,225);
