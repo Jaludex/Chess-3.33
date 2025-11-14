@@ -43,7 +43,7 @@ enum class PieceType
     Bomb
 };
 
-class IPiece : public IGameObject
+class IPiece : public virtual IGameObject
 {
 public:
     bool get_team() const;

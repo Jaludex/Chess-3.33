@@ -18,7 +18,7 @@
 class PieceInstantiator : public IGameObject
 {
     public:
-    PieceInstantiator(PieceType _type, bool _team, sf::Vector2f position);
+    PieceInstantiator(PieceType _type, bool _team, sf::Vector2f position, sf::Texture texture);
     virtual void update(float dt) override;
     virtual void render(sf::RenderWindow& window) override;
     void return_to_origin();
