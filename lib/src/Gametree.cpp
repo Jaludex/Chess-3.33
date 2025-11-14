@@ -1,10 +1,10 @@
 #include <Gametree.hpp>
 
-GameTree::GameTree(BoardL beggining, GameEvaluator _heuristica)
+GameTree::GameTree(BoardL initial_board, GameEvaluator _heuristic)
 {
-    this->heuristica = _heuristica;
+    this->heuristic = _heuristic;
     this->current_board = std::make_shared<GameNode>();
-    this->current_board->board = beggining;
+    this->current_board->board = initial_board;
     this->current_board->dad = Play();
     this->current_board->result_minimax = 0;
 }
@@ -16,7 +16,7 @@ Play GameTree::find_best_play(int deepness)
     int alpha = -(std::numeric_limits<int>::max());
     int beta = std::numeric_limits<int>::max();
 
-    std::list<Play> possible_plays = this->generate_all_plays(current_board->board, true);
+    std::list<Play> possible_plays = this->generate_all_plays(current_board->board, false);
 
     for(const Play& play : possible_plays)
     {
@@ -45,7 +45,7 @@ int GameTree::minimax(std::shared_ptr<GameNode> node, int deepness, int alpha, i
     //Nos falta meterle que verifique fin de juego, pa eso necesito al augusto
     if (deepness == 0)
     {
-        int score = this->heuristica.eval(node->board);
+        int score = this->heuristic.eval(node->board);
         node->result_minimax = score;
         return score;
     }  
@@ -133,7 +133,7 @@ std::list<Play> GameTree::generate_all_plays(const BoardL& current, bool team)
 
                 Play new_play;
                 new_play.moving_piece = slot;
-                new_play.destino = move_target->pos;
+                new_play.destination = move_target->pos;
                 new_play.captured_piece = captured_slot; 
                 
                 all_plays.push_back(new_play);
@@ -171,7 +171,7 @@ BoardL GameTree::apply_play(const BoardL& original, const Play& move)
     }
     if (new_moving_slot)
     {
-        new_moving_slot->pos = move.destino;
+        new_moving_slot->pos = move.destination;
     }
 
     if (new_moving_slot->piece->get_piece_type() == PieceType::Trapper)
@@ -188,4 +188,14 @@ BoardL GameTree::apply_play(const BoardL& original, const Play& move)
 
 
     return new_state;
+}
+
+void GameTree::set_current_board(const BoardL& current)
+{
+    current_board->board = current;
+}
+
+void GameTree::initial_game_eval()
+{
+    heuristic.initial_eval(current_board->board);
 }

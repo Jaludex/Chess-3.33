@@ -1,6 +1,7 @@
 #pragma once
 
 #include <IGameState.hpp>
+#include <Gametree.hpp>
 #include <Board.hpp>
 #include <memory>
 #include <vector>
@@ -30,7 +31,10 @@ private:
     bool player_turn;
     std::vector<PieceInstantPtr> instantiators;
 
+    GameTree bot; 
+
     PieceInstantPtr clicked_instantiator(sf::Vector2i mouse_position);
+    bool check_winner();
     // Challenges
     
 public:

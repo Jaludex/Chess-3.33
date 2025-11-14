@@ -16,10 +16,10 @@
 struct Play
 {
     BoardObjectPtr moving_piece; 
-    Position destino;             
+    Position destination;             
     BoardObjectPtr captured_piece; 
 
-    Play() : moving_piece(nullptr), destino(0, 0), captured_piece(nullptr) {}
+    Play() : moving_piece(nullptr), destination(0, 0), captured_piece(nullptr) {}
 };
 
 struct GameNode
@@ -35,16 +35,18 @@ class GameTree
 private:
     std::shared_ptr<GameNode> current_board;
     
-    GameEvaluator heuristica;
+    GameEvaluator heuristic;
 
-    int minimax(std::shared_ptr<GameNode> nodo, int deepness, int alpha, int beta, bool Maximizing);
+    int minimax(std::shared_ptr<GameNode> node, int deepness, int alpha, int beta, bool Maximizing);
     
     std::list<Play> generate_all_plays(const BoardL& current, bool bot_turn);
     
     BoardL apply_play(const BoardL& original, const Play& move);
 
 public:
-    GameTree(BoardL beggining, GameEvaluator heuristica);
+    GameTree(BoardL initial_board, GameEvaluator _heuristic);
     
     Play find_best_play(int deepness);
+    void set_current_board(const BoardL& current);
+    void initial_game_eval();
 };

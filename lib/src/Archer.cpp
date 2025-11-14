@@ -62,10 +62,18 @@ std::vector<BoardObjectPtr> Archer::set_valid_moves(const std::list<BoardObjectP
     }
 
     if (free_front) valid_moves.push_back(std::make_shared<InBoardObject>(relative_moves.at(0), nullptr));
-    if (retrieve_move->piece || (retrieve_move->pos.x >= 0 && retrieve_move->pos.x <= 5 && retrieve_move->pos.y >= 0 && retrieve_move->pos.y <= 5))
+    if (retrieve_move->piece)
+    {
+        if ((retrieve_move->piece->get_team() != this->team))
+        {
+            valid_moves.push_back(retrieve_move);   
+        }
+    }
+    else if (retrieve_move->pos.x >= 0 && retrieve_move->pos.x <= 5 && retrieve_move->pos.y >= 0 && retrieve_move->pos.y <= 5)
     {
         valid_moves.push_back(retrieve_move);   
     }
+    
     
     return valid_moves;
 }

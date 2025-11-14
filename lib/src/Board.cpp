@@ -66,6 +66,11 @@ size_t Board::size()
     return elements.size();
 }
 
+BoardL Board::get_elements()
+{
+    return elements;
+}
+
 BoardObjectPtr Board::get_position(short x, short y)
 {
     if ((x >= Board::side_lenght) || (y >= Board::side_lenght)) throw std::invalid_argument("Coordinate outside of board");
@@ -116,48 +121,10 @@ bool Board::drop_piece(BoardObjectPtr element)
     if (sprite.getGlobalBounds().contains(element->piece->get_sprite().getPosition()))
     {
         Position position_on_board = get_square_by_coords(static_cast<sf::Vector2i>(element->piece->get_sprite().getPosition()));
-        auto valid_moves = element->piece->get_valid_moves();
-        for (auto move : valid_moves)
-        {
-            if (move->pos == position_on_board)
-            {
-                it_moves = true;
-                if (move->piece)
-                {
-                    if (element->piece->get_piece_type() == PieceType::Portal && element->piece->get_team() == move->piece->get_team())
-                    {                    
-                        move->pos = element->pos;
-                        set_piece_sprite(move);
-                    }
-                    else if (move->piece->hurt(element->piece))
-                    {
-                        auto it = std::find(elements.begin(), elements.end(), (move->piece->get_piece_type() == PieceType::Bomb) ? element : move);
-                        if (it != elements.end())
-                        {
-                            elements.erase(it);
-                        }
-                    }
-                }
-
-                element->pos = position_on_board;
-                break;
-            }
-        }
+        it_moves = this->move_piece(element, position_on_board);
     }
 
-    if (it_moves)
-    {
-        
-        if (element->piece->get_piece_type() == PieceType::Trapper)
-        {
-            add_piece(std::make_shared<InBoardObject>(old_pos, std::make_shared<Bomb>(element->piece->get_team())));
-        }
-        
-        bool team_of_bombs_to_remove = !element->piece->get_team(); 
-        elements.erase(std::remove_if(elements.begin(), elements.end(),
-            [team_of_bombs_to_remove](BoardObjectPtr element) {
-                return element->piece->get_piece_type() == PieceType::Bomb && element->piece->get_team() == team_of_bombs_to_remove;}), elements.end());
-    }
+    if (it_moves) update_bombs(element, old_pos);
     
     set_piece_sprite(element);
     return it_moves;
@@ -167,5 +134,51 @@ void Board::add_piece(BoardObjectPtr piece)
 {
     elements.push_front(piece);
     set_piece_sprite(piece);
+}
+
+bool Board::move_piece(BoardObjectPtr element, Position destination)
+{
+    bool it_moves = false;
+    auto valid_moves = element->piece->get_valid_moves();
+    for (auto move : valid_moves)
+    {
+        if (move->pos == destination)
+        {
+            it_moves = true;
+            if (move->piece)
+            {
+                if (element->piece->get_piece_type() == PieceType::Portal && element->piece->get_team() == move->piece->get_team())
+                {                    
+                    move->pos = element->pos;
+                    set_piece_sprite(move);
+                }
+                else if (move->piece->hurt(element->piece))
+                {
+                    auto it = std::find(elements.begin(), elements.end(), (move->piece->get_piece_type() == PieceType::Bomb) ? element : move);
+                    if (it != elements.end())
+                    {
+                        elements.erase(it);
+                    }
+                }
+            }
+            element->pos = destination;
+            break;
+        }
+    }
+
+    return it_moves;
+}
+
+void Board::update_bombs(BoardObjectPtr moved_piece, Position old_position)
+{
+    if (moved_piece->piece->get_piece_type() == PieceType::Trapper)
+        {
+            add_piece(std::make_shared<InBoardObject>(old_position, std::make_shared<Bomb>(moved_piece->piece->get_team())));
+        }
+        
+        bool team_of_bombs_to_remove = !moved_piece->piece->get_team(); 
+        elements.erase(std::remove_if(elements.begin(), elements.end(),
+            [team_of_bombs_to_remove](BoardObjectPtr element) {
+                return element->piece->get_piece_type() == PieceType::Bomb && element->piece->get_team() == team_of_bombs_to_remove;}), elements.end());
 }
 
