@@ -1,5 +1,6 @@
 #pragma once
 
+#include <SpriteManager.hpp>
 #include <cstdint>
 #include <IGameObject.hpp>
 #include <memory>

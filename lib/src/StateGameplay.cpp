@@ -39,45 +39,20 @@ void StateGameplay::init()
     //instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Archer, false, sf::Vector2f(width - xmargin - xoffset, ymargin + 3*yoffset)));
     //instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Portal, false, sf::Vector2f(width - xmargin - xoffset, ymargin + 4*yoffset)));
 
-    load_texture_piece("white_pawn", "bin/assets/WhitePawn.png");
-    load_texture_piece("white_rook", "bin/assets/WhiteRook.png");
-    load_texture_piece("white_bishop", "bin/assets/WhiteBishop.png");
-    load_texture_piece("white_horse", "bin/assets/WhiteHorse.png");
-    load_texture_piece("white_queen", "bin/assets/WhiteQueen.png");
-    load_texture_piece("white_portal", "bin/assets/WhitePortal.png");
-    load_texture_piece("white_crook", "bin/assets/WhiteCrook.png");
-    load_texture_piece("white_archer", "bin/assets/WhiteArcher.png");
-    load_texture_piece("white_trapper", "bin/assets/WhiteTrapper.png");
-    load_texture_piece("white_trap", "bin/assets/WhiteTrap.png");
-    board.add_piece(std::make_shared<InBoardObject>(Position(0,0), std::make_shared<Tower>(true,get_piece_texture("white_rook"))));
-    load_texture_piece("black_pawn", "bin/assets/BlackPawn.png");
-    load_texture_piece("black_rook", "bin/assets/BlackRook.png");
-    load_texture_piece("black_bishop", "bin/assets/BlackBishop.png");
-    load_texture_piece("black_horse", "bin/assets/BlackHorse.png");
-    load_texture_piece("black_queen", "bin/assets/BlackQueen.png");
-    load_texture_piece("black_portal", "bin/assets/BlackPortal.png");
-    load_texture_piece("black_crook", "bin/assets/BlackCrook.png");
-    load_texture_piece("black_archer", "bin/assets/BlackArcher.png");
-    load_texture_piece("black_trapper","bin/assets/BlackTrapper.png");
-    load_texture_piece("black_trap", "bin/assets/BlackTrap.png");
+    board.add_piece(std::make_shared<InBoardObject>(Position(3, 5), std::make_shared<Queen>(true, SpriteManager::get_piece_texture("white_queen"))));
+    board.add_piece(std::make_shared<InBoardObject>(Position(1, 4), std::make_shared<Archer>(true, SpriteManager::get_piece_texture("white_archer"))));
+    board.add_piece(std::make_shared<InBoardObject>(Position(5, 5), std::make_shared<Crook>(true, SpriteManager::get_piece_texture("white_crook"))));
+    
+    board.add_piece(std::make_shared<InBoardObject>(Position(0, 1), std::make_shared<Horse>(false, SpriteManager::get_piece_texture("black_horse"))));
+    board.add_piece(std::make_shared<InBoardObject>(Position(2, 1), std::make_shared<Queen>(false, SpriteManager::get_piece_texture("black_queen"))));
+    board.add_piece(std::make_shared<InBoardObject>(Position(1, 1), std::make_shared<Archer>(false, SpriteManager::get_piece_texture("black_archer"))));
+    board.add_piece(std::make_shared<InBoardObject>(Position(1, 0), std::make_shared<Portal>(false, SpriteManager::get_piece_texture("black_portal"))));
+    board.add_piece(std::make_shared<InBoardObject>(Position(5, 1), std::make_shared<Trapper>(false, SpriteManager::get_piece_texture("black_trapper"))));
 
     bot.set_current_board(board.get_elements());
     bot.initial_game_eval();
 }
 
-void StateGameplay::load_texture_piece(std::string type, std::string file)
-{
-    sf::Texture texture;
-    if (!texture.loadFromFile(file))
-    {
-        throw(std::runtime_error("Texture not found: " + file));
-    }
-        texture_map[type] = texture;
-}
-const sf::Texture& StateGameplay::get_piece_texture(std::string type)
-{
-    return texture_map.at(type);
-}
 void StateGameplay::terminate()
 {
     //si usamos shared pointers entonces no necesitamos eliminar la pieza creada en init

@@ -1,9 +1,11 @@
 #include <SFML/Graphics.hpp>
+#include <SpriteManager.hpp>
 #include <StateGameplay.hpp>
 #include <Board.hpp>
 
 int main()
 {
+
     auto window = sf::RenderWindow(sf::VideoMode({1080u, 810u}), "Chess 3.33 Alpha");
     window.setFramerateLimit(144);
     sf::Clock clock; 
@@ -12,6 +14,16 @@ int main()
     const sf::Time target_time = sf::seconds(1)/60.f;
 
     const sf::Color Cerulean = sf::Color(130,130,200,255);
+
+    try
+    {
+        SpriteManager::init();
+    }
+    catch(const std::exception& e)
+    {
+        std::cerr << e.what() << '\n';
+        return 1;
+    }
 
     StateGameplay gamestate(window);
     gamestate.init();

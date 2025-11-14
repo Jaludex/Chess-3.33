@@ -10,7 +10,7 @@ sf::Color Archer::get_color(bool _team)
 return (_team)? Archer::white : Archer::black;
 }
 
-Archer::Archer(bool team, sf::Texture texture) : IGameObject(texture)
+Archer::Archer(bool team, sf::Texture texture) : IGameObject(texture) 
 {
     set_team(team);
     set_piece_type(PieceType::Archer);

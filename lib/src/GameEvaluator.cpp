@@ -9,8 +9,6 @@ void GameEvaluator::initial_eval(BoardL& pieces)
     GameEvaluator::initial_material_sum_w = 0;
     GameEvaluator::initial_material_sum_b = 0;
 
-    std::cout << "Initial eval\n";
-
     for(auto p : pieces)
     {
         if(p->piece->get_team())
@@ -22,8 +20,6 @@ void GameEvaluator::initial_eval(BoardL& pieces)
             GameEvaluator::initial_material_sum_b += p->piece->get_material_value();
         }
     }
-
-    std::cout << "Initial eval end\n";
 }
 
 int GameEvaluator::eval(BoardL& pieces)
@@ -39,11 +35,8 @@ int GameEvaluator::eval(BoardL& pieces)
     int danger_b = 0;
     int danger_w = 0;
 
-    std::cout << "eval\n";
-
     for (auto p : pieces)
     {
-        std::cout << "evaling one piece\n";
         if (p->piece->get_team())
         {
             material_w += p->piece->get_material_value();
@@ -68,8 +61,6 @@ int GameEvaluator::eval(BoardL& pieces)
         }
     }
 
-    std::cout << "eval all pieces\n";
-
     if(leader_w)
     {
         danger_w -= (leader_w->pos.x + leader_w->pos.y) * material_b;
@@ -91,8 +82,6 @@ int GameEvaluator::eval(BoardL& pieces)
     {
         mobility_value = 50 * ((mobility_b / max_mobility_b) + 1 - (mobility_w / max_mobility_w));
     }
-
-    std::cout << "settet material and mobility values\n";
 
     return (material_value * 5) + (mobility_value * 3);
 }

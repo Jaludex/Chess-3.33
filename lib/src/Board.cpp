@@ -173,7 +173,7 @@ void Board::update_bombs(BoardObjectPtr moved_piece, Position old_position)
 {
     if (moved_piece->piece->get_piece_type() == PieceType::Trapper)
         {
-            add_piece(std::make_shared<InBoardObject>(old_position, std::make_shared<Bomb>(moved_piece->piece->get_team())));
+            add_piece(std::make_shared<InBoardObject>(old_position, std::make_shared<Bomb>(moved_piece->piece->get_team(), (moved_piece->piece->get_team()) ? SpriteManager::get_piece_texture("white_trap") : SpriteManager::get_piece_texture("black_trap"))));
         }
         
         bool team_of_bombs_to_remove = !moved_piece->piece->get_team(); 

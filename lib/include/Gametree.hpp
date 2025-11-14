@@ -1,6 +1,7 @@
 #pragma once
 
 #include <GameEvaluator.hpp>
+#include <SpriteManager.hpp>
 #include <Board.hpp>
 #include <list>
 #include <functional>
