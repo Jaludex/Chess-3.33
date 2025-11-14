@@ -1,11 +1,13 @@
 #include <StateGameplay.hpp>
 
-StateGameplay::StateGameplay(sf::RenderWindow& _window) : board(sf::Texture ({(unsigned int)(Board::side_lenght * Board::cell_lenght),
+StateGameplay::StateGameplay(sf::RenderWindow* _window) : board(sf::Texture ({(unsigned int)(Board::side_lenght * Board::cell_lenght),
                                                                               (unsigned int)(Board::side_lenght * Board::cell_lenght)})), player_turn(true)
 {
-    window = &_window;
+    window = _window;
+    type = StateType::Gameplay;
+    go_to = StateType::None;
 }
-StateGameplay::~StateGameplay(){}
+StateGameplay::~StateGameplay() {}
 
 void StateGameplay::init()
 {
@@ -53,11 +55,6 @@ void StateGameplay::update(float dt)
     drag();
     
     board.update(dt);
-}
-
-sf::Vector2i StateGameplay::get_relative_mouse_position()
-{
-    return sf::Mouse::getPosition(*window);
 }
 
 void StateGameplay::drag()
