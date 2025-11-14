@@ -60,6 +60,7 @@ void Board::render_pieces(sf::RenderWindow& window)
         element->piece->render(window);
     }
 }
+
 size_t Board::size()
 {
     return elements.size();
@@ -112,7 +113,6 @@ bool Board::drop_piece(BoardObjectPtr element)
 {
     bool it_moves = false;
     auto old_pos = element->pos;
-    
     if (sprite.getGlobalBounds().contains(element->piece->get_sprite().getPosition()))
     {
         Position position_on_board = get_square_by_coords(static_cast<sf::Vector2i>(element->piece->get_sprite().getPosition()));
@@ -150,7 +150,7 @@ bool Board::drop_piece(BoardObjectPtr element)
         
         if (element->piece->get_piece_type() == PieceType::Trapper)
         {
-            add_piece(std::make_shared<InBoardObject>(old_pos, std::make_shared<Bomb>(element->piece->get_team(), element->piece->get_sprite().getTexture())));
+            add_piece(std::make_shared<InBoardObject>(old_pos, std::make_shared<Bomb>(element->piece->get_team(), element->piece->texture)));
         }
         
         bool team_of_bombs_to_remove = !element->piece->get_team(); 
@@ -168,4 +168,5 @@ void Board::add_piece(BoardObjectPtr piece)
     elements.push_front(piece);
     set_piece_sprite(piece);
 }
+
 
