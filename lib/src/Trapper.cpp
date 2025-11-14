@@ -10,7 +10,7 @@ sf::Color Bomb::get_color(bool _team)
 return (_team)? Bomb::white : Bomb::black;
 }
 
-Bomb::Bomb(bool team)
+Bomb::Bomb(bool team, sf::Texture texture) : IGameObject(texture)
 {
     set_team(team);
     set_piece_type(PieceType::Bomb);
@@ -23,13 +23,7 @@ void Bomb::update(float dt)
 
 void Bomb::render(sf::RenderWindow& window)
 {
-    auto triangle = sf::CircleShape(45,(size_t)3);
-    triangle.setOrigin({45.f,45.f});
-    triangle.setScale({1.f,2.f});
-    auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
-    triangle.setPosition(this->sprite.getPosition() + offset);
-    triangle.setFillColor(get_color(team));
-    window.draw(triangle);
+    window.draw(sprite);
 }
 
 std::vector<BoardObjectPtr> Bomb::set_valid_moves(const std::list<BoardObjectPtr>& pieces, Position current) 
@@ -40,7 +34,7 @@ std::vector<BoardObjectPtr> Bomb::set_valid_moves(const std::list<BoardObjectPtr
 
 bool Bomb::hurt(PiecePtr attacker)
 {
-    attacker->hurt(std::make_shared<Bomb>(this));
+    attacker->hurt(std::make_shared<Bomb>(this, this->get_sprite().getTexture()));
     return true;
 }
 
@@ -63,7 +57,7 @@ sf::Color Trapper::get_color(bool _team)
 return (_team)? Trapper::white : Trapper::black;
 }
 
-Trapper::Trapper(bool team)
+Trapper::Trapper(bool team, sf::Texture texture) : IGameObject(texture)
 {
     set_team(team);
     set_piece_type(PieceType::Trapper);
@@ -76,13 +70,7 @@ void Trapper::update(float dt)
 
 void Trapper::render(sf::RenderWindow& window)
 {
-    auto triangle = sf::CircleShape(45,(size_t)3);
-    triangle.setOrigin({45.f,45.f});
-    triangle.setScale({1.f,2.f});
-    auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
-    triangle.setPosition(this->sprite.getPosition() + offset);
-    triangle.setFillColor(get_color(team));
-    window.draw(triangle);
+    window.draw(sprite);
 }
 
 std::vector<BoardObjectPtr> Trapper::set_valid_moves(const std::list<BoardObjectPtr>& pieces, Position current)

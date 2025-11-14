@@ -12,7 +12,7 @@ Position Position::operator+(Position it)
     return Position(x + it.x, y + it.y);
 }
 
-IPiece::IPiece() : IGameObject(sf::Texture(sf::Texture ({(unsigned int)(100),(unsigned int)(100)})))
+IPiece::IPiece()
 {}
 
 void IPiece::set_piece_type(PieceType type)

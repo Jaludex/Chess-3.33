@@ -11,7 +11,7 @@ sf::Color Horse::get_color(bool _team)
 return (_team)? Horse::white : Horse::black;
 }
 
-Horse::Horse(bool team)
+Horse::Horse(bool team, sf::Texture texture) : IGameObject(texture)
 {
     set_team(team);
     set_piece_type(PieceType::Horse);
@@ -24,13 +24,7 @@ void Horse::update(float dt)
 
 void Horse::render(sf::RenderWindow& window)
 {
-    auto triangle = sf::CircleShape(45,(size_t)3);
-    triangle.setOrigin({45.f,45.f});
-    triangle.setScale({1.f,2.f});
-    auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
-    triangle.setPosition(this->sprite.getPosition() + offset);
-    triangle.setFillColor(get_color(team));
-    window.draw(triangle);
+    window.draw(sprite);
 }
 
 std::vector<BoardObjectPtr> Horse::set_valid_moves(const std::list<BoardObjectPtr>& pieces, Position current) 

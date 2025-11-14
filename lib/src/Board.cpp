@@ -2,17 +2,17 @@
 
 Board::Board(sf::Texture texture) : IGameObject(texture)
 {
-    //empty
+    sprite.setScale(sf::Vector2f(1.0,1.0));
 }
 
 Board::Board(sf::Texture texture, std::list<BoardObjectPtr> _elements) : IGameObject(texture), elements(_elements)
 {
-    //empty
+    sprite.setScale(sf::Vector2f(1.0,1.0));
 }
 
 Board::Board(const Board& _board) : IGameObject(_board.sprite.getTexture()), elements(_board.elements)
 {
-    //empty
+    sprite.setScale(sf::Vector2f(1.0,1.0));
 }
 
 void Board::update(float dt)

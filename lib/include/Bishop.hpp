@@ -8,7 +8,7 @@
 class Bishop : public IPiece
 {
 public:
-    Bishop(bool team);
+    Bishop(bool team, sf::Texture texture);
 
     virtual ~Bishop() = default;
     virtual void update(float dt) override;

@@ -8,7 +8,7 @@ sf::Color Pawn::get_color(bool _team)
 return (_team)? Pawn::white : Pawn::black;
 }
 
-Pawn::Pawn(bool team)
+Pawn::Pawn(bool team, sf::Texture texture) : IGameObject(texture)
 {
     set_team(team);
     set_piece_type(PieceType::Pawn);
@@ -21,13 +21,7 @@ void Pawn::update(float dt)
 
 void Pawn::render(sf::RenderWindow& window)
 {
-    auto triangle = sf::CircleShape(45,(size_t)12);
-    triangle.setOrigin({45.f,45.f});
-    triangle.setScale({1.f,2.f});
-    auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
-    triangle.setPosition(this->sprite.getPosition() + offset);
-    triangle.setFillColor(get_color(team));
-    window.draw(triangle);
+    window.draw(sprite);
 }
 
 std::vector<BoardObjectPtr> Pawn::set_valid_moves(const std::list<BoardObjectPtr>& pieces, Position current) 
@@ -55,14 +49,14 @@ std::vector<BoardObjectPtr> Pawn::set_valid_moves(const std::list<BoardObjectPtr
         }
     }
     
-    if (!front->piece && front->pos.x <= 5, front->pos.y <= 5)
+    if (!front->piece && front->pos.x <= 5 && front->pos.y <= 5 && front->pos.x >= 0 && front->pos.y >= 0)
     {
         valid_moves.push_back(front);
     }
 
-    if (left)   valid_moves.push_back(left);
+    if (left->piece)   valid_moves.push_back(left);
 
-    if (right)  valid_moves.push_back(right);
+    if (right->piece)  valid_moves.push_back(right);
     
     return valid_moves;    
 }

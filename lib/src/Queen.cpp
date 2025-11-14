@@ -12,7 +12,7 @@ return (_team)? Queen::white : Queen::black;
 }
                                                     
 
-Queen::Queen(bool team)
+Queen::Queen(bool team, sf::Texture texture) : IGameObject(texture)
 {
     set_team(team);
     set_piece_type(PieceType::Queen);

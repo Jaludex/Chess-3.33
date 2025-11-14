@@ -10,7 +10,7 @@ sf::Color Archer::get_color(bool _team)
 return (_team)? Archer::white : Archer::black;
 }
 
-Archer::Archer(bool team)
+Archer::Archer(bool team, sf::Texture texture) : IGameObject(texture)
 {
     set_team(team);
     set_piece_type(PieceType::Archer);
@@ -23,13 +23,7 @@ void Archer::update(float dt)
 
 void Archer::render(sf::RenderWindow& window)
 {
-    auto triangle = sf::CircleShape(45,(size_t)5);
-    triangle.setOrigin({45.f,45.f});
-    triangle.setScale({1.f,2.f});
-    auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
-    triangle.setPosition(this->sprite.getPosition() + offset);
-    triangle.setFillColor(get_color(team));
-    window.draw(triangle);
+    window.draw(sprite);
 }
 
 std::vector<BoardObjectPtr> Archer::set_valid_moves(const std::list<BoardObjectPtr>& elements, Position current)
