@@ -39,15 +39,15 @@ void StateGameplay::init()
     instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Archer, false, sf::Vector2f(width - (xmargin + 100) - xoffset, ymargin + 3*yoffset), SpriteManager::get_piece_texture("black_archer"))); 
     instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Portal, false, sf::Vector2f(width - (xmargin + 100) - xoffset, ymargin + 4*yoffset), SpriteManager::get_piece_texture("black_portal"))); 
 
-    board.add_piece(std::make_shared<InBoardObject>(Position(3, 5), std::make_shared<Queen>(true, SpriteManager::get_piece_texture("white_queen"))));
-    board.add_piece(std::make_shared<InBoardObject>(Position(1, 4), std::make_shared<Archer>(true, SpriteManager::get_piece_texture("white_archer"))));
-    board.add_piece(std::make_shared<InBoardObject>(Position(5, 5), std::make_shared<Crook>(true, SpriteManager::get_piece_texture("white_crook"))));
-    
-    board.add_piece(std::make_shared<InBoardObject>(Position(0, 1), std::make_shared<Horse>(false, SpriteManager::get_piece_texture("black_horse"))));
-    board.add_piece(std::make_shared<InBoardObject>(Position(2, 1), std::make_shared<Queen>(false, SpriteManager::get_piece_texture("black_queen"))));
-    board.add_piece(std::make_shared<InBoardObject>(Position(1, 1), std::make_shared<Archer>(false, SpriteManager::get_piece_texture("black_archer"))));
-    board.add_piece(std::make_shared<InBoardObject>(Position(1, 0), std::make_shared<Portal>(false, SpriteManager::get_piece_texture("black_portal"))));
-    board.add_piece(std::make_shared<InBoardObject>(Position(5, 1), std::make_shared<Trapper>(false, SpriteManager::get_piece_texture("black_trapper"))));
+    //board.add_piece(std::make_shared<InBoardObject>(Position(3, 5), std::make_shared<Queen>(true, SpriteManager::get_piece_texture("white_queen"))));
+    //board.add_piece(std::make_shared<InBoardObject>(Position(1, 4), std::make_shared<Archer>(true, SpriteManager::get_piece_texture("white_archer"))));
+    //board.add_piece(std::make_shared<InBoardObject>(Position(5, 5), std::make_shared<Crook>(true, SpriteManager::get_piece_texture("white_crook"))));
+    //
+    //board.add_piece(std::make_shared<InBoardObject>(Position(0, 1), std::make_shared<Horse>(false, SpriteManager::get_piece_texture("black_horse"))));
+    //board.add_piece(std::make_shared<InBoardObject>(Position(2, 1), std::make_shared<Queen>(false, SpriteManager::get_piece_texture("black_queen"))));
+    //board.add_piece(std::make_shared<InBoardObject>(Position(1, 1), std::make_shared<Archer>(false, SpriteManager::get_piece_texture("black_archer"))));
+    //board.add_piece(std::make_shared<InBoardObject>(Position(1, 0), std::make_shared<Portal>(false, SpriteManager::get_piece_texture("black_portal"))));
+    //board.add_piece(std::make_shared<InBoardObject>(Position(5, 1), std::make_shared<Trapper>(false, SpriteManager::get_piece_texture("black_trapper"))));
 
     bot.set_current_board(board.get_elements());
     bot.initial_game_eval();
@@ -66,19 +66,21 @@ void StateGameplay::update(float dt)
     }
     else
     {
+        sf::sleep(sf::seconds(1.f));
         auto bot_play = bot.find_best_play(2);
 
-        Position old_position = bot_play.moving_piece->pos;
+        if (bot_play.moving_piece)
+        {
+            Position old_position = bot_play.moving_piece->pos;
 
-        board.move_piece(bot_play.moving_piece, bot_play.destination);
-        board.set_piece_sprite(bot_play.moving_piece);
+            board.move_piece(bot_play.moving_piece, bot_play.destination);
+            board.set_piece_sprite(bot_play.moving_piece);
 
-        board.update_bombs(bot_play.moving_piece, old_position);
+            board.update_bombs(bot_play.moving_piece, old_position);
+        }
 
         player_turn = true;
     }
-    
-    
     
     board.update(dt);
 }
@@ -86,11 +88,6 @@ void StateGameplay::update(float dt)
 sf::Vector2i StateGameplay::get_relative_mouse_position()
 {
     return sf::Mouse::getPosition(*window);
-}
-
-bool check_winner()
-{
-
 }
 
 void StateGameplay::drag()
