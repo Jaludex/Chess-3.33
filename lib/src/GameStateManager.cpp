@@ -1,6 +1,6 @@
 #include <GameStateManager.hpp>
 
-GameStateManager::GameStateManager(sf::RenderWindow& _window) : window(&_window)
+GameStateManager::GameStateManager(*sf::RenderWindow& _window) : window(_window)
 {
 
 }
@@ -10,13 +10,15 @@ GameStateManager::~GameStateManager()
 }
 
 void GameStateManager::go_back()
-{
+{    
+    states.top().terminate();
     states.pop();
 }
 
 void GameStateManager::go_to(GameStatePtr new_state)
 {
     states.push(new_state);
+    new_state.init();
 }
 
 void GameStateManager::init()
@@ -30,14 +32,36 @@ void GameStateManager::init()
 
 void GameStateManager::update(float dt)
 {
-    //Logica para cambiar los states em base a su atributo de cambiar
+    switch(states.top()->go_to)
+    {
+    case StateType.MainMenu:
+        {
+            go_to(std::make_shared<StateGameplay>(this->window));
+        }       
+        break;
 
+    case StateType.Gameplay:
+        {
+            go_to(std::make_shared<StateMainMenu>(this->window));
+        }    
+        break;
+
+    case StateType.Return:
+        {
+            go_back();
+        }
+        break;
+
+    default:
+        break;
+    }
+    
     states.top()->update(dt);
 }
 
-void GameStateManager::render(sf::RenderWindow& window)
+void GameStateManager::render(sf::RenderWindow& _window)
 {
-    states.top()->render(window);
+    states.top()->render(_window);
 }
 
 void GameStateManager::terminate()

@@ -10,6 +10,7 @@ enum class StateType
     Gameover,
     Shop,
     Stats,
+    Return,
     None
 };
 
