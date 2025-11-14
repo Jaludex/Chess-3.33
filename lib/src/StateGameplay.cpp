@@ -1,7 +1,7 @@
 #include <StateGameplay.hpp>
 
 StateGameplay::StateGameplay(sf::RenderWindow& _window) : board(sf::Texture ({(unsigned int)(Board::side_lenght * Board::cell_lenght),
-                                                                              (unsigned int)(Board::side_lenght * Board::cell_lenght)})), player_turn(true)
+                                                                              (unsigned int)(Board::side_lenght * Board::cell_lenght)})), player_turn(true), bot(BoardL(), GameEvaluator())
 {
     window = &_window;
 }
@@ -19,63 +19,40 @@ void StateGameplay::init()
     float xoffset = Board::cell_lenght * 1.2f;
     float yoffset = Board::cell_lenght * 1.2f;
     float width = (float)window->getSize().x;
+    //instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Pawn, true, sf::Vector2f(xmargin, ymargin)));
+    //instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Horse, true, sf::Vector2f(xmargin, ymargin + yoffset)));
+    //instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Bishop, true, sf::Vector2f(xmargin, ymargin + 2*yoffset)));
+    //instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Tower, true, sf::Vector2f(xmargin, ymargin + 3*yoffset)));
+    //instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Queen, true, sf::Vector2f(xmargin, ymargin + 4*yoffset)));
+    //instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Trapper, true, sf::Vector2f(xmargin + xoffset, ymargin + yoffset)));
+    //instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Crook, true, sf::Vector2f(xmargin + xoffset, ymargin + 2*yoffset)));
+    //instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Archer, true, sf::Vector2f(xmargin + xoffset, ymargin + 3*yoffset)));
+    //instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Portal, true, sf::Vector2f(xmargin + xoffset, ymargin + 4*yoffset)));
 
-    load_texture_piece("white_pawn", "bin/assets/WhitePawn.png");
-    load_texture_piece("white_rook", "bin/assets/WhiteRook.png");
-    load_texture_piece("white_bishop", "bin/assets/WhiteBishop.png");
-    load_texture_piece("white_horse", "bin/assets/WhiteHorse.png");
-    load_texture_piece("white_queen", "bin/assets/WhiteQueen.png");
-    load_texture_piece("white_portal", "bin/assets/WhitePortal.png");
-    load_texture_piece("white_crook", "bin/assets/WhiteCrook.png");
-    load_texture_piece("white_archer", "bin/assets/WhiteArcher.png");
-    load_texture_piece("white_trapper", "bin/assets/WhiteTrapper.png");
-    load_texture_piece("white_trap", "bin/assets/WhiteTrap.png");
-    board.add_piece(std::make_shared<InBoardObject>(Position(0,0), std::make_shared<Tower>(true,get_piece_texture("white_rook"))));
-    load_texture_piece("black_pawn", "bin/assets/BlackPawn.png");
-    load_texture_piece("black_rook", "bin/assets/BlackRook.png");
-    load_texture_piece("black_bishop", "bin/assets/BlackBishop.png");
-    load_texture_piece("black_horse", "bin/assets/BlackHorse.png");
-    load_texture_piece("black_queen", "bin/assets/BlackQueen.png");
-    load_texture_piece("black_portal", "bin/assets/BlackPortal.png");
-    load_texture_piece("black_crook", "bin/assets/BlackCrook.png");
-    load_texture_piece("black_archer", "bin/assets/BlackArcher.png");
-    load_texture_piece("black_trapper","bin/assets/BlackTrapper.png");
-    load_texture_piece("black_trap", "bin/assets/BlackTrap.png");
+    //instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Pawn, false, sf::Vector2f(width - xmargin, ymargin)));
+    //instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Horse, false, sf::Vector2f(width - xmargin, ymargin + yoffset)));
+    //instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Bishop, false, sf::Vector2f(width - xmargin, ymargin + 2*yoffset)));
+    //instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Tower, false, sf::Vector2f(width - xmargin, ymargin + 3*yoffset)));
+    //instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Queen, false, sf::Vector2f(width - xmargin, ymargin + 4*yoffset)));
+    //instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Trapper, false, sf::Vector2f(width - xmargin - xoffset, ymargin + yoffset)));
+    //instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Crook, false, sf::Vector2f(width - xmargin - xoffset, ymargin + 2*yoffset)));
+    //instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Archer, false, sf::Vector2f(width - xmargin - xoffset, ymargin + 3*yoffset)));
+    //instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Portal, false, sf::Vector2f(width - xmargin - xoffset, ymargin + 4*yoffset)));
 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Pawn, true, sf::Vector2f(xmargin, ymargin), get_piece_texture("white_pawn")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Horse, true, sf::Vector2f(xmargin, ymargin + yoffset),  get_piece_texture("white_horse")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Bishop, true, sf::Vector2f(xmargin, ymargin + 2*yoffset),  get_piece_texture("white_bishop")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Tower, true, sf::Vector2f(xmargin, ymargin + 3*yoffset),  get_piece_texture("white_rook")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Queen, true, sf::Vector2f(xmargin, ymargin + 4*yoffset), get_piece_texture("white_queen")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Trapper, true, sf::Vector2f(xmargin + xoffset, ymargin + yoffset), get_piece_texture("white_trapper")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Crook, true, sf::Vector2f(xmargin + xoffset, ymargin + 2*yoffset), get_piece_texture("white_crook")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Archer, true, sf::Vector2f(xmargin + xoffset, ymargin + 3*yoffset), get_piece_texture("white_archer")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Portal, true, sf::Vector2f(xmargin + xoffset, ymargin + 4*yoffset), get_piece_texture("white_portal")));
+    board.add_piece(std::make_shared<InBoardObject>(Position(3, 5), std::make_shared<Queen>(true, SpriteManager::get_piece_texture("white_queen"))));
+    board.add_piece(std::make_shared<InBoardObject>(Position(1, 4), std::make_shared<Archer>(true, SpriteManager::get_piece_texture("white_archer"))));
+    board.add_piece(std::make_shared<InBoardObject>(Position(5, 5), std::make_shared<Crook>(true, SpriteManager::get_piece_texture("white_crook"))));
+    
+    board.add_piece(std::make_shared<InBoardObject>(Position(0, 1), std::make_shared<Horse>(false, SpriteManager::get_piece_texture("black_horse"))));
+    board.add_piece(std::make_shared<InBoardObject>(Position(2, 1), std::make_shared<Queen>(false, SpriteManager::get_piece_texture("black_queen"))));
+    board.add_piece(std::make_shared<InBoardObject>(Position(1, 1), std::make_shared<Archer>(false, SpriteManager::get_piece_texture("black_archer"))));
+    board.add_piece(std::make_shared<InBoardObject>(Position(1, 0), std::make_shared<Portal>(false, SpriteManager::get_piece_texture("black_portal"))));
+    board.add_piece(std::make_shared<InBoardObject>(Position(5, 1), std::make_shared<Trapper>(false, SpriteManager::get_piece_texture("black_trapper"))));
 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Pawn, false, sf::Vector2f(width - xmargin, ymargin), get_piece_texture("black_pawn")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Horse, false, sf::Vector2f(width - xmargin, ymargin + yoffset), get_piece_texture("black_horse")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Bishop, false, sf::Vector2f(width - xmargin, ymargin + 2*yoffset), get_piece_texture("black_bishop")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Tower, false, sf::Vector2f(width - xmargin, ymargin + 3*yoffset), get_piece_texture("black_rook")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Queen, false, sf::Vector2f(width - xmargin, ymargin + 4*yoffset), get_piece_texture("black_queen")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Trapper, false, sf::Vector2f(width - xmargin - xoffset, ymargin + yoffset), get_piece_texture("black_trapper")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Crook, false, sf::Vector2f(width - xmargin - xoffset, ymargin + 2*yoffset), get_piece_texture("black_crook")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Archer, false, sf::Vector2f(width - xmargin - xoffset, ymargin + 3*yoffset), get_piece_texture("black_archer")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Portal, false, sf::Vector2f(width - xmargin - xoffset, ymargin + 4*yoffset), get_piece_texture("black_portal")));
-
+    bot.set_current_board(board.get_elements());
+    bot.initial_game_eval();
 }
-void StateGameplay::load_texture_piece(std::string type, std::string file)
-{
-    sf::Texture texture;
-    if (!texture.loadFromFile(file))
-    {
-        throw(std::runtime_error("Texture not found: " + file));
-    }
-        texture_map[type] = texture;
-}
-const sf::Texture& StateGameplay::get_piece_texture(std::string type)
-{
-    return texture_map.at(type);
-}
+
 void StateGameplay::terminate()
 {
     //si usamos shared pointers entonces no necesitamos eliminar la pieza creada en init
@@ -83,7 +60,25 @@ void StateGameplay::terminate()
 
 void StateGameplay::update(float dt)
 {
-    drag();
+    if (player_turn)
+    {
+        drag();
+    }
+    else
+    {
+        auto bot_play = bot.find_best_play(2);
+
+        Position old_position = bot_play.moving_piece->pos;
+
+        board.move_piece(bot_play.moving_piece, bot_play.destination);
+        board.set_piece_sprite(bot_play.moving_piece);
+
+        board.update_bombs(bot_play.moving_piece, old_position);
+
+        player_turn = true;
+    }
+    
+    
     
     board.update(dt);
 }
@@ -91,6 +86,11 @@ void StateGameplay::update(float dt)
 sf::Vector2i StateGameplay::get_relative_mouse_position()
 {
     return sf::Mouse::getPosition(*window);
+}
+
+bool check_winner()
+{
+
 }
 
 void StateGameplay::drag()
@@ -124,7 +124,12 @@ void StateGameplay::drag()
     }
     else if (selected_piece)
     {   
-        if (board.drop_piece(selected_piece)) player_turn = !player_turn;
+        if (board.drop_piece(selected_piece)) 
+        {
+            player_turn = !player_turn;
+            bot.set_current_board(board.get_elements());
+            bot.initial_game_eval();
+        }
 
         selected_piece = nullptr;
     }

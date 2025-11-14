@@ -76,3 +76,13 @@ bool Bishop::hurt(PiecePtr attacker)
 {
     return true;
 }
+
+int Bishop::get_material_value() const
+{
+    return 6;
+}
+
+int Bishop::get_max_mobility() const
+{
+    return 8;
+}

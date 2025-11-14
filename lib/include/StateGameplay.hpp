@@ -1,6 +1,8 @@
 #pragma once
 
+#include <SpriteManager.hpp>
 #include <IGameState.hpp>
+#include <Gametree.hpp>
 #include <Board.hpp>
 #include <memory>
 #include <vector>
@@ -15,7 +17,7 @@
 #include "Trapper.hpp"
 #include "Bishop.hpp"
 #include "PieceInstantiator.hpp"
-#include <map>
+
 #include <exception>
 using PieceInstantPtr = std::shared_ptr<PieceInstantiator>;
 
@@ -30,8 +32,9 @@ private:
     sf::RenderWindow* window;
     bool player_turn;
     std::vector<PieceInstantPtr> instantiators;
-    std::map<std::string,sf::Texture> texture_map;
+    GameTree bot; 
     PieceInstantPtr clicked_instantiator(sf::Vector2i mouse_position);
+    bool check_winner();
     // Challenges
     
 public:
@@ -42,8 +45,6 @@ public:
     void terminate() override;           // eliminar memoria reservada dinámicamente o cosas que se tengan que manejar al final de ese estado de juego.
 	void update(float dt) override;
 	void render(sf::RenderWindow& window) override;
-    void load_texture_piece(std::string type, std::string file);
-    const sf::Texture& get_piece_texture(std::string type);
     sf::Vector2i get_relative_mouse_position();
     void drag();
 };

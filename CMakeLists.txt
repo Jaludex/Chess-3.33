@@ -13,7 +13,7 @@ FetchContent_Declare(SFML
     SYSTEM)
 FetchContent_MakeAvailable(SFML)
 
-set(gamefiles src/main.cpp lib/src/Archer.cpp lib/src/PieceInstantiator.cpp lib/src/Bishop.cpp lib/src/Board.cpp lib/src/Crook.cpp lib/src/Horse.cpp lib/src/IGameObject.cpp lib/src/IGameState.cpp lib/src/IPiece.cpp lib/src/Pawn.cpp lib/src/Portal.cpp lib/src/Queen.cpp lib/src/StateGameplay.cpp lib/src/Tower.cpp lib/src/Trapper.cpp)
+set(gamefiles src/main.cpp lib/src/Archer.cpp lib/src/SpriteManager.cpp lib/src/PieceInstantiator.cpp lib/src/Bishop.cpp lib/src/Board.cpp lib/src/Crook.cpp lib/src/Horse.cpp lib/src/IGameObject.cpp lib/src/IGameState.cpp lib/src/IPiece.cpp lib/src/Pawn.cpp lib/src/Portal.cpp lib/src/Queen.cpp lib/src/StateGameplay.cpp lib/src/Tower.cpp lib/src/Trapper.cpp lib/src/Gametree.cpp lib/src/GameEvaluator.cpp)
 add_executable(main ${gamefiles})
 include_directories(main PRIVATE lib/include)
 target_compile_features(main PRIVATE cxx_std_17)

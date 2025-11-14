@@ -38,6 +38,16 @@ bool Bomb::hurt(PiecePtr attacker)
     return true;
 }
 
+int Bomb::get_material_value() const
+{
+    return 0;
+}
+
+int Bomb::get_max_mobility() const
+{
+    return 0;
+}
+
 
 sf::Color Trapper::white = sf::Color(170,170,70,255);
 sf::Color Trapper::black = sf::Color(70,70,0,255);
@@ -107,4 +117,14 @@ std::vector<BoardObjectPtr> Trapper::set_valid_moves(const std::list<BoardObject
 bool Trapper::hurt(PiecePtr attacker)
 {
     return true;
+}
+
+int Trapper::get_material_value() const
+{
+    return 5;
+}
+
+int Trapper::get_max_mobility() const
+{
+    return 4;
 }

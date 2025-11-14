@@ -43,3 +43,13 @@ bool Portal::hurt(PiecePtr attacker)
 {
     return true;
 }
+
+int Portal::get_material_value() const
+{
+    return 3;
+}
+
+int Portal::get_max_mobility() const
+{
+    return 0;
+}
