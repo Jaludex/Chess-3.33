@@ -42,10 +42,9 @@ Play GameTree::find_best_play(int deepness)
 
 int GameTree::minimax(std::shared_ptr<GameNode> node, int deepness, int alpha, int beta, bool Maximizing)
 {
-    //Nos falta meterle que verifique fin de juego, pa eso necesito al augusto
-    if (deepness == 0)
+    int score = this->heuristic.eval(node->board);
+    if ((deepness == 0) || (Maximizing && score <= alpha) || (!Maximizing && score >= beta))
     {
-        int score = this->heuristic.eval(node->board);
         node->result_minimax = score;
         return score;
     }  
