@@ -60,6 +60,7 @@ public:
     bool is_valid(Position pos);
     virtual int get_material_value() const = 0;
     virtual int get_max_mobility() const = 0;
+    virtual PiecePtr clone_piece() const = 0;
     IPiece();
     virtual ~IPiece() = default;
 

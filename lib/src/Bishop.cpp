@@ -86,3 +86,8 @@ int Bishop::get_max_mobility() const
 {
     return 8;
 }
+
+PiecePtr Bishop::clone_piece() const
+{
+    return std::make_shared<Bishop>(*this);
+}

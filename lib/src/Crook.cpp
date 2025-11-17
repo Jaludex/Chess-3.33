@@ -94,3 +94,8 @@ int Crook::get_max_mobility() const
 {
     return 3;
 }
+
+PiecePtr Crook::clone_piece() const
+{
+    return std::make_shared<Crook>(*this);
+}

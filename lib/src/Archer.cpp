@@ -86,3 +86,7 @@ int Archer::get_max_mobility() const
 {
     return 2;
 }
+PiecePtr Archer::clone_piece() const
+{
+    return std::make_shared<Archer>(*this);
+}

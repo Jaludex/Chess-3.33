@@ -53,3 +53,8 @@ int Portal::get_max_mobility() const
 {
     return 0;
 }
+
+PiecePtr Portal::clone_piece() const
+{
+    return std::make_shared<Portal>(*this);
+}

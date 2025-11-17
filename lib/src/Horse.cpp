@@ -85,3 +85,8 @@ int Horse::get_max_mobility() const
 {
     return 8;
 }
+
+PiecePtr Horse::clone_piece() const
+{
+    return std::make_shared<Horse>(*this);
+}

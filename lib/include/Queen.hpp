@@ -18,7 +18,7 @@ class Queen : public IPiece
     virtual int get_material_value() const override;
     virtual int get_max_mobility() const override;
     void swap(Position pos);
-
+    virtual PiecePtr clone_piece() const override;
     static sf::Color get_color(bool);
     static sf::Color white;
     static sf::Color black;
