@@ -76,3 +76,8 @@ int Pawn::get_max_mobility() const
 {
     return 1;
 }
+
+PiecePtr Pawn::clone_piece() const
+{
+    return std::make_shared<Pawn>(*this);
+}

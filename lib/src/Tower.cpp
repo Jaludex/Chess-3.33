@@ -86,3 +86,8 @@ int Tower::get_max_mobility() const
 {
     return 8;
 }
+
+PiecePtr Tower::clone_piece() const
+{
+    return std::make_shared<Tower>(*this);
+}

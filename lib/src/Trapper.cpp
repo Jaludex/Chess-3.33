@@ -48,6 +48,10 @@ int Bomb::get_max_mobility() const
     return 0;
 }
 
+PiecePtr Bomb::clone_piece() const
+{
+    return std::make_shared<Bomb>(*this);
+}
 
 sf::Color Trapper::white = sf::Color(170,170,70,255);
 sf::Color Trapper::black = sf::Color(70,70,0,255);
@@ -127,4 +131,9 @@ int Trapper::get_material_value() const
 int Trapper::get_max_mobility() const
 {
     return 4;
+}
+
+PiecePtr Trapper::clone_piece() const
+{
+    return std::make_shared<Trapper>(*this);
 }

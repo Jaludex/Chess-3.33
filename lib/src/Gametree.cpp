@@ -147,11 +147,12 @@ BoardL GameTree::apply_play(const BoardL& original, const Play& move)
     BoardL new_state;
     std::map<BoardObjectPtr, BoardObjectPtr> original_to_new_map;
 
-    for (auto const& slot_original : original)
+    for (auto const& original_slot : original)
     {
-        auto nuevo_slot = std::make_shared<InBoardObject>(slot_original->pos, slot_original->piece);
-        new_state.push_back(nuevo_slot);
-        original_to_new_map[slot_original] = nuevo_slot;
+        PiecePtr new_piece = original_slot->piece->clone_piece();
+        auto new_slot = std::make_shared<InBoardObject>(original_slot->pos, new_piece);
+        new_state.push_back(new_slot);
+        original_to_new_map[original_slot] = new_slot;
     }
 
     BoardObjectPtr new_moving_slot = original_to_new_map[move.moving_piece];

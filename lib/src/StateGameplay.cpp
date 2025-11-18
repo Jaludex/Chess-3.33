@@ -67,7 +67,7 @@ void StateGameplay::update(float dt)
     else
     {
         sf::sleep(sf::seconds(1.f));
-        auto bot_play = bot.find_best_play(2);
+        auto bot_play = bot.find_best_play(4);
 
         if (bot_play.moving_piece)
         {

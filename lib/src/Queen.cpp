@@ -89,3 +89,8 @@ int Queen::get_max_mobility() const
 {
     return 16;
 }
+
+PiecePtr Queen::clone_piece() const
+{
+    return std::make_shared<Queen>(*this);
+}
