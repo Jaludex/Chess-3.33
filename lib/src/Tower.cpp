@@ -10,31 +10,10 @@ sf::Color Tower::get_color(bool _team)
 return (_team)? Tower::white : Tower::black;
 }
 
-Tower::Tower(bool team, int startX, int startY)
+Tower::Tower(bool team, sf::Texture texture) : IGameObject(texture)
 {
     set_team(team);
     set_piece_type(PieceType::Tower);
-    
-    current.x = startX;
-    current.y = startY;
-}
-
-bool Tower::verify_position(Position pos)
-{
-    int dx = std::abs(pos.x - current.x);
-    int dy = std::abs(pos.y - current.y);
-
-    return (dx == dy) && (dx > 0);
-}
-
-void Tower::move(Position pos)
-{
-    if (is_valid(pos))
-    {
-        current.x = pos.x;
-        current.y = pos.y;
-    }
-
 }
 
 void Tower::update(float dt)
@@ -44,16 +23,10 @@ void Tower::update(float dt)
 
 void Tower::render(sf::RenderWindow& window)
 {
-    auto triangle = sf::CircleShape(45,(size_t)7);
-    triangle.setOrigin({45.f,45.f});
-    triangle.setScale({1.f,2.f});
-    auto offset = sf::Vector2f({(float)(Board::cell_lenght/2), (float)(Board::cell_lenght/2)});
-    triangle.setPosition(this->sprite.getPosition() + offset);
-    triangle.setFillColor(get_color(team));
-    window.draw(triangle);
+    window.draw(sprite);
 }
 
-std::vector<Move> Tower::set_valid_moves(const std::vector<PiecePtr>& pieces) 
+std::vector<BoardObjectPtr> Tower::set_valid_moves(const std::list<BoardObjectPtr>& pieces, Position current) 
 {
     valid_moves.erase(valid_moves.begin(), valid_moves.end());
     const uint8_t lenght = Board::side_lenght;
@@ -69,29 +42,28 @@ std::vector<Move> Tower::set_valid_moves(const std::vector<PiecePtr>& pieces)
 
             if (tile_x >= lenght || tile_y >= lenght) break;
 
-            Position target_move(tile_x, tile_y);
-            PiecePtr piece_at_cell = nullptr;
+            auto target = std::make_shared<InBoardObject>(Position(tile_x, tile_y));
             
-            for(auto const& piece : pieces)
+            for(auto const& object : pieces)
             {
-                if (piece->get_position() == target_move)
+                if (object->pos == target->pos)
                 {
-                    piece_at_cell = piece;
+                    target = object;
                     break;
                 }
             }
 
-            if (piece_at_cell)
+            if (target->piece)
             {
-                if (piece_at_cell->get_team() != this->get_team())
+                if (target->piece->get_team() != this->get_team())
                 {
-                    valid_moves.push_back(Move(target_move, true, piece_at_cell));
+                    valid_moves.push_back(target);
                 }
                 break;
             }
             else
             {
-                valid_moves.push_back(Move(target_move, true, piece_at_cell));
+                valid_moves.push_back(target);
             }
         }
         
@@ -102,4 +74,20 @@ std::vector<Move> Tower::set_valid_moves(const std::vector<PiecePtr>& pieces)
 bool Tower::hurt(PiecePtr attacker)
 {
     return true;
+}
+
+
+int Tower::get_material_value() const
+{
+    return 7;
+}
+
+int Tower::get_max_mobility() const
+{
+    return 8;
+}
+
+PiecePtr Tower::clone_piece() const
+{
+    return std::make_shared<Tower>(*this);
 }

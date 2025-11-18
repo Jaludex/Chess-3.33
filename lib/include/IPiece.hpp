@@ -1,7 +1,10 @@
 #pragma once
 
+#include <SpriteManager.hpp>
 #include <cstdint>
 #include <IGameObject.hpp>
+#include <memory>
+#include <list>
 
 struct Position
 {
@@ -15,14 +18,18 @@ struct Position
 class IPiece;
 using PiecePtr = std::shared_ptr<IPiece>;
 
-struct Move
+struct InBoardObject
 {
-    Position relative_positiion;
-    bool moves_piece;   //Esto para poder diferenciar los movimientos que atacan pero no mueven directamente la pieza, como las flechas del arquero
-    PiecePtr occupant;
+    Position pos;
+    PiecePtr piece;
+    bool leader;
 
-    Move(Position _pos, bool _m, PiecePtr _o) : relative_positiion(_pos), moves_piece(_m), occupant(_o) {}
+    InBoardObject(Position _pos, PiecePtr _piece) : pos(_pos), piece(_piece), leader(false) {}
+    InBoardObject(Position _pos) : pos(_pos), piece(nullptr), leader(false) {}
+    InBoardObject() : pos(Position(0,0)), piece(nullptr), leader(false) {}
 };
+
+using BoardObjectPtr = std::shared_ptr<InBoardObject>;
 
 enum class PieceType
 {
@@ -39,28 +46,26 @@ enum class PieceType
     Bomb
 };
 
-class IPiece : public IGameObject
+class IPiece : public virtual IGameObject
 {
 public:
     bool get_team() const;
-    Position get_position() const;
-    std::vector<Move> get_valid_moves();
+    std::vector<BoardObjectPtr> get_valid_moves();
     PieceType get_piece_type() const;
     void set_team(bool team);
     void set_piece_type(PieceType type);
-    virtual bool verify_position(Position pos) = 0;
-    virtual std::vector<Move> set_valid_moves(const std::vector<PiecePtr>& pieces) = 0;
-    virtual void move(Position pos) = 0;
+    virtual std::vector<BoardObjectPtr> set_valid_moves(const std::list<BoardObjectPtr>& elements, Position current) = 0;
     //Retorna si mata o no a la pieza, pues hay piezas con mas vida
     virtual bool hurt(PiecePtr attacker) = 0;
     bool is_valid(Position pos);
+    virtual int get_material_value() const = 0;
+    virtual int get_max_mobility() const = 0;
+    virtual PiecePtr clone_piece() const = 0;
     IPiece();
     virtual ~IPiece() = default;
-    void swap(Position pos);
 
 protected:
-    Position current;
     bool team;
     PieceType type;
-    std::vector<Move> valid_moves;
+    std::vector<BoardObjectPtr> valid_moves;
 };

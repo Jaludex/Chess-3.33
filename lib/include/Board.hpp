@@ -2,40 +2,43 @@
 
 #include <SFML/Graphics.hpp>
 #include <IPiece.hpp>
-#include <vector>
-#include <memory>
+#include <iostream>
 #include <algorithm>
 #include <stdexcept>
+#include "Trapper.hpp"
 
+using BoardObjectPtr = std::shared_ptr<InBoardObject>;
+using BoardL = std::list<BoardObjectPtr>;
 
 class Board : public IGameObject
 {
 private:
     //static const sf::Color black{70,50,50,255};
     //static const sf::Color white{220,200,200,255}; 
-    std::vector<PiecePtr> elements;
+    BoardL elements;
 
 public:
 
     static const uint8_t side_lenght = 6;
-    static const int cell_lenght = 100;
-
+    static const uint8_t cell_lenght = 100;
     Board(sf::Texture texture);
-    Board(sf::Texture texture, std::vector<PiecePtr> _elements);
+    Board(sf::Texture texture, std::list<BoardObjectPtr> _elements);
     Board(const Board& _board);
 
     size_t size();
-    PiecePtr get_position(short x, short y);
+    BoardL get_elements();
+    BoardObjectPtr get_position(short x, short y);
     void remove_by_position(short x, short y);
-    PiecePtr clicked_piece(sf::Vector2i mouse_position);
+    BoardObjectPtr clicked_piece(sf::Vector2i mouse_position);
     Position get_square_by_coords(sf::Vector2i mouse_position);
-    bool drop_piece(PiecePtr piece);
+    bool drop_piece(BoardObjectPtr element);
+    bool move_piece(BoardObjectPtr element, Position destination);
+    void update_bombs(BoardObjectPtr moved_piece, Position old_position);
     void update(float dt) override;
     void render(sf::RenderWindow& window) override;
-    void render_highlights(sf::RenderWindow& window, const std::vector<Move>& valid_moves); 
+    void render_highlights(sf::RenderWindow& window, const std::vector<BoardObjectPtr>& valid_moves); 
     void render_pieces(sf::RenderWindow& window);
-    void add_piece(PiecePtr piece);
-    void set_piece_sprite(PiecePtr piece);
-
+    void add_piece(BoardObjectPtr piece);
+    void set_piece_sprite(BoardObjectPtr element);
 };
 

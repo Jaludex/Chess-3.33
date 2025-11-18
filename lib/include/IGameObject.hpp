@@ -3,9 +3,9 @@
 
 class IGameObject
 {
-protected:
+public:
+    sf::Texture texture;
     sf::Sprite sprite;
-
 public:
     IGameObject(sf::Texture texture);
     IGameObject();

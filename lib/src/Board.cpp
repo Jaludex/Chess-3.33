@@ -1,27 +1,26 @@
 #include <Board.hpp>
-#include "Trapper.hpp"
-#include <iostream>
+
 Board::Board(sf::Texture texture) : IGameObject(texture)
 {
-    //empty
+    sprite.setScale(sf::Vector2f(1.0,1.0));
 }
 
-Board::Board(sf::Texture texture, std::vector<PiecePtr> _elements) : IGameObject(texture), elements(_elements)
+Board::Board(sf::Texture texture, std::list<BoardObjectPtr> _elements) : IGameObject(texture), elements(_elements)
 {
-    //empty
+    sprite.setScale(sf::Vector2f(1.0,1.0));
 }
 
 Board::Board(const Board& _board) : IGameObject(_board.sprite.getTexture()), elements(_board.elements)
 {
-    //empty
+    sprite.setScale(sf::Vector2f(1.0,1.0));
 }
 
 void Board::update(float dt)
 {
     for (auto element : elements)
     {
-        element->set_valid_moves(elements);
-        element->update(dt);
+        element->piece->set_valid_moves(elements, element->pos);
+        element->piece->update(dt);
     }
 }
 
@@ -39,15 +38,15 @@ void Board::render(sf::RenderWindow& window)
     }
 }
 
-void Board::render_highlights(sf::RenderWindow& window, const std::vector<Move>& valid_moves)
+void Board::render_highlights(sf::RenderWindow& window, const std::vector<BoardObjectPtr>& valid_moves)
 {
     sf::RectangleShape cell({(float)(Board::cell_lenght),(float)(Board::cell_lenght)});
     auto origin = this->sprite.getPosition();
 
     for (auto move : valid_moves)
     {
-        cell.setFillColor( (move.occupant) ? sf::Color::Red : sf::Color::Cyan );
-        auto pos = sf::Vector2<float>({(float)(move.relative_positiion.x * Board::cell_lenght), (float)(move.relative_positiion.y * Board::cell_lenght)});
+        cell.setFillColor( (move->piece) ? sf::Color::Red : sf::Color::Cyan );
+        auto pos = sf::Vector2<float>({(float)(move->pos.x * Board::cell_lenght), (float)(move->pos.y * Board::cell_lenght)});
         cell.setPosition(origin + pos);
         window.draw(cell);
     }
@@ -58,7 +57,7 @@ void Board::render_pieces(sf::RenderWindow& window)
 {
     for (auto element : elements)
     {
-        element->render(window);
+        element->piece->render(window);
     }
 }
 
@@ -67,28 +66,32 @@ size_t Board::size()
     return elements.size();
 }
 
-PiecePtr Board::get_position(short x, short y)
+BoardL Board::get_elements()
+{
+    return elements;
+}
+
+BoardObjectPtr Board::get_position(short x, short y)
 {
     if ((x >= Board::side_lenght) || (y >= Board::side_lenght)) throw std::invalid_argument("Coordinate outside of board");
 
     for (auto element : elements)
     {
-        auto position = element->get_position();
-        if (position.x == x && position.y == y) return element;
+        if (element->pos.x == x && element->pos.y == y) return element;
     }
     
     return nullptr;
 }
 
-PiecePtr Board::clicked_piece(sf::Vector2i mouse_position)
+BoardObjectPtr Board::clicked_piece(sf::Vector2i mouse_position)
 {
     if (this->is_touching_mouse(mouse_position))
     {
-        for (auto piece : elements)
+        for (auto element : elements)
         {
-            if (piece->is_touching_mouse(mouse_position))
+            if (element->piece->is_touching_mouse(mouse_position))
             {
-                return piece;
+                return element;
             }   
         }
     }
@@ -96,12 +99,12 @@ PiecePtr Board::clicked_piece(sf::Vector2i mouse_position)
     return nullptr;
 }
 
-void Board::set_piece_sprite(PiecePtr piece)
+void Board::set_piece_sprite(BoardObjectPtr element)
 {
-    auto objetive_position = piece->get_position();
+    auto objetive_position = element->pos;
     auto board_position = sprite.getPosition();
     auto offset = sf::Vector2f({(float)(objetive_position.x * Board::cell_lenght), (float)(objetive_position.y * Board::cell_lenght)});
-    piece->set_sprite_position(board_position + offset);
+    element->piece->set_sprite_position(board_position + offset);
 }
 
 Position Board::get_square_by_coords(sf::Vector2i mouse_position)
@@ -111,69 +114,71 @@ Position Board::get_square_by_coords(sf::Vector2i mouse_position)
 }
 
 //Retorna si la pieza se movio en el tablero
-bool Board::drop_piece(PiecePtr piece)
+bool Board::drop_piece(BoardObjectPtr element)
 {
     bool it_moves = false;
-    if (sprite.getGlobalBounds().contains(piece->get_sprite().getPosition()))
+    auto old_pos = element->pos;
+    if (sprite.getGlobalBounds().contains(element->piece->get_sprite().getPosition()))
     {
-        Position position_on_board = get_square_by_coords(static_cast<sf::Vector2i>(piece->get_sprite().getPosition()));
-        auto valid_moves = piece->get_valid_moves();
-        PiecePtr swapped_piece = nullptr;
-        for (auto move : valid_moves)
-        {
-            if (move.relative_positiion == position_on_board)
-            {
-                if (move.occupant)
-                {
-                    if (piece->get_piece_type() == PieceType::Portal && piece->get_team() == move.occupant->get_team())
-                    {
-                        swapped_piece = move.occupant; 
-                        Position old_portal_pos = piece->get_position(); 
-                    
-                        move.occupant->swap(old_portal_pos); 
-                        set_piece_sprite(move.occupant);
-                        it_moves = true;
-                    }
-                    else if (move.occupant->hurt(piece))
-                    {
-                        it_moves = move.moves_piece;
-                        auto it = std::find(elements.begin(), elements.end(), (move.occupant->get_piece_type() == PieceType::Bomb) ? piece : move.occupant);
-                        if (it != elements.end())
-                        {
-                            elements.erase(it);
-                        }
-                    }
-                }
-                else it_moves = true;
-
-                break;
-            }
-        }
-
-        if (it_moves && piece->get_piece_type() == PieceType::Trapper)
-        {
-            Position bomb_pos = piece->get_position(); 
-            add_piece(std::make_shared<Bomb>(piece->get_team(), bomb_pos.x, bomb_pos.y));
-        }
-    
-        piece->move(position_on_board);
+        Position position_on_board = get_square_by_coords(static_cast<sf::Vector2i>(element->piece->get_sprite().getPosition()));
+        it_moves = this->move_piece(element, position_on_board);
     }
 
-    if (it_moves)
-    {
-        bool team_of_bombs_to_remove = !piece->get_team(); 
-        elements.erase(std::remove_if(elements.begin(), elements.end(),
-            [team_of_bombs_to_remove](PiecePtr element) {
-                return element->get_piece_type() == PieceType::Bomb && element->get_team() == team_of_bombs_to_remove;}), elements.end());
-    }
+    if (it_moves) update_bombs(element, old_pos);
     
-    set_piece_sprite(piece);
+    set_piece_sprite(element);
     return it_moves;
 }
 
-void Board::add_piece(PiecePtr piece)
+void Board::add_piece(BoardObjectPtr piece)
 {
-    elements.push_back(piece);
+    elements.push_front(piece);
     set_piece_sprite(piece);
+}
+
+bool Board::move_piece(BoardObjectPtr element, Position destination)
+{
+    bool it_moves = false;
+    auto valid_moves = element->piece->get_valid_moves();
+    for (auto move : valid_moves)
+    {
+        if (move->pos == destination)
+        {
+            it_moves = true;
+            if (move->piece)
+            {
+                if (element->piece->get_piece_type() == PieceType::Portal && element->piece->get_team() == move->piece->get_team())
+                {                    
+                    move->pos = element->pos;
+                    set_piece_sprite(move);
+                }
+                else if (move->piece->hurt(element->piece))
+                {
+                    auto it = std::find(elements.begin(), elements.end(), (move->piece->get_piece_type() == PieceType::Bomb) ? element : move);
+                    if (it != elements.end())
+                    {
+                        elements.erase(it);
+                    }
+                }
+            }
+            element->pos = destination;
+            break;
+        }
+    }
+
+    return it_moves;
+}
+
+void Board::update_bombs(BoardObjectPtr moved_piece, Position old_position)
+{
+    if (moved_piece->piece->get_piece_type() == PieceType::Trapper)
+        {
+            add_piece(std::make_shared<InBoardObject>(old_position, std::make_shared<Bomb>(moved_piece->piece->get_team(), (moved_piece->piece->get_team()) ? SpriteManager::get_piece_texture("white_trap") : SpriteManager::get_piece_texture("black_trap"))));
+        }
+        
+        bool team_of_bombs_to_remove = !moved_piece->piece->get_team(); 
+        elements.erase(std::remove_if(elements.begin(), elements.end(),
+            [team_of_bombs_to_remove](BoardObjectPtr element) {
+                return element->piece->get_piece_type() == PieceType::Bomb && element->piece->get_team() == team_of_bombs_to_remove;}), elements.end());
 }
 

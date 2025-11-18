@@ -8,17 +8,17 @@
 class Queen : public IPiece
 {
     public:
-    Queen(bool team, int startX, int startY);
+    Queen(bool team, sf::Texture texture);
 
     virtual ~Queen() = default;
-    virtual bool verify_position(Position pos) override;
-    virtual void move(Position pos) override;
     virtual void update(float dt) override;
     virtual void render(sf::RenderWindow& window) override;
-    virtual std::vector<Move> set_valid_moves(const std::vector<PiecePtr>& pieces) override;
+    virtual std::vector<BoardObjectPtr> set_valid_moves(const std::list<BoardObjectPtr>& elements, Position current) override;
     virtual bool hurt(PiecePtr attacker) override;
+    virtual int get_material_value() const override;
+    virtual int get_max_mobility() const override;
     void swap(Position pos);
-
+    virtual PiecePtr clone_piece() const override;
     static sf::Color get_color(bool);
     static sf::Color white;
     static sf::Color black;

@@ -8,16 +8,16 @@
 class Pawn : public IPiece
 {
     public:
-    Pawn(bool team, int startX, int startY);
+    Pawn(bool team, sf::Texture texture);
 
     virtual ~Pawn() = default;
-    virtual bool verify_position(Position pos) override;
-    virtual void move(Position pos) override;
     virtual void update(float dt) override;
     virtual void render(sf::RenderWindow& window) override;
-    virtual std::vector<Move> set_valid_moves(const std::vector<PiecePtr>& pieces) override;
+    virtual std::vector<BoardObjectPtr> set_valid_moves(const std::list<BoardObjectPtr>& elements, Position current) override;
     virtual bool hurt(PiecePtr attacker) override;
-
+    virtual int get_material_value() const override;
+    virtual int get_max_mobility() const override;
+    virtual PiecePtr clone_piece() const override;
     static sf::Color get_color(bool);
     static sf::Color white;
     static sf::Color black;
