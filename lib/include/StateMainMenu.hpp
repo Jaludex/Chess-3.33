@@ -5,10 +5,9 @@
 class StateMainMenu : public IGameState
 {
 private:
-    
-
+    //Aqui se pueden agregar botones mas elaborados
 public:
-    StateMainMenu(/* args */);
+    StateMainMenu(sf::RenderWindow* _window);
     ~StateMainMenu();
 
     void init() override;                // inicializar aspectos del gamestate
@@ -16,11 +15,3 @@ public:
 	void update(float dt) override;
 	void render(sf::RenderWindow& window) override;
 };
-
-StateMainMenu::StateMainMenu(/* args */)
-{
-}
-
-StateMainMenu::~StateMainMenu()
-{
-}

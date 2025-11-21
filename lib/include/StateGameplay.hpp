@@ -21,7 +21,7 @@
 #include <exception>
 using PieceInstantPtr = std::shared_ptr<PieceInstantiator>;
 
-class StateGameplay : IGameState
+class StateGameplay : public IGameState
 {
 private:
     BoardObjectPtr selected_piece;
@@ -29,7 +29,6 @@ private:
     Board board;
     sf::Clock elapsed_time;
     long score;
-    sf::RenderWindow* window;
     bool player_turn;
     std::vector<PieceInstantPtr> instantiators;
     GameTree bot; 

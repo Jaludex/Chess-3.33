@@ -3,7 +3,7 @@
 #include <StateGameplay.hpp>
 #include"StateTutorial.hpp"
 #include <Board.hpp>
-
+#include<GameStateManager.hpp>
 int main()
 {
 
@@ -16,25 +16,16 @@ int main()
 
     const sf::Color Cerulean = sf::Color(130,130,200,255);
 
-    try
-    {
-        SpriteManager::init();
-    }
-    catch(const std::exception& e)
-    {
-        std::cerr << e.what() << '\n';
-        return 1;
-    }
-    
-    StateGameplay gamestate(window);
-    gamestate.init();
-    
+    GameStateManager manager(window);
+    manager.init();
+
     while (window.isOpen())
     {
         while (const std::optional event = window.pollEvent())
         {
             if (event->is<sf::Event::Closed>())
             {
+                //Guardar partida rapidamente, tal vez aca
                 window.close();
             }
         }
@@ -43,11 +34,12 @@ int main()
         delta_time += now - last_time;
         if (delta_time >= target_time)
         {
-            gamestate.update(delta_time/target_time);
+            manager.update(delta_time/target_time);
+            
             delta_time = sf::Time::Zero;
 
             window.clear(Cerulean);
-            gamestate.render(window);
+            manager.render(window);
             window.display();
         }
         last_time = now;
