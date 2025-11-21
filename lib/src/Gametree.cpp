@@ -48,21 +48,25 @@ int GameTree::minimax(std::shared_ptr<GameNode> node, int deepness, int alpha, i
         node->result_minimax = score;
         return score;
     }  
+    auto possible_plays = this->generate_all_plays(node->board, !Maximizing);
+    
+    if (possible_plays.empty()) return score;
+    for (const Play& play : possible_plays)
+    {
+        BoardL new_state = this->apply_play((node->board), play);
+        auto child_node = std::make_shared<GameNode>();
+        child_node->board = new_state;
+        child_node->dad = play;
 
+        node->possible_plays.push_back(child_node);
+    }
+    
     if(Maximizing)
     {
         int better_value = -(std::numeric_limits<int>::max());
-        auto possible_plays = this->generate_all_plays(node->board, false);
 
-        for(const Play& play : possible_plays)
+        for(auto& play_node : node->possible_plays)
         {
-            BoardL new_state = this->apply_play(node->board, play);
-            auto play_node = std::make_shared<GameNode>();
-            play_node->board = new_state;
-            play_node->dad = play;
-
-            node->possible_plays.push_back(play_node);
-
             int eval = this->minimax(play_node, deepness - 1, alpha, beta, false);
 
             better_value = std::max(better_value,eval);
@@ -74,20 +78,15 @@ int GameTree::minimax(std::shared_ptr<GameNode> node, int deepness, int alpha, i
             }
         }
         node->result_minimax = better_value;
+        node->possible_plays.clear();
         return better_value;
     }
     else
     {
         int worst_value = std::numeric_limits<int>::max();
-        auto possible_plays = this->generate_all_plays(node->board, true);
 
-        for(const auto& play : possible_plays)
+        for(auto& play_node : node->possible_plays)
         {
-            BoardL new_state = this->apply_play(node->board, play);
-            auto play_node = std::make_shared<GameNode>();
-            play_node->board = new_state;
-            play_node->dad = play;
-             node->possible_plays.push_back(play_node);
 
             int eval = this->minimax(play_node, deepness - 1, alpha, beta, true);
 
@@ -100,6 +99,7 @@ int GameTree::minimax(std::shared_ptr<GameNode> node, int deepness, int alpha, i
             }
         }
         node->result_minimax = worst_value;
+        node->possible_plays.clear();
         return worst_value;
     }
 }
