@@ -8,6 +8,7 @@ enum class StateType
     Options,
     Credits,
     Gameover,
+    Tutorial,
     Shop,
     Stats,
     Return,

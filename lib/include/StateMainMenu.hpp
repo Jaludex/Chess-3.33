@@ -1,17 +1,29 @@
 #pragma once
-
 #include <IGameState.hpp>
+#include <vector>
+#include <string>
 
-class StateMainMenu : public IGameState
+/*class StateMainMenu : public IGameState
 {
 private:
-    //Aqui se pueden agregar botones mas elaborados
+    sf::Font menu_font;
+    sf::Text title_text;
+    
+    struct MenuButton {
+        sf::RectangleShape button_shape;
+        sf::Text button_text;
+        StateType action_type;
+    };
+    std::vector<MenuButton> menu_buttons;
+
+    void create_button(float x_pos, float y_pos, std::string button_label, StateType action_type_param);
+
 public:
-    StateMainMenu(sf::RenderWindow* _window);
+    StateMainMenu(sf::RenderWindow* window_ptr); 
     ~StateMainMenu();
 
-    void init() override;                // inicializar aspectos del gamestate
-    void terminate() override;           // eliminar memoria reservada dinámicamente o cosas que se tengan que manejar al final de ese estado de juego.
-	void update(float dt) override;
-	void render(sf::RenderWindow& window) override;
-};
+    void init() override;
+    void terminate() override;
+    void update(float dt) override;
+    void render(sf::RenderWindow& window_ref) override;
+};*/

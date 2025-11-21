@@ -153,8 +153,7 @@ void StateTutorial::update(float dt)
             else 
             {
                 save_tutorial_completed();
-                //Linea tentativa a quitar dependiendo del manejador de states
-                window->close();
+                go_to = StateType::Return;
             }
         }
 
@@ -172,8 +171,7 @@ void StateTutorial::update(float dt)
         {
             input_cooldown = cooldown;
             save_tutorial_completed();
-            //Linea se pudiera quitar o no, depende como hagamos el manejador de states
-            window->close();
+            go_to = StateType::Return;
         }
     }
     update_dots();
