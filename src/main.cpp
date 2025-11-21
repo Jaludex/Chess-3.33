@@ -1,6 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <SpriteManager.hpp>
 #include <StateGameplay.hpp>
+#include"StateTutorial.hpp"
 #include <Board.hpp>
 
 int main()
@@ -24,10 +25,10 @@ int main()
         std::cerr << e.what() << '\n';
         return 1;
     }
-
+    
     StateGameplay gamestate(window);
     gamestate.init();
-
+    
     while (window.isOpen())
     {
         while (const std::optional event = window.pollEvent())
@@ -52,8 +53,3 @@ int main()
         last_time = now;
     }
 }
-
-
-
-
-

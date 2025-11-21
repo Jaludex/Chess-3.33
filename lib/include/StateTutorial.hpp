@@ -13,9 +13,9 @@ private:
     int current_indx;
 
     sf::Texture texNext, texPrev, texExit;
-    sf::Sprite btnNext;
-    sf::Sprite btnPrev;
-    sf::Sprite btnExit;
+    sf::Sprite btn_next;
+    sf::Sprite btn_prev;
+    sf::Sprite btn_exit;
 
     std::vector<sf::CircleShape> progress_dots;
 

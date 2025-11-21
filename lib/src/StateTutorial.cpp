@@ -1,10 +1,10 @@
 #include"StateTutorial.hpp"
 #include <iostream>
-StateTutorial::StateTutorial(sf::RenderWindow& Window) : current_sprite(texExit), btnNext(texNext), btnPrev(texPrev), btnExit(texExit) 
+StateTutorial::StateTutorial(sf::RenderWindow& Window) : current_sprite(texExit), btn_next(texNext), btn_prev(texPrev), btn_exit(texExit) 
 {
     window = &Window;
     current_indx = 0;
-     input_cooldown = 0.0f;
+    input_cooldown = 0.0f;
 }
 
 StateTutorial::~StateTutorial() 
@@ -14,7 +14,9 @@ StateTutorial::~StateTutorial()
 
 void StateTutorial::init()
 {
-    for(int i = 1; i <= 4; i++) 
+    slides_tutorial.clear();
+    progress_dots.clear();
+    for(int i = 1; i <= 8; i++) 
     {
         sf::Texture texture;
         std::string path = "assets/tutorial/slide" + std::to_string(i) + ".png";
@@ -32,15 +34,26 @@ void StateTutorial::init()
     if (!slides_tutorial.empty())
     {
         current_sprite.setTexture(slides_tutorial[0]);
+        auto size = slides_tutorial[0].getSize();
+        current_sprite.setTextureRect({{0, 0}, {static_cast<int>(size.x), static_cast<int>(size.y)}});
     }
 
     if (!texPrev.loadFromFile("assets/tutorial/prevBtn.png")) std::cerr << "Falta prevBtn.png" << std::endl;
     if (!texNext.loadFromFile("assets/tutorial/nextBtn.png")) std::cerr << "Falta nextBtn.png" << std::endl;
     if (!texExit.loadFromFile("assets/tutorial/exitBtn.png")) std::cerr << "Falta exitBtn.png" << std::endl;
 
-    btnPrev.setTexture(texPrev);
-    btnNext.setTexture(texNext);
-    btnExit.setTexture(texExit);
+    btn_prev.setTexture(texPrev);
+    btn_next.setTexture(texNext);
+    btn_exit.setTexture(texExit);
+
+    auto prev_size = texPrev.getSize();
+    btn_prev.setTextureRect({{0, 0}, {static_cast<int>(prev_size.x), static_cast<int>(prev_size.y)}});
+
+    auto next_size = texNext.getSize();
+    btn_next.setTextureRect({{0, 0}, {static_cast<int>(next_size.x), static_cast<int>(next_size.y)}});
+
+    auto exit_size = texExit.getSize();
+    btn_exit.setTextureRect({{0, 0}, {static_cast<int>(exit_size.x), static_cast<int>(exit_size.y)}});
 
     float dot_radius = 10.0f;
     for(size_t i = 0; i < slides_tutorial.size(); i++)
@@ -50,6 +63,7 @@ void StateTutorial::init()
         dot.setOutlineColor(sf::Color::White);
         progress_dots.push_back(dot);
     }
+    update_dots();
     setup_layout();
 }
 
@@ -57,32 +71,26 @@ void StateTutorial::setup_layout()
 {
     if(!window) return;
     
-    // CORRECCIÓN 1: Conversión explícita a sf::Vector2f
     sf::Vector2u sizeU = window->getSize();
     sf::Vector2f winSize((float)sizeU.x, (float)sizeU.y);
     
     float margin = 30.0f;
     float btn_scale = 0.8f;
 
-    // CORRECCIÓN 2: Uso explícito del constructor en setScale
-    btnExit.setScale(sf::Vector2f(btn_scale, btn_scale)); 
-    btnNext.setScale(sf::Vector2f(btn_scale, btn_scale));
-    btnPrev.setScale(sf::Vector2f(btn_scale, btn_scale));
+    btn_exit.setScale(sf::Vector2f(btn_scale, btn_scale)); 
+    btn_next.setScale(sf::Vector2f(btn_scale, btn_scale));
+    btn_prev.setScale(sf::Vector2f(btn_scale, btn_scale));
 
-    // --- Acomodar Diapositiva (Centrada) ---
     if (!slides_tutorial.empty()) 
     {
-        // CORRECCIÓN 3: Asignación explícita a FloatRect
         sf::FloatRect bounds = current_sprite.getLocalBounds(); 
         
         if (bounds.size.x > 0 && bounds.size.y > 0)
         {
             current_sprite.setOrigin(sf::Vector2f(bounds.size.x  / 2.f, bounds.size.y / 2.f)); 
             
-            // CORRECCIÓN 4: Uso explícito de sf::Vector2f para setPosition
             current_sprite.setPosition(sf::Vector2f(winSize.x / 2.f, winSize.y / 2.f)); 
             
-            // Escalar
             float max_width = winSize.x * 0.9f;
             float scale = max_width / bounds.size.x ;
             
@@ -94,18 +102,18 @@ void StateTutorial::setup_layout()
         }
     }
 
-    sf::FloatRect exit_bounds = btnExit.getLocalBounds();
-    sf::FloatRect next_bounds = btnNext.getLocalBounds();
-    sf::FloatRect prev_bounds = btnPrev.getLocalBounds();
+    sf::FloatRect exit_bounds = btn_exit.getLocalBounds();
+    sf::FloatRect next_bounds = btn_next.getLocalBounds();
+    sf::FloatRect prev_bounds = btn_prev.getLocalBounds();
 
-    btnExit.setOrigin(sf::Vector2f(exit_bounds.size.x, 0.0f)); 
-    btnExit.setPosition(sf::Vector2f(winSize.x - margin, margin));
+    btn_exit.setOrigin(sf::Vector2f(exit_bounds.size.x, 0.0f)); 
+    btn_exit.setPosition(sf::Vector2f(winSize.x - margin, margin));
 
-    btnNext.setOrigin(sf::Vector2f(next_bounds.size.x , next_bounds.size.y));
-    btnNext.setPosition(sf::Vector2f(winSize.x - margin, winSize.y - margin));
+    btn_next.setOrigin(sf::Vector2f(next_bounds.size.x , next_bounds.size.y));
+    btn_next.setPosition(sf::Vector2f(winSize.x - margin, winSize.y - margin));
 
-    btnPrev.setOrigin(sf::Vector2f(0.0f, prev_bounds.size.y));
-    btnPrev.setPosition(sf::Vector2f(margin, winSize.y - margin));
+    btn_prev.setOrigin(sf::Vector2f(0.0f, prev_bounds.size.y));
+    btn_prev.setPosition(sf::Vector2f(margin, winSize.y - margin));
 
     if (!progress_dots.empty())
     {
@@ -130,34 +138,42 @@ void StateTutorial::update(float dt)
     if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left) && input_cooldown <= 0.0f) 
     {
         sf::Vector2i mousePos = sf::Mouse::getPosition(*window);    
-        
-        if (is_clicked(btnNext, mousePos)) 
+        float cooldown = 30;
+        if (is_clicked(btn_next, mousePos)) 
         {
-            input_cooldown = 0.3f; 
+            input_cooldown = cooldown; 
             if (current_indx < (int)slides_tutorial.size() - 1) 
             {
                 current_indx++;
                 current_sprite.setTexture(slides_tutorial[current_indx]);
+                auto size = slides_tutorial[current_indx].getSize();
+                current_sprite.setTextureRect({{0, 0}, {static_cast<int>(size.x), static_cast<int>(size.y)}});
                 setup_layout(); 
             } 
             else 
             {
                 save_tutorial_completed();
+                //Linea tentativa a quitar dependiendo del manejador de states
+                window->close();
             }
         }
 
-        if (current_indx > 0 && is_clicked(btnPrev, mousePos)) 
+        if (current_indx > 0 && is_clicked(btn_prev, mousePos)) 
         {
-            input_cooldown = 0.3f;
+            input_cooldown = cooldown;
             current_indx--;
             current_sprite.setTexture(slides_tutorial[current_indx]);
+            auto size = slides_tutorial[current_indx].getSize();
+            current_sprite.setTextureRect({{0, 0}, {static_cast<int>(size.x), static_cast<int>(size.y)}});
             setup_layout();
         }
 
-        if (is_clicked(btnExit, mousePos)) 
+        if (is_clicked(btn_exit, mousePos)) 
         {
-            input_cooldown = 0.3f;
+            input_cooldown = cooldown;
             save_tutorial_completed();
+            //Linea se pudiera quitar o no, depende como hagamos el manejador de states
+            window->close();
         }
     }
     update_dots();
@@ -179,20 +195,20 @@ void StateTutorial::update_dots()
 
 void StateTutorial::render(sf::RenderWindow& window) {
 
-    window.clear(sf::Color(30, 30, 30));
+    window.clear(sf::Color(130,130,200,255));
 
     window.draw(current_sprite);
     
-    if(current_indx > 0) window.draw(btnPrev);
-    window.draw(btnNext);
-    window.draw(btnExit);
+    if(current_indx > 0) window.draw(btn_prev);
+    window.draw(btn_next);
+    window.draw(btn_exit);
 
     for(auto& dot : progress_dots)
     {
         window.draw(dot);
     }
-    
-    window.display();
+    //Quito este display pq vi que en el main ya hay un .display, aun tenemos que definir el que manejara estos estados
+    //window.display();
 }
 
 bool StateTutorial::is_clicked(sf::Sprite& sprite, sf::Vector2i mousePos)
