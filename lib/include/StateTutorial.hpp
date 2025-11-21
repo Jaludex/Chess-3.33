@@ -1,0 +1,38 @@
+#pragma once
+#include "IGameState.hpp"
+#include <vector>
+#include <string>
+#include <fstream>
+#include <SFML/Graphics.hpp>
+class StateTutorial : public IGameState
+{
+private:
+    sf::RenderWindow* window;
+    std::vector<sf::Texture> slides_tutorial;
+    sf::Sprite current_sprite;
+    int current_indx;
+
+    sf::Texture texNext, texPrev, texExit;
+    sf::Sprite btnNext;
+    sf::Sprite btnPrev;
+    sf::Sprite btnExit;
+
+    std::vector<sf::CircleShape> progress_dots;
+
+    float input_cooldown;
+
+    void save_tutorial_completed();
+    void setup_layout(); 
+    void update_dots();  
+
+public:
+    StateTutorial(sf::RenderWindow& Window);
+    ~StateTutorial();
+
+    void init() override;                
+    void terminate() override;           
+    void update(float dt) override;
+    void render(sf::RenderWindow& window) override;
+    
+    bool is_clicked(sf::Sprite& sprite, sf::Vector2i mousePos);
+};
