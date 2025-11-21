@@ -1,5 +1,3 @@
-#include <SFML/Graphics.hpp>
-#include <SpriteManager.hpp>
 #include <StateGameplay.hpp>
 #include"StateTutorial.hpp"
 #include <Board.hpp>
