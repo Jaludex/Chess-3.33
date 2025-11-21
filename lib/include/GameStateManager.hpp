@@ -15,7 +15,7 @@ private:
     sf::RenderWindow* window;
 
 public:
-    GameStateManager(*sf::RenderWindow& _window);
+    GameStateManager(sf::RenderWindow& _window);
     ~GameStateManager();
 
     void go_back();

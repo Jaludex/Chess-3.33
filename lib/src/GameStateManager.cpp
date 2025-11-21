@@ -1,6 +1,6 @@
 #include <GameStateManager.hpp>
 
-GameStateManager::GameStateManager(*sf::RenderWindow& _window) : window(_window)
+GameStateManager::GameStateManager(sf::RenderWindow& _window) : window(&_window)
 {
 
 }
@@ -11,14 +11,14 @@ GameStateManager::~GameStateManager()
 
 void GameStateManager::go_back()
 {    
-    states.top().terminate();
+    states.top()->terminate();
     states.pop();
 }
 
 void GameStateManager::go_to(GameStatePtr new_state)
 {
     states.push(new_state);
-    new_state.init();
+    new_state->init();
 }
 
 void GameStateManager::init()
@@ -34,19 +34,19 @@ void GameStateManager::update(float dt)
 {
     switch(states.top()->go_to)
     {
-    case StateType.MainMenu:
+    case StateType::MainMenu:
         {
             go_to(std::make_shared<StateGameplay>(this->window));
         }       
         break;
 
-    case StateType.Gameplay:
+    case StateType::Gameplay:
         {
             go_to(std::make_shared<StateMainMenu>(this->window));
         }    
         break;
 
-    case StateType.Return:
+    case StateType::Return:
         {
             go_back();
         }
