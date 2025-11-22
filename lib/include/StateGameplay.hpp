@@ -1,7 +1,7 @@
 #pragma once
 
 #include <SpriteManager.hpp>
-#include <IGameState.hpp>
+#include "IGameState.hpp"
 #include <Gametree.hpp>
 #include <Board.hpp>
 #include <memory>
@@ -21,7 +21,7 @@
 #include <exception>
 using PieceInstantPtr = std::shared_ptr<PieceInstantiator>;
 
-class StateGameplay : IGameState
+class StateGameplay : public IGameState
 {
 private:
     BoardObjectPtr selected_piece;
@@ -29,23 +29,24 @@ private:
     Board board;
     sf::Clock elapsed_time;
     long score;
-    sf::RenderWindow* window;
     bool player_turn;
     std::vector<PieceInstantPtr> instantiators;
     GameTree bot; 
     PieceInstantPtr clicked_instantiator(sf::Vector2i mouse_position);
     bool check_winner();
+    sf::Font font; 
+    sf::Text* btn_back = nullptr;
+    bool isMouseOver(const sf::Text& text, const sf::Vector2i& mousePos);
     // Challenges
     
 public:
-    StateGameplay(sf::RenderWindow& _window);
+    StateGameplay(sf::RenderWindow* _window);
     ~StateGameplay();
 
     void init() override;                // inicializar aspectos del gamestate
     void terminate() override;           // eliminar memoria reservada dinámicamente o cosas que se tengan que manejar al final de ese estado de juego.
 	void update(float dt) override;
-	void render(sf::RenderWindow& window) override;
-    sf::Vector2i get_relative_mouse_position();
+    void render(sf::RenderWindow& window) override;
     void drag();
 };
 

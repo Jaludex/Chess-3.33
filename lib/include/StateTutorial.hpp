@@ -26,7 +26,7 @@ private:
     void update_dots();  
 
 public:
-    StateTutorial(sf::RenderWindow& Window);
+    StateTutorial(sf::RenderWindow* Window);
     ~StateTutorial();
 
     void init() override;                
