@@ -28,7 +28,10 @@ public:
 	virtual void update(float dt) = 0;
 	virtual void render(sf::RenderWindow& window) = 0;
 
-    sf::Vector2i get_relative_mouse_position();
+    sf::Vector2i get_relative_mouse_position()
+    {
+        return sf::Mouse::getPosition(*window);
+    }
 };
-
 using GameStatePtr = std::shared_ptr<IGameState>;
+

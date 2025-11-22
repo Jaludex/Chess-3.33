@@ -32,27 +32,30 @@ void GameStateManager::init()
 
 void GameStateManager::update(float dt)
 {
+    if (states.empty()) return;
     StateType next_state = states.top()->go_to;
     
     if (next_state != StateType::None)
     {
+        StateType next_state = states.top()->go_to;
         states.top()->go_to = StateType::None;
-        switch(states.top()->go_to)
+        switch(next_state)
         {
-            /*case StateType::MainMenu:
+            case StateType::MainMenu:
                 {
-                    go_to(std::make_shared<StateGameplay>(*this->window));
+                    states.pop();
+                    states.push(std::make_shared<StateMainMenu>(this->window));
+                    states.top()->init();
                 }       
                 break;
-            */
             case StateType::Gameplay:
                 {
-                    go_to(std::make_shared<StateMainMenu>(*this->window));
+                    go_to(std::make_shared<StateGameplay>(this->window));
                 }    
                 break;
             case StateType::Tutorial:
                 {
-                    go_to(std::make_shared<StateTutorial>(*this->window)); 
+                    go_to(std::make_shared<StateTutorial>(this->window)); 
                 }
             break;
             case StateType::Return:

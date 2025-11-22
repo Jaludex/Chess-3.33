@@ -1,121 +1,114 @@
-/*#include "StateMainMenu.hpp"
-#include <iostream>
+#include "StateMainMenu.hpp"
 
-// Constructor (solo para inicializar puntero y tipo)
-StateMainMenu::StateMainMenu(sf::RenderWindow* window_ptr)
+StateMainMenu::StateMainMenu(sf::RenderWindow* _window)
+    :    text_title(nullptr), btn_play(nullptr), btn_tutorial(nullptr), btn_exit(nullptr)
 {
-    window = window_ptr;
+    window = _window;
     type = StateType::MainMenu;
     go_to = StateType::None;
 }
 
-StateMainMenu::~StateMainMenu() {}
-
-void StateMainMenu::init() 
+StateMainMenu::~StateMainMenu()
 {
-    // Carga de fuente
-    if (!menu_font.loadFromFile("assets/fonts/arial.ttf")) {
-        if (!menu_font.loadFromFile("C:/Windows/Fonts/arial.ttf")) {
-            std::cerr << "ERROR: No se pudo cargar fuente para el menu" << std::endl;
-        }
-    }
-
-    sf::Vector2u window_size = window->getSize();
-    float center_x = (float)window_size.x / 2.0f;
-
-    // Título
-    title_text.setFont(menu_font);
-    title_text.setString("CHESS 3.33");
-    title_text.setCharacterSize(60);
-    title_text.setFillColor(sf::Color::White);
-    title_text.setStyle(sf::Text::Bold);
-    
-    sf::FloatRect title_bounds = title_text.getLocalBounds();
-    title_text.setOrigin(title_bounds. + title_bounds.width / 2.0f, title_bounds.top + title_bounds / 2.0f);
-    
-    title_text.setPosition(sf::Vector2f(center_x, 150.0f)); 
-
-    // Crear Botones
-    create_button(center_x, 350.0f, "JUGAR", StateType::Gameplay);
-    create_button(center_x, 450.0f, "TUTORIAL", StateType::Tutorial);
-    create_button(center_x, 550.0f, "SALIR", StateType::None);
-}
-
-void StateMainMenu::create_button(float x_pos, float y_pos, std::string button_label, StateType action_type_param)
-{
-    MenuButton button_data;
-    button_data.action_type = action_type_param;
-
-    // Forma
-    button_data.button_shape.setSize(sf::Vector2f(300.0f, 60.0f));
-    button_data.button_shape.setOrigin(150.0f, 30.0f);
-    button_data.button_shape.setPosition(sf::Vector2f(x_pos, y_pos));
-    button_data.button_shape.setFillColor(sf::Color(50, 50, 60));
-    button_data.button_shape.setOutlineColor(sf::Color::White);
-    button_data.button_shape.setOutlineThickness(2.0f);
-
-    // Texto
-    button_data.button_text.setFont(menu_font);
-    button_data.button_text.setString(button_label);
-    button_data.button_text.setCharacterSize(24);
-    button_data.button_text.setFillColor(sf::Color::White);
-    
-    sf::FloatRect text_bounds = button_data.button_text.getLocalBounds();
-    button_data.button_text.setOrigin(text_bounds.left + text_bounds.width/2.0f, text_bounds.top + text_bounds.height/2.0f);
-    
-    button_data.button_text.setPosition(sf::Vector2f(x_pos, y_pos));
-
-    menu_buttons.push_back(button_data);
+    terminate();
 }
 
 void StateMainMenu::terminate()
 {
-    menu_buttons.clear();
+    delete text_title;
+    text_title = nullptr;
+    delete btn_play;
+    btn_play = nullptr;
+    delete btn_tutorial;
+    btn_tutorial = nullptr;
+    delete btn_exit;
+    btn_exit = nullptr;
+}
+
+void StateMainMenu::init()
+{
+    if (!font.openFromFile("assets/fonts/arial.ttf")) 
+    {
+        //if (!font.openFromFile("arial.ttf")) 
+        //{
+            std::cerr << "ERROR: No se pudo cargar la fuente (arial.ttf)" << std::endl;
+        //}
+    }
+    
+
+    text_title = new sf::Text(font, "CHESS 3.33", 60);
+    btn_play = new sf::Text(font,"JUGAR", 40);
+    btn_tutorial = new sf::Text(font,"TUTORIAL", 40);
+    btn_exit = new sf::Text(font,"SALIR", 40);
+
+    sf::Vector2u winSize = window->getSize();
+    float midX = winSize.x / 2.0f;
+
+    text_title->setFillColor(sf::Color::White);
+    text_title->setStyle(sf::Text::Bold);
+    
+    sf::FloatRect bounds = text_title->getLocalBounds();
+    text_title->setOrigin({bounds.position.x + bounds.size.x / 2.0f, bounds.position.y + bounds.size.y / 2.0f});
+    text_title->setPosition({midX, winSize.y * 0.2f});
+
+    setupText(btn_play, "JUGAR", winSize.y * 0.45f);
+    setupText(btn_tutorial, "TUTORIAL", winSize.y * 0.60f);
+    setupText(btn_exit, "SALIR", winSize.y * 0.75f);
+}
+
+void StateMainMenu::setupText(sf::Text* text, const std::string& str, float yPos)
+{
+    text->setString(str);
+    text->setCharacterSize(40);
+    text->setFillColor(sf::Color(200, 200, 200)); 
+    
+    sf::FloatRect bounds = text->getLocalBounds();
+    text->setOrigin({bounds.position.x + bounds.size.x / 2.0f, bounds.position.y + bounds.size.y / 2.0f});
+    text->setPosition({(float)window->getSize().x / 2.0f, yPos});
 }
 
 void StateMainMenu::update(float dt)
 {
-    sf::Vector2i mouse_pos_i = sf::Mouse::getPosition(*window);
-    sf::Vector2f mouse_pos_f(static_cast<float>(mouse_pos_i.x), static_cast<float>(mouse_pos_i.y));
+    sf::Vector2i mousePos = get_relative_mouse_position();
     
-    bool clicked = sf::Mouse::isButtonPressed(sf::Mouse::Button::Left);
-
-    for (auto& button_data : menu_buttons)
-    {
-        if (button_data.button_shape.getGlobalBounds().contains(mouse_pos_f))
-        {
-            button_data.button_shape.setFillColor(sf::Color(100, 100, 180));
-            
-            if (clicked)
-            {
-                if (button_data.action_type == StateType::None) 
-                {
-                    window->close();
-                }
-                else 
-                {
-                    go_to = button_data.action_type; 
-                    sf::sleep(sf::milliseconds(150));
-                }
-            }
-        }
+    auto updateButtonColor = [&](sf::Text* btn) {
+        if (isMouseOver(*btn, mousePos))
+            btn->setFillColor(sf::Color::Yellow);
         else
+            btn->setFillColor(sf::Color::White);
+    };
+
+    updateButtonColor(btn_play);
+    updateButtonColor(btn_tutorial);
+    updateButtonColor(btn_exit);
+
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+    {
+        if (isMouseOver(*btn_play, mousePos))
         {
-            button_data.button_shape.setFillColor(sf::Color(50, 50, 60));
+            this->go_to = StateType::Gameplay;
+        }
+        else if (isMouseOver(*btn_tutorial, mousePos))
+        {
+            this->go_to = StateType::Tutorial;
+        }
+        else if (isMouseOver(*btn_exit, mousePos))
+        {
+            window->close(); 
         }
     }
 }
 
-void StateMainMenu::render(sf::RenderWindow& window_ref)
+bool StateMainMenu::isMouseOver(const sf::Text& text, const sf::Vector2i& mousePos)
 {
-    window_ref.clear(sf::Color(20, 20, 30));
-
-    window_ref.draw(title_text);
-
-    for (auto& button_data : menu_buttons)
-    {
-        window_ref.draw(button_data.button_shape);
-        window_ref.draw(button_data.button_text);
-    }
+    sf::FloatRect bounds = text.getGlobalBounds();
+    return bounds.contains({(float)mousePos.x, (float)mousePos.y});
 }
-*/
+
+void StateMainMenu::render(sf::RenderWindow& target)
+{
+    target.draw(*text_title);
+    target.draw(*btn_play);
+    target.draw(*btn_tutorial);
+    target.draw(*btn_exit);
+}

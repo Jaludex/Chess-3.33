@@ -1,8 +1,8 @@
 #include"StateTutorial.hpp"
 #include <iostream>
-StateTutorial::StateTutorial(sf::RenderWindow& Window) : current_sprite(texExit), btn_next(texNext), btn_prev(texPrev), btn_exit(texExit) 
+StateTutorial::StateTutorial(sf::RenderWindow* _window) : current_sprite(texExit), btn_next(texNext), btn_prev(texPrev), btn_exit(texExit) 
 {
-    window = &Window;
+    window = _window;
     current_indx = 0;
     input_cooldown = 0.0f;
 }

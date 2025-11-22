@@ -1,9 +1,9 @@
 #include <StateGameplay.hpp>
 
-StateGameplay::StateGameplay(sf::RenderWindow& _window) : board(sf::Texture(sf::Vector2u((unsigned int)(Board::side_lenght * Board::cell_lenght),
+StateGameplay::StateGameplay(sf::RenderWindow* _window) : board(sf::Texture(sf::Vector2u((unsigned int)(Board::side_lenght * Board::cell_lenght),
                                                                               (unsigned int)(Board::side_lenght * Board::cell_lenght)))), player_turn(true), bot(BoardL(), GameEvaluator())
 {
-    window = &_window;
+    window = _window;
     type = StateType::Gameplay;
     go_to = StateType::None;
 }
@@ -11,6 +11,7 @@ StateGameplay::~StateGameplay() {}
 
 void StateGameplay::init()
 {
+    SpriteManager::init();
     float halfboard_lenght = Board::side_lenght * Board::cell_lenght / 2;
     auto pos = sf::Vector2<float>((float)(window->getSize().x/2 - halfboard_lenght),
                                   (float)(window->getSize().y/2 - halfboard_lenght));
@@ -50,6 +51,17 @@ void StateGameplay::init()
     //board.add_piece(std::make_shared<InBoardObject>(Position(1, 1), std::make_shared<Archer>(false, SpriteManager::get_piece_texture("black_archer"))));
     //board.add_piece(std::make_shared<InBoardObject>(Position(1, 0), std::make_shared<Portal>(false, SpriteManager::get_piece_texture("black_portal"))));
     //board.add_piece(std::make_shared<InBoardObject>(Position(5, 1), std::make_shared<Trapper>(false, SpriteManager::get_piece_texture("black_trapper"))));
+    
+    if (!font.openFromFile("assets/fonts/arial.ttf")) 
+    {
+         std::cerr << "ERROR: No se pudo cargar fuente en Gameplay" << std::endl;
+    }
+    btn_back = new sf::Text(font, "<-", 30);
+    btn_back->setFillColor(sf::Color::White);
+    btn_back->setPosition(sf::Vector2f(20.f, 20.f));
+    
+    btn_back->setOutlineThickness(2);
+    btn_back->setOutlineColor(sf::Color::Black);
 
     bot.set_current_board(board.get_elements());
     bot.initial_game_eval();
@@ -83,13 +95,27 @@ void StateGameplay::update(float dt)
 
         player_turn = true;
     }
-    
+    sf::Vector2i mousePos = get_relative_mouse_position();
+
+    if (btn_back) 
+    {
+        if (isMouseOver(*btn_back, mousePos)) btn_back->setFillColor(sf::Color::Yellow);
+        else btn_back->setFillColor(sf::Color::White);
+    }
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+    {
+        if (btn_back && isMouseOver(*btn_back, mousePos))
+        {
+            this->go_to = StateType::Return; 
+            return;
+        }
+    }
     board.update(dt);
 }
 
 void StateGameplay::drag()
 {
-    auto mouse_position = get_relative_mouse_position();
+    auto mouse_position = this->get_relative_mouse_position();
     if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
     {        
         if (selected_piece)
@@ -150,6 +176,8 @@ void StateGameplay::render(sf::RenderWindow& window)
     {
         inst->render(window);
     }
+
+    if (btn_back) window.draw(*btn_back);
 }
 
 PieceInstantPtr StateGameplay::clicked_instantiator(sf::Vector2i mouse_position)
@@ -165,4 +193,10 @@ PieceInstantPtr StateGameplay::clicked_instantiator(sf::Vector2i mouse_position)
     }
 
     return nullptr;
+}
+
+bool StateGameplay::isMouseOver(const sf::Text& text, const sf::Vector2i& mousePos)
+{
+    sf::FloatRect bounds = text.getGlobalBounds();
+    return bounds.contains({(float)mousePos.x, (float)mousePos.y});
 }
