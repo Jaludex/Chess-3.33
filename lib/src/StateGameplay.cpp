@@ -158,7 +158,14 @@ void StateGameplay::drag()
         if(board.is_touching_mouse(mouse_position))
         {
             auto pos = board.get_square_by_coords(mouse_position);
-            board.add_piece(selected_inst->make_piece(pos.x, pos.y));
+            if (!board.get_position(pos.x, pos.y))
+            {
+                board.add_piece(selected_inst->make_piece(pos.x, pos.y));
+            }
+            else
+            {
+                //Reproducir señal de error o prohibido
+            }
         }
         
         selected_inst->return_to_origin();
