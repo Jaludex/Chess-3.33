@@ -205,8 +205,6 @@ void StateTutorial::render(sf::RenderWindow& window) {
     {
         window.draw(dot);
     }
-    //Quito este display pq vi que en el main ya hay un .display, aun tenemos que definir el que manejara estos estados
-    //window.display();
 }
 
 bool StateTutorial::is_clicked(sf::Sprite& sprite, sf::Vector2i mousePos)

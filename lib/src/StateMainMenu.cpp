@@ -29,10 +29,8 @@ void StateMainMenu::init()
 {
     if (!font.openFromFile("assets/fonts/arial.ttf")) 
     {
-        //if (!font.openFromFile("arial.ttf")) 
-        //{
-            std::cerr << "ERROR: No se pudo cargar la fuente (arial.ttf)" << std::endl;
-        //}
+        std::cerr << "ERROR: No se pudo cargar la fuente (arial.ttf)" << std::endl;
+
     }
     
 
