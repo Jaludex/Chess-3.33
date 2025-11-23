@@ -109,7 +109,7 @@ void Board::set_piece_sprite(BoardObjectPtr element)
 
 Position Board::get_square_by_coords(sf::Vector2i mouse_position)
 {
-    sf::Vector2f relative_position = static_cast<sf::Vector2f>(mouse_position) - sprite.getPosition();
+    sf::Vector2f relative_position = static_cast<sf::Vector2f>(mouse_position)- sprite.getPosition();
     return Position(relative_position.x / Board::cell_lenght, relative_position.y / Board::cell_lenght);
 }
 
@@ -120,7 +120,11 @@ bool Board::drop_piece(BoardObjectPtr element)
     auto old_pos = element->pos;
     if (sprite.getGlobalBounds().contains(element->piece->get_sprite().getPosition()))
     {
-        Position position_on_board = get_square_by_coords(static_cast<sf::Vector2i>(element->piece->get_sprite().getPosition()));
+        sf::FloatRect piece_center = element->piece->get_sprite().getLocalBounds();
+        float center_x = piece_center.size.x / 2.0;
+        float center_y = piece_center.size.y / 2.0;
+        sf::Vector2f offset(center_x,center_y);
+        Position position_on_board = get_square_by_coords(static_cast<sf::Vector2i>(element->piece->get_sprite().getPosition() + offset));
         it_moves = this->move_piece(element, position_on_board);
     }
 

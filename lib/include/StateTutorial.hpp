@@ -33,6 +33,5 @@ public:
     void terminate() override;           
     void update(float dt) override;
     void render(sf::RenderWindow& window) override;
-    
-    bool is_clicked(sf::Sprite& sprite, sf::Vector2i mousePos);
+
 };

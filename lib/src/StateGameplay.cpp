@@ -99,12 +99,12 @@ void StateGameplay::update(float dt)
 
     if (btn_back) 
     {
-        if (isMouseOver(*btn_back, mousePos)) btn_back->setFillColor(sf::Color::Yellow);
+        if (is_mouse_over(*btn_back, mousePos)) btn_back->setFillColor(sf::Color::Yellow);
         else btn_back->setFillColor(sf::Color::White);
     }
     if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
     {
-        if (btn_back && isMouseOver(*btn_back, mousePos))
+        if (btn_back && is_mouse_over(*btn_back, mousePos))
         {
             this->go_to = StateType::Return; 
             return;
@@ -112,7 +112,13 @@ void StateGameplay::update(float dt)
     }
     board.update(dt);
 }
+float fix_offset(const sf::Sprite& _sprite, char t)
+{
+    sf::FloatRect boundaries = _sprite.getGlobalBounds();
+    if(t == 'x') return boundaries.size.x / 2.0;
 
+    else return boundaries.size.y / 2.0;
+}
 void StateGameplay::drag()
 {
     auto mouse_position = this->get_relative_mouse_position();
@@ -120,12 +126,14 @@ void StateGameplay::drag()
     {        
         if (selected_piece)
         {   
-            selected_piece->piece->set_sprite_position({(float)mouse_position.x, (float)mouse_position.y});
+            
+            //sf::Sprite aux_sprite = selected_piece->piece->get_sprite();
+            selected_piece->piece->set_sprite_position({(float)mouse_position.x - fix_offset(selected_piece->piece->get_sprite(), 'x'), (float)mouse_position.y - fix_offset(selected_piece->piece->get_sprite(), 'y')});
             selected_inst = nullptr;
         }
         else if (selected_inst)
         {
-            selected_inst->set_sprite_position({(float)mouse_position.x, (float)mouse_position.y});
+            selected_inst->set_sprite_position({(float)mouse_position.x - fix_offset(selected_inst->get_sprite(), 'x'), (float)mouse_position.y - fix_offset(selected_inst->get_sprite(), 'y')});
             selected_piece = nullptr;
         }
         else
@@ -202,8 +210,3 @@ PieceInstantPtr StateGameplay::clicked_instantiator(sf::Vector2i mouse_position)
     return nullptr;
 }
 
-bool StateGameplay::isMouseOver(const sf::Text& text, const sf::Vector2i& mousePos)
-{
-    sf::FloatRect bounds = text.getGlobalBounds();
-    return bounds.contains({(float)mousePos.x, (float)mousePos.y});
-}
