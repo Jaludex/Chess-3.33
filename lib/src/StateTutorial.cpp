@@ -16,10 +16,12 @@ void StateTutorial::init()
 {
     slides_tutorial.clear();
     progress_dots.clear();
+
+    std::string route = "assets/tutorial/";
     for(int i = 1; i <= 8; i++) 
     {
         sf::Texture texture;
-        std::string path = "assets/tutorial/slide" + std::to_string(i) + ".png";
+        std::string path = route + "slide" + std::to_string(i) + ".png";
         if (texture.loadFromFile(path))
         {
             texture.setSmooth(true); 
@@ -38,9 +40,9 @@ void StateTutorial::init()
         current_sprite.setTextureRect({{0, 0}, {static_cast<int>(size.x), static_cast<int>(size.y)}});
     }
 
-    if (!texPrev.loadFromFile("assets/tutorial/prevBtn.png")) std::cerr << "Falta prevBtn.png" << std::endl;
-    if (!texNext.loadFromFile("assets/tutorial/nextBtn.png")) std::cerr << "Falta nextBtn.png" << std::endl;
-    if (!texExit.loadFromFile("assets/tutorial/exitBtn.png")) std::cerr << "Falta exitBtn.png" << std::endl;
+    if (!texPrev.loadFromFile(route + "prevBtn.png")) std::cerr << "Falta prevBtn.png" << std::endl;
+    if (!texNext.loadFromFile(route + "nextBtn.png")) std::cerr << "Falta nextBtn.png" << std::endl;
+    if (!texExit.loadFromFile(route + "exitBtn.png")) std::cerr << "Falta exitBtn.png" << std::endl;
 
     btn_prev.setTexture(texPrev);
     btn_next.setTexture(texNext);
