@@ -172,12 +172,6 @@ PieceInstantPtr StateGameplay::clicked_instantiator(sf::Vector2i mouse_position)
     return nullptr;
 }
 
-bool StateGameplay::isMouseOver(const sf::Text& text, const sf::Vector2i& mousePos)
-{
-    sf::FloatRect bounds = text.getGlobalBounds();
-    return bounds.contains({(float)mousePos.x, (float)mousePos.y});
-}
-
 void StateGameplay::on_resize() 
 {
     float halfboard_lenght = Board::side_lenght * Board::cell_lenght / 2;
