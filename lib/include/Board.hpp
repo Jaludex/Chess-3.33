@@ -40,5 +40,6 @@ public:
     void render_pieces(sf::RenderWindow& window);
     void add_piece(BoardObjectPtr piece);
     void set_piece_sprite(BoardObjectPtr element);
+    void on_resize();
 };
 
