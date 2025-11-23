@@ -11,7 +11,6 @@ StateGameplay::~StateGameplay() {}
 
 void StateGameplay::init()
 {
-    SpriteManager::init();
     float halfboard_lenght = Board::side_lenght * Board::cell_lenght / 2;
     auto pos = sf::Vector2<float>((float)(window->getSize().x/2 - halfboard_lenght),
                                   (float)(window->getSize().y/2 - halfboard_lenght));
@@ -158,14 +157,7 @@ void StateGameplay::drag()
         if(board.is_touching_mouse(mouse_position))
         {
             auto pos = board.get_square_by_coords(mouse_position);
-            if (!board.get_position(pos.x, pos.y))
-            {
                 board.add_piece(selected_inst->make_piece(pos.x, pos.y));
-            }
-            else
-            {
-                //Reproducir señal de error o prohibido
-            }
         }
         
         selected_inst->return_to_origin();
