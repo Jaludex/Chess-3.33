@@ -40,6 +40,23 @@ int main()
             {
                 
                 sf::Vector2f newSize(resized->size);
+                bool minimun = false;
+                if (newSize.x <= 1080)
+                {
+                    newSize.x = 1080;
+                    minimun = true;
+                }
+                if (newSize.y <= 810)
+                {
+                    newSize.y = 810;
+                    minimun = true;
+                }
+
+                if (minimun)
+                {
+                    window.setSize(static_cast<sf::Vector2u>(newSize));
+                }
+                
                 sf::FloatRect visibleArea({0.f, 0.f}, newSize);
 
                 window.setView(sf::View(visibleArea));
