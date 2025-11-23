@@ -29,6 +29,8 @@ public:
 	virtual void render(sf::RenderWindow& window) = 0;
     sf::Vector2i get_relative_mouse_position();
     virtual void on_resize() = 0;
+    bool is_mouse_over(const sf::Text& text, const sf::Vector2i& mouse_pos);
+    bool is_mouse_over(const sf::Sprite& sprite, const sf::Vector2i& mouse_pos);
 };
 using GameStatePtr = std::shared_ptr<IGameState>;
 
