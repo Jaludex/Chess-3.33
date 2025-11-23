@@ -8,7 +8,6 @@ int main()
     SpriteManager::init();
     auto window = sf::RenderWindow(sf::VideoMode({1080u, 810u}), "Chess 3.33 Alpha");
     window.setFramerateLimit(144u);
-    window.setMinimumSize(sf::Vector2u(1080u, 810u));
     
     sf::Vector2u desktopSize = sf::VideoMode::getDesktopMode().size;
     sf::Vector2u windowSize = window.getSize();
@@ -44,6 +43,7 @@ int main()
                 sf::FloatRect visibleArea({0.f, 0.f}, newSize);
 
                 window.setView(sf::View(visibleArea));
+                manager.on_resize();
             }
         }
 

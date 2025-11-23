@@ -199,3 +199,5 @@ bool StateGameplay::isMouseOver(const sf::Text& text, const sf::Vector2i& mouseP
     sf::FloatRect bounds = text.getGlobalBounds();
     return bounds.contains({(float)mousePos.x, (float)mousePos.y});
 }
+
+void StateGameplay::on_resize() {}
