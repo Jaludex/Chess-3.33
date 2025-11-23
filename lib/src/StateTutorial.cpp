@@ -5,6 +5,7 @@ StateTutorial::StateTutorial(sf::RenderWindow* _window) : current_sprite(texExit
     window = _window;
     current_indx = 0;
     input_cooldown = 0.0f;
+    go_to = StateType::None;
 }
 
 StateTutorial::~StateTutorial() 
