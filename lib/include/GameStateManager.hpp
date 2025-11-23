@@ -24,4 +24,5 @@ public:
 	void update(float dt);
 	void render(sf::RenderWindow& _window);
     void terminate();
+    void on_resize();
 };

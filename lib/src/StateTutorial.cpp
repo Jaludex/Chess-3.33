@@ -135,6 +135,11 @@ void StateTutorial::setup_layout()
     }
 }
 
+void StateTutorial::on_resize()
+{
+    setup_layout();   
+}
+
 void StateTutorial::update(float dt)
 {
     if (input_cooldown > 0.0f) input_cooldown -= dt;

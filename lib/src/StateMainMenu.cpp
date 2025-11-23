@@ -39,12 +39,17 @@ void StateMainMenu::init()
     btn_tutorial = new sf::Text(font,"TUTORIAL", 40);
     btn_exit = new sf::Text(font,"SALIR", 40);
 
-    sf::Vector2u winSize = window->getSize();
-    float midX = winSize.x / 2.0f;
-
     text_title->setFillColor(sf::Color::White);
     text_title->setStyle(sf::Text::Bold);
     
+    on_resize();
+}
+
+void StateMainMenu::on_resize()
+{
+    sf::Vector2u winSize = window->getSize();
+    float midX = winSize.x / 2.0f;
+
     sf::FloatRect bounds = text_title->getLocalBounds();
     text_title->setOrigin({bounds.position.x + bounds.size.x / 2.0f, bounds.position.y + bounds.size.y / 2.0f});
     text_title->setPosition({midX, winSize.y * 0.2f});

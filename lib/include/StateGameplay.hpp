@@ -48,6 +48,7 @@ public:
 	void update(float dt) override;
     void render(sf::RenderWindow& window) override;
     void drag();
+    void on_resize() override;
 };
 
 

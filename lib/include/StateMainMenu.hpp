@@ -26,4 +26,5 @@ public:
     void terminate() override;
     void update(float dt) override;
     void render(sf::RenderWindow& window) override;
+    void on_resize() override;
 };

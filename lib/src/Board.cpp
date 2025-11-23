@@ -182,3 +182,11 @@ void Board::update_bombs(BoardObjectPtr moved_piece, Position old_position)
                 return element->piece->get_piece_type() == PieceType::Bomb && element->piece->get_team() == team_of_bombs_to_remove;}), elements.end());
 }
 
+void Board::on_resize()
+{
+    for (auto piece : elements)
+    {
+        set_piece_sprite(piece);
+    }
+}
+
