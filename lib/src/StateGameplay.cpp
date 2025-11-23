@@ -126,9 +126,7 @@ void StateGameplay::drag()
     {        
         if (selected_piece)
         {   
-            
-            //sf::Sprite aux_sprite = selected_piece->piece->get_sprite();
-            selected_piece->piece->set_sprite_position({(float)mouse_position.x - fix_offset(selected_piece->piece->get_sprite(), 'x'), (float)mouse_position.y - fix_offset(selected_piece->piece->get_sprite(), 'y')});
+            selected_piece->piece->set_sprite_position({(float)mouse_position.x - fix_offset(selected_piece->piece->get_sprite(), 'x'), (float)mouse_position.y - fix_offset(selected_piece->piece->get_sprite(),'y')});
             selected_inst = nullptr;
         }
         else if (selected_inst)
