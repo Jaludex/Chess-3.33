@@ -135,7 +135,15 @@ void StateGameplay::drag()
         if(board.is_touching_mouse(mouse_position))
         {
             auto pos = board.get_square_by_coords(mouse_position);
+            if (!board.get_position(pos.x, pos.y))
+            {
                 board.add_piece(selected_inst->make_piece(pos.x, pos.y));
+            }
+            else
+            {
+                //Reproducir sonido de error tal vez, notificar que no es valido instanciar asi
+            }
+                
         }
         
         selected_inst->return_to_origin();
