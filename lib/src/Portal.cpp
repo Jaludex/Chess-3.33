@@ -11,6 +11,7 @@ return (_team)? Portal::white : Portal::black;
 
 Portal::Portal(bool team, sf::Texture texture) : IGameObject(texture)
 {
+    height = 84;
     set_team(team);
     set_piece_type(PieceType::Portal);
 }

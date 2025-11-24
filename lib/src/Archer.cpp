@@ -12,6 +12,7 @@ return (_team)? Archer::white : Archer::black;
 
 Archer::Archer(bool team, sf::Texture texture) : IGameObject(texture) 
 {
+    height = 76;
     set_team(team);
     set_piece_type(PieceType::Archer);
 }
