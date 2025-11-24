@@ -1,16 +1,26 @@
-#include <StateGameplay.hpp>
+#include <StatePractice.hpp>
 
-StateGameplay::StateGameplay(sf::RenderWindow* _window) : IStatePlayable(_window)
+StatePractice::StatePractice(sf::RenderWindow* _window) : IStatePlayable(_window)
 {
-    type = StateType::Gameplay;
+    type = StateType::Practice;
     go_to = StateType::None;
 }
 
-StateGameplay::~StateGameplay() {}
+StatePractice::~StatePractice() {}
 
-void StateGameplay::init()
+void StatePractice::init()
 {
     this->on_resize();
+
+    //board.add_piece(std::make_shared<InBoardObject>(Position(3, 5), std::make_shared<Queen>(true, SpriteManager::get_piece_texture("white_queen"))));
+    //board.add_piece(std::make_shared<InBoardObject>(Position(1, 4), std::make_shared<Archer>(true, SpriteManager::get_piece_texture("white_archer"))));
+    //board.add_piece(std::make_shared<InBoardObject>(Position(5, 5), std::make_shared<Crook>(true, SpriteManager::get_piece_texture("white_crook"))));
+    //
+    //board.add_piece(std::make_shared<InBoardObject>(Position(0, 1), std::make_shared<Horse>(false, SpriteManager::get_piece_texture("black_horse"))));
+    //board.add_piece(std::make_shared<InBoardObject>(Position(2, 1), std::make_shared<Queen>(false, SpriteManager::get_piece_texture("black_queen"))));
+    //board.add_piece(std::make_shared<InBoardObject>(Position(1, 1), std::make_shared<Archer>(false, SpriteManager::get_piece_texture("black_archer"))));
+    //board.add_piece(std::make_shared<InBoardObject>(Position(1, 0), std::make_shared<Portal>(false, SpriteManager::get_piece_texture("black_portal"))));
+    //board.add_piece(std::make_shared<InBoardObject>(Position(5, 1), std::make_shared<Trapper>(false, SpriteManager::get_piece_texture("black_trapper"))));
     
     if (!font.openFromFile("assets/fonts/arial.ttf")) 
     {
@@ -27,12 +37,12 @@ void StateGameplay::init()
     bot.initial_game_eval();
 }
 
-void StateGameplay::terminate()
+void StatePractice::terminate()
 {
     //si usamos shared pointers entonces no necesitamos eliminar la pieza creada en init
 }
 
-void StateGameplay::update(float dt)
+void StatePractice::update(float dt)
 {
     if (player_turn)
     {
@@ -73,8 +83,7 @@ void StateGameplay::update(float dt)
     board.update(dt);
 }
 
-
-void StateGameplay::render(sf::RenderWindow& window)
+void StatePractice::render(sf::RenderWindow& window)
 {
     board.render(window);
     if (selected_piece) board.render_highlights(window, selected_piece->piece->get_valid_moves());
@@ -88,7 +97,7 @@ void StateGameplay::render(sf::RenderWindow& window)
     if (btn_back) window.draw(*btn_back);
 }
 
-void StateGameplay::on_resize() 
+void StatePractice::on_resize() 
 {
     float halfboard_lenght = Board::side_lenght * Board::cell_lenght / 2;
     auto pos = sf::Vector2<float>((float)(window->getSize().x/2 - halfboard_lenght),

@@ -2,11 +2,11 @@
 
 #include <IStatePlayable.hpp>
 
-class StateGameplay : public IStatePlayable
+class StatePractice : public IStatePlayable
 {
-    public:
-    StateGameplay(sf::RenderWindow* _window);
-    ~StateGameplay();
+public:
+    StatePractice(sf::RenderWindow* _window);
+    ~StatePractice();
 
     void init() override;                // inicializar aspectos del gamestate
     void terminate() override;           // eliminar memoria reservada dinámicamente o cosas que se tengan que manejar al final de ese estado de juego.

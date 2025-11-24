@@ -1,14 +1,14 @@
-#include <StateGameplay.hpp>
+#include <StateVersus.hpp>
 
-StateGameplay::StateGameplay(sf::RenderWindow* _window) : IStatePlayable(_window)
+StateVersus::StateVersus(sf::RenderWindow* _window) : IStatePlayable(_window)
 {
-    type = StateType::Gameplay;
+    type = StateType::Versus;
     go_to = StateType::None;
 }
 
-StateGameplay::~StateGameplay() {}
+StateVersus::~StateVersus() {}
 
-void StateGameplay::init()
+void StateVersus::init()
 {
     this->on_resize();
     
@@ -27,12 +27,12 @@ void StateGameplay::init()
     bot.initial_game_eval();
 }
 
-void StateGameplay::terminate()
+void StateVersus::terminate()
 {
     //si usamos shared pointers entonces no necesitamos eliminar la pieza creada en init
 }
 
-void StateGameplay::update(float dt)
+void StateVersus::update(float dt)
 {
     if (player_turn)
     {
@@ -74,7 +74,7 @@ void StateGameplay::update(float dt)
 }
 
 
-void StateGameplay::render(sf::RenderWindow& window)
+void StateVersus::render(sf::RenderWindow& window)
 {
     board.render(window);
     if (selected_piece) board.render_highlights(window, selected_piece->piece->get_valid_moves());
@@ -88,7 +88,7 @@ void StateGameplay::render(sf::RenderWindow& window)
     if (btn_back) window.draw(*btn_back);
 }
 
-void StateGameplay::on_resize() 
+void StateVersus::on_resize() 
 {
     float halfboard_lenght = Board::side_lenght * Board::cell_lenght / 2;
     auto pos = sf::Vector2<float>((float)(window->getSize().x/2 - halfboard_lenght),
