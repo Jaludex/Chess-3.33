@@ -12,7 +12,7 @@ Position Position::operator+(Position it)
     return Position(x + it.x, y + it.y);
 }
 
-IPiece::IPiece()
+IPiece::IPiece() : height(0)
 {}
 
 void IPiece::set_piece_type(PieceType type)
@@ -52,4 +52,9 @@ bool IPiece::is_valid(Position pos)
 std::vector<BoardObjectPtr> IPiece::get_valid_moves()
 {
     return valid_moves;
+}
+
+int IPiece::get_height() const
+{
+    return height;
 }

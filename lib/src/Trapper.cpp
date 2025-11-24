@@ -63,6 +63,7 @@ return (_team)? Trapper::white : Trapper::black;
 
 Trapper::Trapper(bool team, sf::Texture texture) : IGameObject(texture)
 {
+    height = 80;
     set_team(team);
     set_piece_type(PieceType::Trapper);
 }
