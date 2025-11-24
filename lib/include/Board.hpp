@@ -45,5 +45,6 @@ public:
     bool is_black_king_in_board() const;
     bool is_white_king_in_board() const;
     void render_crown(sf::RenderWindow&, sf::Vector2f, float);
+    void on_resize();
 };
 

@@ -13,6 +13,7 @@ void GameStateManager::go_back()
 {    
     states.top()->terminate();
     states.pop();
+    this->on_resize();
 }
 
 void GameStateManager::go_to(GameStatePtr new_state)
@@ -82,4 +83,9 @@ void GameStateManager::render(sf::RenderWindow& _window)
 void GameStateManager::terminate()
 {
     
+}
+
+void GameStateManager::on_resize()
+{
+    states.top()->on_resize();
 }

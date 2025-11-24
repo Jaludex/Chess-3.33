@@ -135,6 +135,11 @@ void StateTutorial::setup_layout()
     }
 }
 
+void StateTutorial::on_resize()
+{
+    setup_layout();   
+}
+
 void StateTutorial::update(float dt)
 {
     if (input_cooldown > 0.0f) input_cooldown -= dt;
@@ -143,7 +148,7 @@ void StateTutorial::update(float dt)
     {
         sf::Vector2i mousePos = sf::Mouse::getPosition(*window);    
         float cooldown = 30;
-        if (is_clicked(btn_next, mousePos)) 
+        if (is_mouse_over(btn_next, mousePos)) 
         {
             input_cooldown = cooldown; 
             if (current_indx < (int)slides_tutorial.size() - 1) 
@@ -161,7 +166,7 @@ void StateTutorial::update(float dt)
             }
         }
 
-        if (current_indx > 0 && is_clicked(btn_prev, mousePos)) 
+        if (current_indx > 0 && is_mouse_over(btn_prev, mousePos)) 
         {
             input_cooldown = cooldown;
             current_indx--;
@@ -171,7 +176,7 @@ void StateTutorial::update(float dt)
             setup_layout();
         }
 
-        if (is_clicked(btn_exit, mousePos)) 
+        if (is_mouse_over(btn_exit, mousePos)) 
         {
             input_cooldown = cooldown;
             save_tutorial_completed();
@@ -186,7 +191,7 @@ void StateTutorial::update_dots()
     {
         if ((int)i == current_indx) 
         {
-            progress_dots[i].setFillColor(sf::Color::White);
+            progress_dots[i].setFillColor(sf::Color::Yellow);
         }
         else 
         {
@@ -209,12 +214,6 @@ void StateTutorial::render(sf::RenderWindow& window) {
     {
         window.draw(dot);
     }
-}
-
-bool StateTutorial::is_clicked(sf::Sprite& sprite, sf::Vector2i mousePos)
-{
-    sf::Vector2f mouseF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
-    return sprite.getGlobalBounds().contains(mouseF);
 }
 
 void StateTutorial::save_tutorial_completed()

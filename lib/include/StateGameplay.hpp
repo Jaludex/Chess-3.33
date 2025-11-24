@@ -36,7 +36,6 @@ private:
     bool check_winner();
     sf::Font font; 
     sf::Text* btn_back = nullptr;
-    bool isMouseOver(const sf::Text& text, const sf::Vector2i& mousePos);
     // Challenges
     
 public:
@@ -48,6 +47,7 @@ public:
 	void update(float dt) override;
     void render(sf::RenderWindow& window) override;
     void drag();
+    void on_resize() override;
 };
 
 
