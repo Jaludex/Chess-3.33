@@ -15,6 +15,8 @@ struct Button
 class StateMainMenu : public IGameState
 {
 private:
+    float time_elapsed = 0.0f; 
+    const float INPUT_COOLDOWN = 0.5f;   
     sf::Texture background_tex;
     sf::Sprite background_sprite;
     sf::Font font;

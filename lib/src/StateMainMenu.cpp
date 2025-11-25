@@ -41,7 +41,12 @@ void StateMainMenu::init()
 
     }
     if(!background_tex.loadFromFile("assets/background_menu.png"))
-    text_title = new sf::Text(font, "CHESS 3.33", 60);
+    {
+        std::cerr << "ERROR: No se pudo cargar el fondo" << std::endl;
+    }
+    auto size = background_tex.getSize();
+    background_sprite.setTexture(background_tex);
+    background_sprite.setTextureRect({{0, 0}, {static_cast<int>(size.x), static_cast<int>(size.y)}});
     if (!button_texture.loadFromFile("assets/button.png")) 
     {
         sf::Image img;
@@ -127,20 +132,22 @@ void StateMainMenu::setup_button(Button* button, const std::string& str, float y
 
 void StateMainMenu::update(float dt)
 {
+     time_elapsed += dt;
     sf::Vector2i mouse_pos = get_relative_mouse_position();
-    
    auto update_button_color = [&](Button* btn) {
         if (is_mouse_over(btn->btn_sprite, mouse_pos))
             btn->btn_sprite.setColor(sf::Color(200, 200, 200)); 
         else
             btn->btn_sprite.setColor(sf::Color::White);
     };
-
     update_button_color(btn_stats);
     update_button_color(btn_play);
     update_button_color(btn_tutorial);
     update_button_color(btn_exit);
-
+    if (time_elapsed < INPUT_COOLDOWN) 
+    {
+        return; 
+    }
     if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
     {
         if (is_mouse_over(btn_play->btn_sprite, mouse_pos))
@@ -155,26 +162,23 @@ void StateMainMenu::update(float dt)
         {
             this->go_to = StateType::Tutorial;
         }
-        else if (is_mouse_over(btn_exit->btn_sprite, mouse_pos))
+        else if (is_mouse_over(btn_exit->btn_sprite, mouse_pos) && time_elapsed > INPUT_COOLDOWN)
         {
-            window->close(); 
+             //window->close(); 
         }
     }
 }
 
 void StateMainMenu::render(sf::RenderWindow& target)
 {
-    
+    target.draw(background_sprite);
     target.draw(*text_title);
     target.draw(btn_play->btn_sprite);
     target.draw(btn_play->btn_text); 
-
     target.draw(btn_stats->btn_sprite);
     target.draw(btn_stats->btn_text);
-
     target.draw(btn_tutorial->btn_sprite);
     target.draw(btn_tutorial->btn_text);
-
     target.draw(btn_exit->btn_sprite);
     target.draw(btn_exit->btn_text);
 }

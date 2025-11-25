@@ -30,13 +30,10 @@ int main()
     
     Stats s1("Master", 9500, 50, 2);
     s1.save_or_update();
-    std::cout<<"1 ";
     Stats s2("JugadorPromedio", 1200, 10, 15);
     s2.save_or_update();
-    std::cout<<"2 ";
     Stats s3("Principiante", 300, 2, 8);
     s3.save_or_update();
-    std::cout<<"3 ";
     while (window.isOpen())
     {
         while (const std::optional event = window.pollEvent())
@@ -44,7 +41,6 @@ int main()
             if (event->is<sf::Event::Closed>())
             {
                 //Guardar partida rapidamente, tal vez aca
-                std::cout<<"4 ";
                 window.close();
             }
             if (const auto* resized = event->getIf<sf::Event::Resized>())
@@ -79,7 +75,6 @@ int main()
         delta_time += now - last_time;
         if (delta_time >= target_time)
         {
-            std::cout<<"5 ";
             manager.update(delta_time/target_time);
             
             delta_time = sf::Time::Zero;
