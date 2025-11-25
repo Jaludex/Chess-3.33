@@ -15,26 +15,31 @@ StateMainMenu::~StateMainMenu()
 
 void StateMainMenu::terminate()
 {
-   delete text_title;
+
+    delete text_title;
     text_title = nullptr;
+
+    delete btn_stats;
+    btn_stats = nullptr;
 
     delete btn_play;
     btn_play = nullptr;
+
     delete btn_tutorial;
     btn_tutorial = nullptr;
+
     delete btn_exit;
     btn_exit = nullptr;
 }
 
 void StateMainMenu::init()
 {
+    std::cout<<"8 ";
     if (!font.openFromFile("assets/fonts/arial.ttf")) 
     {
         std::cerr << "ERROR: No se pudo cargar la fuente (arial.ttf)" << std::endl;
 
     }
-    
-
     text_title = new sf::Text(font, "CHESS 3.33", 60);
     if (!button_texture.loadFromFile("assets/button.png")) 
     {
@@ -50,7 +55,7 @@ void StateMainMenu::init()
     button_texture.setSmooth(true); 
 
     text_title = new sf::Text(font, "CHESS 3.33", 60);
-    
+    btn_stats = new Button(button_texture, font);
     btn_play = new Button(button_texture, font);
     btn_tutorial = new Button(button_texture, font);
     btn_exit = new Button(button_texture, font);
@@ -70,11 +75,11 @@ void StateMainMenu::on_resize()
     text_title->setOrigin({bounds.position.x + bounds.size.x / 2.0f, bounds.position.y + bounds.size.y / 2.0f});
     text_title->setPosition({midX, win_size.y * 0.2f});
 
-    setup_button(btn_play, "JUGAR", win_size.y * 0.45f);
-    setup_button(btn_tutorial, "TUTORIAL", win_size.y * 0.60f);
-    setup_button(btn_exit, "SALIR", win_size.y * 0.75f);
+    setup_button(btn_play,     "JUGAR",    win_size.y * 0.40f);
+    setup_button(btn_stats,    "PUNTAJES", win_size.y * 0.55f);
+    setup_button(btn_tutorial, "TUTORIAL", win_size.y * 0.70f);
+    setup_button(btn_exit,     "SALIR",    win_size.y * 0.85f);
 }
-
 void StateMainMenu::setup_button(Button* button, const std::string& str, float y_pos)
 {
     sf::Vector2u win_size = window->getSize();
@@ -130,6 +135,7 @@ void StateMainMenu::update(float dt)
             btn->btn_sprite.setColor(sf::Color::White);
     };
 
+    update_button_color(btn_stats);
     update_button_color(btn_play);
     update_button_color(btn_tutorial);
     update_button_color(btn_exit);
@@ -139,6 +145,10 @@ void StateMainMenu::update(float dt)
         if (is_mouse_over(btn_play->btn_sprite, mouse_pos))
         {
             this->go_to = StateType::Gameplay;
+        }
+        else if (is_mouse_over(btn_stats->btn_sprite, mouse_pos))
+        {
+            this->go_to = StateType::Stats;
         }
         else if (is_mouse_over(btn_tutorial->btn_sprite, mouse_pos))
         {
@@ -153,9 +163,13 @@ void StateMainMenu::update(float dt)
 
 void StateMainMenu::render(sf::RenderWindow& target)
 {
+    
     target.draw(*text_title);
     target.draw(btn_play->btn_sprite);
     target.draw(btn_play->btn_text); 
+
+    target.draw(btn_stats->btn_sprite);
+    target.draw(btn_stats->btn_text);
 
     target.draw(btn_tutorial->btn_sprite);
     target.draw(btn_tutorial->btn_text);

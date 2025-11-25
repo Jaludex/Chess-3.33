@@ -33,6 +33,7 @@ void GameStateManager::init()
 
 void GameStateManager::update(float dt)
 {
+    std::cout<<"6 ";
     if (states.empty()) return;
     StateType next_state = states.top()->go_to;
     
@@ -44,6 +45,7 @@ void GameStateManager::update(float dt)
         {
             case StateType::MainMenu:
                 {
+                    std::cout<<"7 ";
                     states.pop();
                     states.push(std::make_shared<StateMainMenu>(this->window));
                     states.top()->init();
@@ -54,6 +56,11 @@ void GameStateManager::update(float dt)
                     go_to(std::make_shared<StateGameplay>(this->window));
                 }    
                 break;
+            case StateType::Stats:
+            {
+                go_to(std::make_shared<StateStats>(this->window)); 
+            }
+            break;
             case StateType::Tutorial:
                 {
                     go_to(std::make_shared<StateTutorial>(this->window)); 

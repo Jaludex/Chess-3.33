@@ -15,6 +15,7 @@ struct Button
 class StateMainMenu : public IGameState
 {
 private:
+
     sf::Font font;
     sf::Texture button_texture;
     sf::Text* text_title = nullptr;
@@ -22,7 +23,7 @@ private:
     Button* btn_play = nullptr;
     Button* btn_tutorial = nullptr;
     Button* btn_exit = nullptr;
-
+    Button* btn_stats = nullptr;
     void setup_button(Button* button, const std::string& str, float y_pos);
 
 public:
