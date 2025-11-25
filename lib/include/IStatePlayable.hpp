@@ -53,19 +53,24 @@ protected:
     GameTree bot; 
     sf::Font font; 
     sf::Text* btn_back = nullptr;
+    sf::Text* btn_start = nullptr;
     PhaseType actual_phase;
 
     float fix_offset(const sf::Sprite& _sprite, char t);
     PieceInstantPtr clicked_instantiator(sf::Vector2i mouse_position);
     PlayerType check_winner();
+    void drag();
+    void start_fight();
+
+    virtual void adjust_elements() = 0;
+    virtual void dropped_inst() = 0;
+    virtual void returned_piece() = 0;
+    virtual void end_fight() = 0;
     
 public:
     IStatePlayable(sf::RenderWindow* _window);
     ~IStatePlayable();
 
-    void drag();
-    virtual void adjust_elements() = 0;
-    virtual void dropped_inst() = 0;
-    virtual void returned_piece() = 0;
+    
     
 };

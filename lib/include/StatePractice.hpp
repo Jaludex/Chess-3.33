@@ -4,6 +4,12 @@
 
 class StatePractice : public IStatePlayable
 {
+protected:
+    void adjust_elements() override;
+    void dropped_inst() override;
+    void returned_piece() override;
+    void end_fight() override;
+
 public:
     StatePractice(sf::RenderWindow* _window);
     ~StatePractice();
@@ -13,9 +19,7 @@ public:
 	void update(float dt) override;
     void render(sf::RenderWindow& window) override;
     void on_resize() override;
-    void adjust_elements() override;
-    void dropped_inst() override;
-    void returned_piece() override;
+    
 };
 
 

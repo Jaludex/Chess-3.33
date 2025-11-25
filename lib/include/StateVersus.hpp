@@ -4,6 +4,12 @@
 
 class StateVersus : public IStatePlayable
 {
+protected:
+    void adjust_elements() override;
+    void dropped_inst() override;
+    void returned_piece() override;
+    void end_fight() override;
+    
 public:
     StateVersus(sf::RenderWindow* _window);
     ~StateVersus();
@@ -13,9 +19,6 @@ public:
 	void update(float dt) override;
     void render(sf::RenderWindow& window) override;
     void on_resize() override;
-    void adjust_elements() override;
-    void dropped_inst() override;
-    void returned_piece() override;
 };
 
 

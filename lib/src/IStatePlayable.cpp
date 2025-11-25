@@ -118,6 +118,10 @@ PlayerType IStatePlayable::check_winner()
     if (!P1_King) return PlayerType::P2;
     if (!P2_King) return PlayerType::P1;
     return PlayerType::None;
+}
 
-    
+void IStatePlayable::start_fight()
+{
+    this->actual_phase = PhaseType::Fighting;
+    instantiators.clear();
 }

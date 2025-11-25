@@ -13,14 +13,13 @@ void StateGameplay::init()
     //Aqui se intenta cargar una partida anterior que se haya guardado, sino se carga esto
     if (inventory.empty())
     {
-        for (size_t i = 0; i < 4; i++)
+        for (size_t i = 0; i < 5; i++)
         {
             inventory.push_front(PieceType::Pawn);
         }
     }
-    inventory.push_front(PieceType::Queen);
+    board.add_piece(std::make_shared<InBoardObject>(Position(1, 1), std::make_shared<Archer>(false, SpriteManager::get_type_texture(PieceType::Archer, false))));
     
-    adjust_elements();
     
     if (!font.openFromFile("assets/fonts/arial.ttf")) 
     {
@@ -33,6 +32,15 @@ void StateGameplay::init()
     btn_back->setOutlineThickness(2);
     btn_back->setOutlineColor(sf::Color::Black);
 
+    //Como es temporal, por ahora solo tomo todo esto y lo copio para el boton de empezar
+    btn_start = new sf::Text(font, "->", 30);
+    btn_start->setFillColor(sf::Color::White);
+    btn_start->setPosition(static_cast<sf::Vector2f>(window->getSize()) - sf::Vector2f(100, 100));
+    btn_start->setOutlineThickness(2);
+    btn_start->setOutlineColor(sf::Color::Black);
+
+    adjust_elements();
+
     bot.set_current_board(board.get_elements());
     bot.initial_game_eval();
 }
@@ -44,7 +52,7 @@ void StateGameplay::terminate()
 
 void StateGameplay::update(float dt)
 {
-    if (player_turn)
+    if (actual_phase != PhaseType::Fighting || player_turn)
     {
         drag();
     }
@@ -80,6 +88,21 @@ void StateGameplay::update(float dt)
             return;
         }
     }
+
+    if (btn_start) 
+    {
+        if (is_mouse_over(*btn_start, mousePos)) btn_start->setFillColor(sf::Color::Yellow);
+        else btn_start->setFillColor(sf::Color::White);
+    }
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+    {
+        if (btn_start && is_mouse_over(*btn_start, mousePos))
+        {
+            this->start_fight();
+
+            return;
+        }
+    }
     board.update(dt);
 }
 
@@ -97,6 +120,7 @@ void StateGameplay::render(sf::RenderWindow& window)
     }
 
     if (btn_back) window.draw(*btn_back);
+    if (btn_start && actual_phase == PhaseType::Preparing) window.draw(*btn_start);
 }
 
 void StateGameplay::on_resize() 
@@ -111,6 +135,8 @@ void StateGameplay::adjust_elements()
                                   (float)(window->getSize().y/2 - halfboard_lenght));
     board.set_sprite_position(pos);
     board.on_resize();
+
+    if (btn_start) btn_start->setPosition(static_cast<sf::Vector2f>(window->getSize()) - sf::Vector2f(100, 100));
 
     this->load_instanciators();
 }
@@ -132,9 +158,15 @@ void StateGameplay::returned_piece()
     load_instanciators();
 }
 
+void StateGameplay::end_fight()
+{
+    //Escoje un nuevo equipo enemigo (Si la ronda es multiplo de 3 cambia el lider) y te lleva a preparing
+    board.add_piece(std::make_shared<InBoardObject>(Position(1, 1), std::make_shared<Archer>(false, SpriteManager::get_type_texture(PieceType::Archer, false))));
+    actual_phase = PhaseType::Preparing;
+}
+
 void StateGameplay::load_instanciators()
 {
-    //Aqui aparezco los instanciadores de piezas en tu inventario
     if (actual_phase == PhaseType::Preparing)
     {
         int Ymultiplier = 0;

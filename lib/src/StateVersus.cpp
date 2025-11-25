@@ -121,3 +121,8 @@ void StateVersus::returned_piece()
 {
 
 }
+
+void StateVersus::end_fight()
+{
+    
+}

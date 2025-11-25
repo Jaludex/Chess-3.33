@@ -145,3 +145,8 @@ void StatePractice::returned_piece()
 {
 
 }
+
+void StatePractice::end_fight()
+{
+    
+}
