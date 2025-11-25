@@ -14,6 +14,10 @@
 #include "Tower.hpp"
 #include "Trapper.hpp"
 #include "Bishop.hpp"
+#include <SpriteManager.hpp>
+
+
+BoardObjectPtr make_board_object(PieceType type, bool team, int startX, int startY);
 
 class PieceInstantiator : public IGameObject
 {

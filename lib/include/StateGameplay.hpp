@@ -17,9 +17,11 @@
 #include "Trapper.hpp"
 #include "Bishop.hpp"
 #include "PieceInstantiator.hpp"
-
+#include "../include/json.hpp" 
 #include <exception>
+
 using PieceInstantPtr = std::shared_ptr<PieceInstantiator>;
+using json = nlohmann::json;
 
 class StateGameplay : public IGameState
 {
@@ -36,6 +38,7 @@ private:
     bool check_winner();
     sf::Font font; 
     sf::Text* btn_back = nullptr;
+    bool set_up_black_team();
     // Challenges
     
 public:
