@@ -122,7 +122,7 @@ void StateVersus::returned_piece()
 
 }
 
-void StateVersus::end_fight()
+void StateVersus::end_fight(PlayerType winner)
 {
     
 }

@@ -46,7 +46,7 @@ void IStatePlayable::drag()
             {
                 bot.initial_game_eval();
                 player_turn = !player_turn;
-                board.update_avaiable_moves();
+                this->end_turn();
             }
         }
         else if (actual_phase == PhaseType::Preparing)
@@ -105,15 +105,31 @@ PieceInstantPtr IStatePlayable::clicked_instantiator(sf::Vector2i mouse_position
     return nullptr;
 }
 
+void IStatePlayable::end_turn()
+{
+    board.update_avaiable_moves();
+
+    //Esto se cambiara por el del arbitro si al final se implementa
+    auto possible_winner = check_winner();
+    if (possible_winner != PlayerType::None)
+    {
+        this->end_fight(possible_winner);
+    }
+}
+
 PlayerType IStatePlayable::check_winner()
 {
-    auto pieces = board.get_elements();
+    auto elements = board.get_elements();
     BoardObjectPtr P1_King = nullptr;
     BoardObjectPtr P2_King = nullptr;
 
-    for (auto piece : pieces)
+    for (auto element : elements)
     {
-        //Si es pieza rey de equipo blanco, P1 king apunta a ella, igual con el otro
+        if (element->king)
+        {
+            if (element->piece->get_team()) P1_King = element;
+            else P2_King = element;
+        }
     }
 
     if (!P1_King) return PlayerType::P2;

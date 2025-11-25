@@ -12,7 +12,7 @@ protected:
     void adjust_elements() override;
     void dropped_inst() override;
     void returned_piece() override;
-    void end_fight() override;
+    void end_fight(PlayerType winner) override;
 public:
     StateGameplay(sf::RenderWindow* _window);
     ~StateGameplay();

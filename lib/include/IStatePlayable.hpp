@@ -61,16 +61,14 @@ protected:
     PlayerType check_winner();
     void drag();
     void start_fight();
+    void end_turn();
 
     virtual void adjust_elements() = 0;
     virtual void dropped_inst() = 0;
     virtual void returned_piece() = 0;
-    virtual void end_fight() = 0;
+    virtual void end_fight(PlayerType winner) = 0;
     
 public:
     IStatePlayable(sf::RenderWindow* _window);
     ~IStatePlayable();
-
-    
-    
 };

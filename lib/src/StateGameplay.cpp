@@ -69,12 +69,15 @@ void StateGameplay::update(float dt)
             board.set_piece_sprite(bot_play.moving_piece);
 
             board.update_bombs(bot_play.moving_piece, old_position);
-            board.update_avaiable_moves();
+            this->end_turn();
         }
 
         player_turn = true;
     }
+
     sf::Vector2i mousePos = get_relative_mouse_position();
+
+    
 
     if (btn_back) 
     {
@@ -159,10 +162,10 @@ void StateGameplay::returned_piece()
     load_instanciators();
 }
 
-void StateGameplay::end_fight()
+void StateGameplay::end_fight(PlayerType winner)
 {
     //Escoje un nuevo equipo enemigo (Si la ronda es multiplo de 3 cambia el lider) y te lleva a preparing
-    board.add_piece(std::make_shared<InBoardObject>(Position(1, 1), std::make_shared<Archer>(false, SpriteManager::get_type_texture(PieceType::Archer, false))));
+    this->adjust_elements();
     actual_phase = PhaseType::Preparing;
 }
 
