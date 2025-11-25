@@ -61,15 +61,20 @@ void IStatePlayable::drag()
         if(board.is_touching_mouse(mouse_position))
         {
             auto pos = board.get_square_by_coords(mouse_position);
-            if (!board.get_position(pos.x, pos.y))
+            if ((player_turn && pos.y >= 4) || (!player_turn && pos.y <= 1))
             {
-                board.add_piece(selected_inst->make_piece(pos.x, pos.y));
-                dropped_inst();
+                //Renderizar el hightlight correspondiente
+                if (!board.get_position(pos.x, pos.y))
+                {
+                    board.add_piece(selected_inst->make_piece(pos.x, pos.y));
+                    dropped_inst();
+                }
             }
             else
             {
                 //Reproducir sonido de error tal vez, notificar que no es valido instanciar asi
             }
+            
                 
         }
         

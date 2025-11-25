@@ -87,7 +87,7 @@ void StateGameplay::update(float dt)
 void StateGameplay::render(sf::RenderWindow& window)
 {
     board.render(window);
-    if (actual_phase == PhaseType::Fighting && selected_piece) board.render_highlights(window, selected_piece->piece->get_valid_moves());
+    if (selected_piece) board.render_highlights(window, selected_piece->piece->get_valid_moves());
     board.render_pieces(window);
 
     for (auto inst : instantiators)
