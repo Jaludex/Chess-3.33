@@ -33,7 +33,7 @@ public:
     void remove_piece(BoardObjectPtr piece);
     BoardObjectPtr clicked_piece(sf::Vector2i mouse_position);
     Position get_square_by_coords(sf::Vector2i mouse_position);
-    bool drop_piece(BoardObjectPtr element);
+    bool drop_piece(BoardObjectPtr element, long& score);
     bool move_piece(BoardObjectPtr element, Position destination);
     void update_bombs(BoardObjectPtr moved_piece, Position old_position);
     void update(float dt) override;

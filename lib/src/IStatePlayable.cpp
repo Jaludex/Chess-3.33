@@ -42,7 +42,7 @@ void IStatePlayable::drag()
     {   
         if (actual_phase == PhaseType::Fighting) 
         {
-            if (board.drop_piece(selected_piece))
+            if (board.drop_piece(selected_piece, score))
             {
                 this->end_turn();
             }
@@ -107,6 +107,8 @@ void IStatePlayable::end_turn()
 {
     bot.initial_game_eval();
     board.update_avaiable_moves();
+
+    //std::cout << score << std::endl;
 
     //Esto se cambiara por el del arbitro si al final se implementa
     auto possible_winner = check_winner();

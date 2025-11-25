@@ -213,10 +213,11 @@ Position Board::get_square_by_coords(sf::Vector2i mouse_position)
 }
 
 //Retorna si la pieza se movio en el tablero
-bool Board::drop_piece(BoardObjectPtr element)
+bool Board::drop_piece(BoardObjectPtr element, long& score)
 {
     bool it_moves = false;
     auto old_pos = element->pos;
+    BoardObjectPtr attacked_piece;
     if (sprite.getGlobalBounds().contains(element->piece->get_sprite().getPosition()))
     {
         sf::FloatRect piece_center = element->piece->get_sprite().getLocalBounds();
@@ -224,10 +225,16 @@ bool Board::drop_piece(BoardObjectPtr element)
         float center_y = piece_center.size.y / 2.0;
         sf::Vector2f offset(center_x,center_y);
         Position position_on_board = get_square_by_coords(static_cast<sf::Vector2i>(element->piece->get_sprite().getPosition() + offset));
+        attacked_piece = this->get_position(position_on_board.x, position_on_board.y);
         it_moves = this->move_piece(element, position_on_board);
     }
 
-    if (it_moves) update_bombs(element, old_pos);
+    if (it_moves) 
+    {
+        update_bombs(element, old_pos);
+        if (attacked_piece) score += attacked_piece->get_points_value();
+    }
+
     
     set_piece_sprite(element);
     return it_moves;

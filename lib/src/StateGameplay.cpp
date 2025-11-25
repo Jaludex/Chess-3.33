@@ -20,7 +20,8 @@ void StateGameplay::init()
     }
     difficulty = 1;
     round = 1;
-    board.add_piece(std::make_shared<InBoardObject>(Position(1, 1), std::make_shared<Archer>(false, SpriteManager::get_type_texture(PieceType::Archer, false))));
+    score = 0;
+    board.add_piece(std::make_shared<InBoardObject>(Position(1, 1), std::make_shared<Queen>(false, SpriteManager::get_type_texture(PieceType::Queen, false))));
     
     
     if (!font.openFromFile("assets/fonts/arial.ttf")) 
