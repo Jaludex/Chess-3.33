@@ -68,6 +68,7 @@ protected:
     virtual void dropped_inst() = 0;
     virtual void returned_piece() = 0;
     virtual void end_fight(PlayerType winner) = 0;
+    virtual void load_instanciators() = 0;
     
 public:
     IStatePlayable(sf::RenderWindow* _window);

@@ -5,6 +5,7 @@
 class StateVersus : public IStatePlayable
 {
 protected:
+    void load_instanciators() override;
     void adjust_elements() override;
     void dropped_inst() override;
     void returned_piece() override;

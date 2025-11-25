@@ -150,3 +150,8 @@ void StatePractice::end_fight(PlayerType winner)
 {
     
 }
+
+void StatePractice::load_instanciators()
+{
+
+}

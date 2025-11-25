@@ -2,16 +2,14 @@
 
 StateVersus::StateVersus(sf::RenderWindow* _window) : IStatePlayable(_window)
 {
-    type = StateType::Versus;
+    type = StateType::Gameplay;
     go_to = StateType::None;
 }
 
 StateVersus::~StateVersus() {}
 
 void StateVersus::init()
-{
-    this->on_resize();
-    
+{    
     if (!font.openFromFile("assets/fonts/arial.ttf")) 
     {
          std::cerr << "ERROR: No se pudo cargar fuente en Gameplay" << std::endl;
@@ -23,8 +21,14 @@ void StateVersus::init()
     btn_back->setOutlineThickness(2);
     btn_back->setOutlineColor(sf::Color::Black);
 
-    bot.set_current_board(board.get_elements());
-    bot.initial_game_eval();
+    //Como es temporal, por ahora solo tomo todo esto y lo copio para el boton de empezar
+    btn_start = new sf::Text(font, "->", 30);
+    btn_start->setFillColor(sf::Color::White);
+    btn_start->setPosition(static_cast<sf::Vector2f>(window->getSize()) - sf::Vector2f(100, 100));
+    btn_start->setOutlineThickness(2);
+    btn_start->setOutlineColor(sf::Color::Black);
+
+    adjust_elements();
 }
 
 void StateVersus::terminate()
@@ -35,7 +39,7 @@ void StateVersus::terminate()
 void StateVersus::update(float dt)
 {
     drag();
-    
+
     sf::Vector2i mousePos = get_relative_mouse_position();
 
     if (btn_back) 
@@ -51,6 +55,21 @@ void StateVersus::update(float dt)
             return;
         }
     }
+
+    if (btn_start) 
+    {
+        if (is_mouse_over(*btn_start, mousePos)) btn_start->setFillColor(sf::Color::Yellow);
+        else btn_start->setFillColor(sf::Color::White);
+    }
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+    {
+        if (btn_start && is_mouse_over(*btn_start, mousePos) && board.is_white_king_in_board())
+        {
+            this->start_fight();
+
+            return;
+        }
+    }
     board.update(dt);
 }
 
@@ -58,8 +77,8 @@ void StateVersus::update(float dt)
 void StateVersus::render(sf::RenderWindow& window)
 {
     board.render(window);
-    if (selected_piece) board.render_move_highlights(window, selected_piece->piece->get_valid_moves());
-    if (selected_inst) board.render_instantiator_highlights(window, selected_inst->get_team());
+    if (actual_phase == PhaseType::Fighting && selected_piece) board.render_move_highlights(window, selected_piece->piece->get_valid_moves());
+    if (actual_phase == PhaseType::Preparing && selected_inst) board.render_instantiator_highlights(window, true);
     board.render_pieces(window);
 
     for (auto inst : instantiators)
@@ -68,9 +87,15 @@ void StateVersus::render(sf::RenderWindow& window)
     }
 
     if (btn_back) window.draw(*btn_back);
+    if (btn_start && actual_phase == PhaseType::Preparing) window.draw(*btn_start);
 }
 
 void StateVersus::on_resize() 
+{
+    adjust_elements();
+}
+
+void StateVersus::adjust_elements()
 {
     float halfboard_lenght = Board::side_lenght * Board::cell_lenght / 2;
     auto pos = sf::Vector2<float>((float)(window->getSize().x/2 - halfboard_lenght),
@@ -78,13 +103,41 @@ void StateVersus::on_resize()
     board.set_sprite_position(pos);
     board.on_resize();
 
-    float xmargin = Board::cell_lenght / 3;
-    float ymargin = Board::cell_lenght / 3;
-    float xoffset = Board::cell_lenght * 1.2f;
-    float yoffset = Board::cell_lenght * 1.2f;
+    if (btn_start) btn_start->setPosition(static_cast<sf::Vector2f>(window->getSize()) - sf::Vector2f(100, 100));
+
+    this->load_instanciators();
+}
+
+void StateVersus::dropped_inst()
+{
+    if (!selected_inst) return;
+
+    load_instanciators();
+}
+
+void StateVersus::returned_piece()
+{
+    if (!selected_piece) return;
+
+    board.remove_piece(selected_piece);
+    
+    load_instanciators();
+}
+
+void StateVersus::end_fight(PlayerType winner)
+{
+    actual_phase = PhaseType::Preparing;
+    
+    board.clear();
+    round++;
+
+    this->adjust_elements();
+}
+
+void StateVersus::load_instanciators()
+{
     float width = (float)window->getSize().x;
 
-    //Esto deberia cambiarse cuando solo aparezcan los instanciadores de las piezas que tienes, pero por ahora resuelve
     instantiators.clear();
 
     instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Pawn, true, sf::Vector2f(xmargin, ymargin), SpriteManager::get_piece_texture("white_pawn")));
@@ -104,25 +157,5 @@ void StateVersus::on_resize()
     instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Trapper, false, sf::Vector2f(width - (xmargin + 100) - xoffset, ymargin + yoffset), SpriteManager::get_piece_texture("black_trapper"))); 
     instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Crook, false, sf::Vector2f(width - (xmargin + 100) - xoffset, ymargin + 2*yoffset), SpriteManager::get_piece_texture("black_crook"))); 
     instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Archer, false, sf::Vector2f(width - (xmargin + 100) - xoffset, ymargin + 3*yoffset), SpriteManager::get_piece_texture("black_archer"))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Portal, false, sf::Vector2f(width - (xmargin + 100) - xoffset, ymargin + 4*yoffset), SpriteManager::get_piece_texture("black_portal"))); 
-}
-
-void StateVersus::adjust_elements()
-{
-
-}
-
-void StateVersus::dropped_inst()
-{
-    //empty
-}
-
-void StateVersus::returned_piece()
-{
-
-}
-
-void StateVersus::end_fight(PlayerType winner)
-{
-    
+    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Portal, false, sf::Vector2f(width - (xmargin + 100) - xoffset, ymargin + 4*yoffset), SpriteManager::get_piece_texture("black_portal")));
 }

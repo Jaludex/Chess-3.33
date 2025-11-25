@@ -10,7 +10,7 @@ protected:
     uint difficulty;
 
 
-    void load_instanciators();
+    void load_instanciators() override;
     void adjust_elements() override;
     void dropped_inst() override;
     void returned_piece() override;
