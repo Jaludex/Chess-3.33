@@ -262,6 +262,8 @@ void Board::render_crown(sf::RenderWindow& window, sf::Vector2f position, float 
     crown.setOrigin(sf::Vector2f(-10,16));
     crown.setPosition(sf::Vector2f(position.x, position.y + (96 - height)));
     window.draw(crown);
+}
+
 void Board::on_resize()
 {
     for (auto piece : elements)
