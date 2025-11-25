@@ -66,5 +66,6 @@ public:
     void drag();
     virtual void adjust_elements() = 0;
     virtual void dropped_inst() = 0;
+    virtual void returned_piece() = 0;
     
 };

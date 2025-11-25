@@ -86,7 +86,7 @@ void StateGameplay::update(float dt)
 void StateGameplay::render(sf::RenderWindow& window)
 {
     board.render(window);
-    if (selected_piece) board.render_highlights(window, selected_piece->piece->get_valid_moves());
+    if (actual_phase == PhaseType::Fighting && selected_piece) board.render_highlights(window, selected_piece->piece->get_valid_moves());
     board.render_pieces(window);
 
     for (auto inst : instantiators)
@@ -118,6 +118,15 @@ void StateGameplay::dropped_inst()
     if (!selected_inst) return;
 
     inventory.erase(std::find(inventory.begin(), inventory.end(), PieceType::Pawn));
+    load_instanciators();
+}
+
+void StateGameplay::returned_piece()
+{
+    if (!selected_piece) return;
+
+    inventory.push_front(selected_piece->piece->get_piece_type());
+    board.remove_piece(selected_piece);
     load_instanciators();
 }
 

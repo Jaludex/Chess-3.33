@@ -40,13 +40,20 @@ void IStatePlayable::drag()
     }
     else if (selected_piece)
     {   
-        if (board.drop_piece(selected_piece)) 
+        if (actual_phase == PhaseType::Fighting) 
         {
-            player_turn = !player_turn;
-            bot.set_current_board(board.get_elements());
-            bot.initial_game_eval();
+            if (board.drop_piece(selected_piece))
+            {
+                bot.initial_game_eval();
+                player_turn = !player_turn;
+            }
+        }
+        else if (actual_phase == PhaseType::Preparing)
+        {
+            returned_piece();
         }
 
+        bot.set_current_board(board.get_elements());
         selected_piece = nullptr;
     }
     else if (selected_inst)

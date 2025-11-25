@@ -83,6 +83,11 @@ BoardObjectPtr Board::get_position(short x, short y)
     return nullptr;
 }
 
+void Board::remove_piece(BoardObjectPtr piece)
+{
+    elements.erase(std::find(elements.begin(), elements.end(), piece));
+}
+
 BoardObjectPtr Board::clicked_piece(sf::Vector2i mouse_position)
 {
     if (this->is_touching_mouse(mouse_position))
@@ -193,4 +198,6 @@ void Board::on_resize()
         set_piece_sprite(piece);
     }
 }
+
+
 

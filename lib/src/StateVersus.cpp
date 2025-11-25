@@ -115,3 +115,8 @@ void StateVersus::dropped_inst()
 {
     //empty
 }
+
+void StateVersus::returned_piece()
+{
+
+}

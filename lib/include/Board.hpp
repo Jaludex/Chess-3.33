@@ -28,7 +28,7 @@ public:
     size_t size();
     BoardL get_elements();
     BoardObjectPtr get_position(short x, short y);
-    void remove_by_position(short x, short y);
+    void remove_piece(BoardObjectPtr piece);
     BoardObjectPtr clicked_piece(sf::Vector2i mouse_position);
     Position get_square_by_coords(sf::Vector2i mouse_position);
     bool drop_piece(BoardObjectPtr element);

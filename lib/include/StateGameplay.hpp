@@ -18,6 +18,7 @@ public:
     void on_resize() override;
     void adjust_elements() override;
     void dropped_inst() override;
+    void returned_piece() override;
     void load_instanciators();
 };
 

@@ -138,7 +138,13 @@ void StatePractice::adjust_elements()
 {
 
 }
+
 void StatePractice::dropped_inst()
 {
     
+}
+
+void StatePractice::returned_piece()
+{
+
 }
