@@ -13,6 +13,7 @@ return (_team)? Horse::white : Horse::black;
 
 Horse::Horse(bool team, sf::Texture texture) : IGameObject(texture)
 {
+    height = 80;
     set_team(team);
     set_piece_type(PieceType::Horse);
 }

@@ -16,6 +16,8 @@ private:
     //static const sf::Color black{70,50,50,255};
     //static const sf::Color white{220,200,200,255}; 
     BoardL elements;
+    bool white_king_in_board;
+    bool black_king_in_board;
 
 public:
 
@@ -40,6 +42,9 @@ public:
     void render_pieces(sf::RenderWindow& window);
     void add_piece(BoardObjectPtr piece);
     void set_piece_sprite(BoardObjectPtr element);
+    bool is_black_king_in_board() const;
+    bool is_white_king_in_board() const;
+    void render_crown(sf::RenderWindow&, sf::Vector2f, float);
     void on_resize();
 };
 

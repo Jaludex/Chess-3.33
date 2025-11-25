@@ -12,6 +12,7 @@ return (_team)? Bishop::white : Bishop::black;
 
 Bishop::Bishop(bool team, sf::Texture texture) : IGameObject(texture)
 {
+    height = 80;
     set_team(team);
     set_piece_type(PieceType::Bishop);
 }
