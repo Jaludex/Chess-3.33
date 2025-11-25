@@ -36,7 +36,9 @@ public:
     void update_bombs(BoardObjectPtr moved_piece, Position old_position);
     void update(float dt) override;
     void render(sf::RenderWindow& window) override;
-    void render_highlights(sf::RenderWindow& window, const std::vector<BoardObjectPtr>& valid_moves); 
+    void render_move_highlights(sf::RenderWindow& window, const std::vector<BoardObjectPtr>& valid_moves);
+    void render_instantiator_highlights(sf::RenderWindow& window);
+    void render_instantiator_highlights(sf::RenderWindow& window, bool team);
     void render_pieces(sf::RenderWindow& window);
     void add_piece(BoardObjectPtr piece);
     void set_piece_sprite(BoardObjectPtr element);

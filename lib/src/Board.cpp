@@ -38,7 +38,7 @@ void Board::render(sf::RenderWindow& window)
     }
 }
 
-void Board::render_highlights(sf::RenderWindow& window, const std::vector<BoardObjectPtr>& valid_moves)
+void Board::render_move_highlights(sf::RenderWindow& window, const std::vector<BoardObjectPtr>& valid_moves)
 {
     sf::RectangleShape cell({(float)(Board::cell_lenght),(float)(Board::cell_lenght)});
     auto origin = this->sprite.getPosition();
@@ -50,8 +50,36 @@ void Board::render_highlights(sf::RenderWindow& window, const std::vector<BoardO
         cell.setPosition(origin + pos);
         window.draw(cell);
     }
-
 }
+
+void Board::render_instantiator_highlights(sf::RenderWindow& window)
+{
+    render_instantiator_highlights(window, true);
+    render_instantiator_highlights(window, false);
+}
+
+void Board::render_instantiator_highlights(sf::RenderWindow& window, bool team)
+{
+    sf::RectangleShape cell({(float)(Board::cell_lenght),(float)(Board::cell_lenght)});
+    cell.setFillColor(sf::Color::Cyan);
+    auto origin = this->sprite.getPosition();
+
+    uint8_t start = ((team) ? Board::side_lenght - 1 : 1);
+
+    for (size_t i = start; i >= start - 1; i--)
+    {
+        for (size_t j = 0; j < 6; j++)
+        {
+            if (!this->get_position(j, i))
+            {
+                auto pos = sf::Vector2<float>({(float)(j * Board::cell_lenght), (float)(i * Board::cell_lenght)});
+                cell.setPosition(origin + pos);
+                window.draw(cell);
+            }
+        }
+    }
+}
+
 
 void Board::render_pieces(sf::RenderWindow& window)
 {

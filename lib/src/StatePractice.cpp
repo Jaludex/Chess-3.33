@@ -86,7 +86,8 @@ void StatePractice::update(float dt)
 void StatePractice::render(sf::RenderWindow& window)
 {
     board.render(window);
-    if (selected_piece) board.render_highlights(window, selected_piece->piece->get_valid_moves());
+    if (selected_piece) board.render_move_highlights(window, selected_piece->piece->get_valid_moves());
+
     board.render_pieces(window);
 
     for (auto inst : instantiators)

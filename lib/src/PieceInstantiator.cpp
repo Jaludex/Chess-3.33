@@ -16,6 +16,11 @@ PieceType PieceInstantiator::get_type()
     return this->type;
 }
 
+bool PieceInstantiator::get_team()
+{
+    return this->team;
+}
+
 void PieceInstantiator::render(sf::RenderWindow& window)
 {
     window.draw(sprite);

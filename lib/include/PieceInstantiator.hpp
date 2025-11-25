@@ -24,6 +24,7 @@ public:
     void return_to_origin();
     BoardObjectPtr make_piece(int startX, int startY);
     PieceType get_type();
+    bool get_team();
     
 private:
     PieceType type;

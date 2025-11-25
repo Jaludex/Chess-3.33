@@ -61,12 +61,12 @@ void IStatePlayable::drag()
         if(board.is_touching_mouse(mouse_position))
         {
             auto pos = board.get_square_by_coords(mouse_position);
-            if ((player_turn && pos.y >= 4) || (!player_turn && pos.y <= 1))
+            auto new_piece = selected_inst->make_piece(pos.x, pos.y);
+            if ((new_piece->piece->get_team() && pos.y >= 4) || (!new_piece->piece->get_team() && pos.y <= 1))
             {
-                //Renderizar el hightlight correspondiente
                 if (!board.get_position(pos.x, pos.y))
                 {
-                    board.add_piece(selected_inst->make_piece(pos.x, pos.y));
+                    board.add_piece(new_piece);
                     dropped_inst();
                 }
             }
@@ -74,8 +74,6 @@ void IStatePlayable::drag()
             {
                 //Reproducir sonido de error tal vez, notificar que no es valido instanciar asi
             }
-            
-                
         }
         
         selected_inst->return_to_origin();
