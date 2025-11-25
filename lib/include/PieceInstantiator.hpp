@@ -17,12 +17,13 @@
 
 class PieceInstantiator : public IGameObject
 {
-    public:
+public:
     PieceInstantiator(PieceType _type, bool _team, sf::Vector2f position, sf::Texture texture);
     virtual void update(float dt) override;
     virtual void render(sf::RenderWindow& window) override;
     void return_to_origin();
     BoardObjectPtr make_piece(int startX, int startY);
+    PieceType get_type();
     
 private:
     PieceType type;

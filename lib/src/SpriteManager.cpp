@@ -11,14 +11,56 @@ void SpriteManager::load_texture_piece(std::string type, std::string file)
     }
         texture_map[type] = texture;
 }
+
 const sf::Texture& SpriteManager::get_piece_texture(std::string type)
 {
     return texture_map.at(type);
 }
 
+const sf::Texture& SpriteManager::get_type_texture(PieceType type, bool team)
+{
+    std::string route = "assets/";
+
+    switch (type)
+    {
+    case PieceType::Archer:
+        return (team) ? get_piece_texture("white_archer") : get_piece_texture("black_archer") ;
+        break;
+    case PieceType::Queen:
+        return (team) ? get_piece_texture("white_queen") : get_piece_texture("black_queen") ;
+        break;
+    case PieceType::Bishop:
+        return (team) ? get_piece_texture("white_bishop") : get_piece_texture("black_bishop") ;
+        break;
+    case PieceType::Bomb:
+        return (team) ? get_piece_texture("white_trap") : get_piece_texture("black_trap") ;
+        break;
+    case PieceType::Crook:
+        return (team) ? get_piece_texture("white_crook") : get_piece_texture("black_crook") ;
+        break;
+    case PieceType::Portal:
+        return (team) ? get_piece_texture("white_portal") : get_piece_texture("black_portal") ;
+        break;
+    case PieceType::Tower:
+        return (team) ? get_piece_texture("white_rook") : get_piece_texture("black_rook") ;
+        break;
+    case PieceType::Trapper:
+        return (team) ? get_piece_texture("white_trapper") : get_piece_texture("black_trapper") ;
+        break;
+    case PieceType::King:
+        return (team) ? get_piece_texture("white_king") : get_piece_texture("black_king") ;
+        break;
+    case PieceType::Pawn:
+    default:
+        return (team) ? get_piece_texture("white_pawn") : get_piece_texture("black_pawn") ;
+        break;
+    }
+}
+
 void SpriteManager::init()
 {
     std::string route = "assets/";
+
     SpriteManager::load_texture_piece("white_pawn", route + "WhitePawn.png");
     SpriteManager::load_texture_piece("white_rook", route + "WhiteRook.png");
     SpriteManager::load_texture_piece("white_bishop", route + "WhiteBishop.png");

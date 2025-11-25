@@ -4,7 +4,10 @@
 
 class StateGameplay : public IStatePlayable
 {
-    public:
+protected:
+    std::list<PieceType> inventory;
+
+public:
     StateGameplay(sf::RenderWindow* _window);
     ~StateGameplay();
 
@@ -13,6 +16,9 @@ class StateGameplay : public IStatePlayable
 	void update(float dt) override;
     void render(sf::RenderWindow& window) override;
     void on_resize() override;
+    void adjust_elements() override;
+    void dropped_inst() override;
+    void load_instanciators();
 };
 
 

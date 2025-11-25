@@ -13,6 +13,8 @@ public:
 	void update(float dt) override;
     void render(sf::RenderWindow& window) override;
     void on_resize() override;
+    void adjust_elements() override;
+    void dropped_inst() override;
 };
 
 

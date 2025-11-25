@@ -34,27 +34,8 @@ void StateVersus::terminate()
 
 void StateVersus::update(float dt)
 {
-    if (player_turn)
-    {
-        drag();
-    }
-    else
-    {
-        sf::sleep(sf::seconds(1.f));
-        auto bot_play = bot.find_best_play(4);
-
-        if (bot_play.moving_piece)
-        {
-            Position old_position = bot_play.moving_piece->pos;
-
-            board.move_piece(bot_play.moving_piece, bot_play.destination);
-            board.set_piece_sprite(bot_play.moving_piece);
-
-            board.update_bombs(bot_play.moving_piece, old_position);
-        }
-
-        player_turn = true;
-    }
+    drag();
+    
     sf::Vector2i mousePos = get_relative_mouse_position();
 
     if (btn_back) 
@@ -123,4 +104,14 @@ void StateVersus::on_resize()
     instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Crook, false, sf::Vector2f(width - (xmargin + 100) - xoffset, ymargin + 2*yoffset), SpriteManager::get_piece_texture("black_crook"))); 
     instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Archer, false, sf::Vector2f(width - (xmargin + 100) - xoffset, ymargin + 3*yoffset), SpriteManager::get_piece_texture("black_archer"))); 
     instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Portal, false, sf::Vector2f(width - (xmargin + 100) - xoffset, ymargin + 4*yoffset), SpriteManager::get_piece_texture("black_portal"))); 
+}
+
+void StateVersus::adjust_elements()
+{
+
+}
+
+void StateVersus::dropped_inst()
+{
+    //empty
 }

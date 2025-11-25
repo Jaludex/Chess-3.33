@@ -4,6 +4,7 @@ IStatePlayable::IStatePlayable(sf::RenderWindow* _window) : board(sf::Texture(sf
                                                                               (unsigned int)(Board::side_lenght * Board::cell_lenght)))), player_turn(true), bot(BoardL(), GameEvaluator())
 {
     window = _window;
+    actual_phase = PhaseType::Preparing;
 }
 
 IStatePlayable::~IStatePlayable() { }
@@ -56,6 +57,7 @@ void IStatePlayable::drag()
             if (!board.get_position(pos.x, pos.y))
             {
                 board.add_piece(selected_inst->make_piece(pos.x, pos.y));
+                dropped_inst();
             }
             else
             {
@@ -90,4 +92,22 @@ PieceInstantPtr IStatePlayable::clicked_instantiator(sf::Vector2i mouse_position
     }
 
     return nullptr;
+}
+
+PlayerType IStatePlayable::check_winner()
+{
+    auto pieces = board.get_elements();
+    BoardObjectPtr P1_King = nullptr;
+    BoardObjectPtr P2_King = nullptr;
+
+    for (auto piece : pieces)
+    {
+        //Si es pieza rey de equipo blanco, P1 king apunta a ella, igual con el otro
+    }
+
+    if (!P1_King) return PlayerType::P2;
+    if (!P2_King) return PlayerType::P1;
+    return PlayerType::None;
+
+    
 }

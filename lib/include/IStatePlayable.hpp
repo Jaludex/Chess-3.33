@@ -21,28 +21,50 @@
 
 using PieceInstantPtr = std::shared_ptr<PieceInstantiator>;
 
+enum class PlayerType
+{
+    P1,
+    P2,
+    None
+};
+
+enum class PhaseType
+{
+    Preparing,
+    Fighting,
+    Shop,
+};
+
 class IStatePlayable : public IGameState
 {
 protected:
+    static constexpr float xmargin = Board::cell_lenght / 3;
+    static constexpr float ymargin = Board::cell_lenght / 3;
+    static constexpr float xoffset = Board::cell_lenght * 1.2f;
+    static constexpr float yoffset = Board::cell_lenght * 1.2f;
+
     BoardObjectPtr selected_piece;
     PieceInstantPtr selected_inst;
     Board board;
     sf::Clock elapsed_time;
     long score;
     bool player_turn;
-    std::vector<PieceInstantPtr> instantiators;
+    std::list<PieceInstantPtr> instantiators;
     GameTree bot; 
-    PieceInstantPtr clicked_instantiator(sf::Vector2i mouse_position);
-    bool check_winner();
     sf::Font font; 
     sf::Text* btn_back = nullptr;
+    PhaseType actual_phase;
 
     float fix_offset(const sf::Sprite& _sprite, char t);
+    PieceInstantPtr clicked_instantiator(sf::Vector2i mouse_position);
+    PlayerType check_winner();
     
 public:
     IStatePlayable(sf::RenderWindow* _window);
     ~IStatePlayable();
 
     void drag();
+    virtual void adjust_elements() = 0;
+    virtual void dropped_inst() = 0;
     
 };

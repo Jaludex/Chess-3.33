@@ -11,6 +11,11 @@ void PieceInstantiator::update(float dt)
     
 }
 
+PieceType PieceInstantiator::get_type()
+{
+    return this->type;
+}
+
 void PieceInstantiator::render(sf::RenderWindow& window)
 {
     window.draw(sprite);

@@ -31,21 +31,6 @@ struct InBoardObject
 
 using BoardObjectPtr = std::shared_ptr<InBoardObject>;
 
-enum class PieceType
-{
-    Pawn ,
-    Horse,
-    Bishop,
-    Tower,
-    Queen,
-    King,
-    Trapper,
-    Crook,
-    Archer,
-    Portal,
-    Bomb
-};
-
 class IPiece : public virtual IGameObject
 {
 public:
