@@ -10,7 +10,7 @@ StateGameplay::~StateGameplay() {}
 
 void StateGameplay::init()
 {
-    //Aqui se intenta cargar una partida anterior que se haya guardado, sino se carga esto
+    //Aqui se intenta cargar una partida anterior que se haya guardado, sino se carga este cacho
     if (inventory.empty())
     {
         for (size_t i = 0; i < 5; i++)
@@ -18,6 +18,8 @@ void StateGameplay::init()
             inventory.push_front(PieceType::Pawn);
         }
     }
+    difficulty = 1;
+    round = 1;
     board.add_piece(std::make_shared<InBoardObject>(Position(1, 1), std::make_shared<Archer>(false, SpriteManager::get_type_texture(PieceType::Archer, false))));
     
     
@@ -59,7 +61,7 @@ void StateGameplay::update(float dt)
     else
     {
         sf::sleep(sf::seconds(1.f));
-        auto bot_play = bot.find_best_play(4);
+        auto bot_play = bot.find_best_play(difficulty);
 
         if (bot_play.moving_piece)
         {
@@ -100,7 +102,7 @@ void StateGameplay::update(float dt)
     }
     if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
     {
-        if (btn_start && is_mouse_over(*btn_start, mousePos))
+        if (btn_start && is_mouse_over(*btn_start, mousePos) && board.is_white_king_in_board())
         {
             this->start_fight();
 
@@ -159,14 +161,32 @@ void StateGameplay::returned_piece()
 
     inventory.push_front(selected_piece->piece->get_piece_type());
     board.remove_piece(selected_piece);
+    
     load_instanciators();
 }
 
 void StateGameplay::end_fight(PlayerType winner)
 {
-    //Escoje un nuevo equipo enemigo (Si la ronda es multiplo de 3 cambia el lider) y te lleva a preparing
-    this->adjust_elements();
     actual_phase = PhaseType::Preparing;
+
+    if (winner == PlayerType::P1)
+    {
+        auto elements = board.get_elements();
+        for (auto element : elements)
+        {
+            if (element->piece->get_team()) inventory.push_front(element->piece->get_piece_type());
+        }
+    }
+    
+    board.clear();
+    round++;
+    //Aqui le falta escojer un nuevo equipo enemigo (Si la ronda es multiplo de 3 cambia el lider), puede ser con algo como
+    //prepare_enemy();
+    //O algo asi
+    //Tambien, si el calculo de (3^(dificultad+1)) / 2 es igual al numero de ronda actual, sumar 1 a la dificultad.
+    //Asi la dificultad que ahora arranca en uno va a subir a un ritmo cada vez mas largo
+
+    this->adjust_elements();
 }
 
 void StateGameplay::load_instanciators()

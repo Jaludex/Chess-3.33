@@ -23,6 +23,18 @@ void Board::update(float dt)
     }
 }
 
+void Board::clear()
+{
+    elements.clear();
+    white_king_in_board = false;
+    black_king_in_board = false;
+}
+
+bool Board::empty()
+{
+    return elements.empty();
+}
+
 void Board::update_avaiable_moves()
 {
     for (auto element : elements)
@@ -146,9 +158,28 @@ BoardObjectPtr Board::get_position(short x, short y)
     return nullptr;
 }
 
-void Board::remove_piece(BoardObjectPtr piece)
+void Board::remove_piece(BoardObjectPtr object)
 {
-    elements.erase(std::find(elements.begin(), elements.end(), piece));
+    elements.erase(std::find(elements.begin(), elements.end(), object));
+    
+    if (object->king)
+    {   
+        bool found_substitute = false;
+        for (auto element : elements)
+        {
+            if (element->piece->get_team() == object->piece->get_team()) 
+            {
+                element->king = true;
+                found_substitute = true;
+                break;
+            }
+        }
+        if (!found_substitute)
+        {
+            if (object->piece->get_team()) white_king_in_board = false;
+            else black_king_in_board = false;
+        }
+    }
 }
 
 BoardObjectPtr Board::clicked_piece(sf::Vector2i mouse_position)
@@ -224,7 +255,7 @@ void Board::add_piece(BoardObjectPtr board_object)
         }
     }
 
-    elements.push_front(board_object);
+    elements.push_back(board_object);
     set_piece_sprite(board_object);
 }
 

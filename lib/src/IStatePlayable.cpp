@@ -44,8 +44,6 @@ void IStatePlayable::drag()
         {
             if (board.drop_piece(selected_piece))
             {
-                bot.initial_game_eval();
-                player_turn = !player_turn;
                 this->end_turn();
             }
         }
@@ -107,6 +105,7 @@ PieceInstantPtr IStatePlayable::clicked_instantiator(sf::Vector2i mouse_position
 
 void IStatePlayable::end_turn()
 {
+    bot.initial_game_eval();
     board.update_avaiable_moves();
 
     //Esto se cambiara por el del arbitro si al final se implementa
@@ -115,6 +114,7 @@ void IStatePlayable::end_turn()
     {
         this->end_fight(possible_winner);
     }
+    player_turn = !player_turn;
 }
 
 PlayerType IStatePlayable::check_winner()

@@ -49,6 +49,7 @@ protected:
     sf::Clock elapsed_time;
     long score;
     bool player_turn;
+    int round;
     std::list<PieceInstantPtr> instantiators;
     GameTree bot; 
     sf::Font font; 

@@ -49,5 +49,7 @@ public:
     bool is_white_king_in_board() const;
     void render_crown(sf::RenderWindow&, sf::Vector2f, float);
     void on_resize();
+    void clear();
+    bool empty();
 };
 
