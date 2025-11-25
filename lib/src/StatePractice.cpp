@@ -10,7 +10,7 @@ StatePractice::~StatePractice() {}
 
 void StatePractice::init()
 {
-    this->on_resize();
+    this->adjust_elements();
 
     //board.add_piece(std::make_shared<InBoardObject>(Position(3, 5), std::make_shared<Queen>(true, SpriteManager::get_piece_texture("white_queen"))));
     //board.add_piece(std::make_shared<InBoardObject>(Position(1, 4), std::make_shared<Archer>(true, SpriteManager::get_piece_texture("white_archer"))));
@@ -99,16 +99,17 @@ void StatePractice::render(sf::RenderWindow& window)
 
 void StatePractice::on_resize() 
 {
+    adjust_elements();
+}
+
+void StatePractice::adjust_elements()
+{
     float halfboard_lenght = Board::side_lenght * Board::cell_lenght / 2;
     auto pos = sf::Vector2<float>((float)(window->getSize().x/2 - halfboard_lenght),
                                   (float)(window->getSize().y/2 - halfboard_lenght));
     board.set_sprite_position(pos);
     board.on_resize();
 
-    float xmargin = Board::cell_lenght / 3;
-    float ymargin = Board::cell_lenght / 3;
-    float xoffset = Board::cell_lenght * 1.2f;
-    float yoffset = Board::cell_lenght * 1.2f;
     float width = (float)window->getSize().x;
 
     //Esto deberia cambiarse cuando solo aparezcan los instanciadores de las piezas que tienes, pero por ahora resuelve
@@ -132,11 +133,6 @@ void StatePractice::on_resize()
     instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Crook, false, sf::Vector2f(width - (xmargin + 100) - xoffset, ymargin + 2*yoffset), SpriteManager::get_piece_texture("black_crook"))); 
     instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Archer, false, sf::Vector2f(width - (xmargin + 100) - xoffset, ymargin + 3*yoffset), SpriteManager::get_piece_texture("black_archer"))); 
     instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Portal, false, sf::Vector2f(width - (xmargin + 100) - xoffset, ymargin + 4*yoffset), SpriteManager::get_piece_texture("black_portal"))); 
-}
-
-void StatePractice::adjust_elements()
-{
-
 }
 
 void StatePractice::dropped_inst()

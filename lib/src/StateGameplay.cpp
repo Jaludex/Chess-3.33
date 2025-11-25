@@ -18,6 +18,7 @@ void StateGameplay::init()
             inventory.push_front(PieceType::Pawn);
         }
     }
+    inventory.push_front(PieceType::Queen);
     
     adjust_elements();
     
@@ -117,7 +118,7 @@ void StateGameplay::dropped_inst()
 {
     if (!selected_inst) return;
 
-    inventory.erase(std::find(inventory.begin(), inventory.end(), PieceType::Pawn));
+    inventory.erase(std::find(inventory.begin(), inventory.end(), selected_inst->get_type()));
     load_instanciators();
 }
 
