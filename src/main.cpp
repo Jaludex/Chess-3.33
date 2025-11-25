@@ -26,19 +26,17 @@ int main()
 
     GameStateManager manager(window);
     manager.init();
-    /*
     std::cout << "Generando datos de prueba..." << std::endl;
     
-    Stats s1("GeminiMaster", 9500, 50, 2);
+    Stats s1("Master", 9500, 50, 2);
     s1.save_or_update();
     std::cout<<"1 ";
     Stats s2("JugadorPromedio", 1200, 10, 15);
     s2.save_or_update();
-std::cout<<"2 ";
+    std::cout<<"2 ";
     Stats s3("Principiante", 300, 2, 8);
     s3.save_or_update();
-std::cout<<"3 ";
-*/
+    std::cout<<"3 ";
     while (window.isOpen())
     {
         while (const std::optional event = window.pollEvent())

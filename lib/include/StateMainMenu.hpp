@@ -15,7 +15,8 @@ struct Button
 class StateMainMenu : public IGameState
 {
 private:
-
+    sf::Texture background_tex;
+    sf::Sprite background_sprite;
     sf::Font font;
     sf::Texture button_texture;
     sf::Text* text_title = nullptr;

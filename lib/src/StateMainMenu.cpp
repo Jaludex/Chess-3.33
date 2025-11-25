@@ -1,7 +1,7 @@
 #include "StateMainMenu.hpp"
 
 StateMainMenu::StateMainMenu(sf::RenderWindow* _window)
-    : text_title(nullptr), btn_play(nullptr), btn_tutorial(nullptr), btn_exit(nullptr)
+    :  background_sprite(background_tex),text_title(nullptr), btn_play(nullptr), btn_tutorial(nullptr), btn_exit(nullptr)
 {
     window = _window;
     type = StateType::MainMenu;
@@ -40,6 +40,7 @@ void StateMainMenu::init()
         std::cerr << "ERROR: No se pudo cargar la fuente (arial.ttf)" << std::endl;
 
     }
+    if(!background_tex.loadFromFile("assets/background_menu.png"))
     text_title = new sf::Text(font, "CHESS 3.33", 60);
     if (!button_texture.loadFromFile("assets/button.png")) 
     {
