@@ -19,8 +19,15 @@ void Board::update(float dt)
 {
     for (auto element : elements)
     {
-        element->piece->set_valid_moves(elements, element->pos);
         element->piece->update(dt);
+    }
+}
+
+void Board::update_avaiable_moves()
+{
+    for (auto element : elements)
+    {
+        element->piece->set_valid_moves(elements, element->pos);
     }
 }
 

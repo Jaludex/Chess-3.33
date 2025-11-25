@@ -46,6 +46,7 @@ void IStatePlayable::drag()
             {
                 bot.initial_game_eval();
                 player_turn = !player_turn;
+                board.update_avaiable_moves();
             }
         }
         else if (actual_phase == PhaseType::Preparing)
@@ -124,4 +125,5 @@ void IStatePlayable::start_fight()
 {
     this->actual_phase = PhaseType::Fighting;
     instantiators.clear();
+    board.update_avaiable_moves();
 }

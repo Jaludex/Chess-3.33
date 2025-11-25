@@ -69,6 +69,7 @@ void StateGameplay::update(float dt)
             board.set_piece_sprite(bot_play.moving_piece);
 
             board.update_bombs(bot_play.moving_piece, old_position);
+            board.update_avaiable_moves();
         }
 
         player_turn = true;
