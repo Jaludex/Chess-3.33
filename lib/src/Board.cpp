@@ -1,16 +1,16 @@
 #include <Board.hpp>
 
-Board::Board(sf::Texture texture) : IGameObject(texture)
+Board::Board(sf::Texture texture) : IGameObject(texture), white_king_in_board(false), black_king_in_board(false)
 {
     sprite.setScale(sf::Vector2f(1.0,1.0));
 }
 
-Board::Board(sf::Texture texture, std::list<BoardObjectPtr> _elements) : IGameObject(texture), elements(_elements)
+Board::Board(sf::Texture texture, std::list<BoardObjectPtr> _elements) : IGameObject(texture), elements(_elements), white_king_in_board(false), black_king_in_board(false)
 {
     sprite.setScale(sf::Vector2f(1.0,1.0));
 }
 
-Board::Board(const Board& _board) : IGameObject(_board.sprite.getTexture()), elements(_board.elements)
+Board::Board(const Board& _board) : IGameObject(_board.sprite.getTexture()), elements(_board.elements), white_king_in_board(false), black_king_in_board(false)
 {
     sprite.setScale(sf::Vector2f(1.0,1.0));
 }
@@ -83,9 +83,37 @@ void Board::render_instantiator_highlights(sf::RenderWindow& window, bool team)
 
 void Board::render_pieces(sf::RenderWindow& window)
 {
+    sf::Vector2f wk_pos;
+    int wk_height = 0;
+    sf::Vector2f bk_pos;
+    int bk_height = 0;
+
     for (auto element : elements)
     {
         element->piece->render(window);
+        if (element->king)
+        {
+            if (element->piece->get_team())
+            {
+                wk_pos = element->piece->get_sprite().getPosition();
+                wk_height = element->piece->get_height();
+            }
+            else
+            {
+                bk_pos = element->piece->get_sprite().getPosition();
+                bk_height = element->piece->get_height();
+            }
+        }
+    }
+
+    if (white_king_in_board)
+    {
+        render_crown(window, wk_pos, wk_height);
+    }
+
+    if (black_king_in_board)
+    {
+        render_crown(window, bk_pos, bk_height);
     }
 }
 
@@ -167,10 +195,30 @@ bool Board::drop_piece(BoardObjectPtr element)
     return it_moves;
 }
 
-void Board::add_piece(BoardObjectPtr piece)
+void Board::add_piece(BoardObjectPtr board_object)
 {
-    elements.push_front(piece);
-    set_piece_sprite(piece);
+    if (board_object->piece->get_piece_type() != PieceType::Bomb)
+    {
+        if (board_object->piece->get_team())
+        {//player or white team
+            if (!white_king_in_board)
+            {
+                board_object->king = true;
+                white_king_in_board = true;
+            }    
+        }    
+        else
+        {//bot or black team
+            if (!black_king_in_board)
+            {            
+                board_object->king = true;
+                black_king_in_board = true;
+            }
+        }
+    }
+
+    elements.push_front(board_object);
+    set_piece_sprite(board_object);
 }
 
 bool Board::move_piece(BoardObjectPtr element, Position destination)
@@ -195,6 +243,18 @@ bool Board::move_piece(BoardObjectPtr element, Position destination)
                     if (it != elements.end())
                     {
                         elements.erase(it);
+
+                        if (move->king)
+                        {
+                            if (move->piece->get_team())
+                            {// player/white team
+                                white_king_in_board = false;
+                            }
+                            else
+                            {// bot/black team
+                                black_king_in_board = false;
+                            }
+                        }
                     }
                 }
             }
@@ -219,6 +279,23 @@ void Board::update_bombs(BoardObjectPtr moved_piece, Position old_position)
                 return element->piece->get_piece_type() == PieceType::Bomb && element->piece->get_team() == team_of_bombs_to_remove;}), elements.end());
 }
 
+bool Board::is_black_king_in_board() const
+{
+    return black_king_in_board;
+}
+
+bool Board::is_white_king_in_board() const
+{
+    return white_king_in_board;
+}
+
+void Board::render_crown(sf::RenderWindow& window, sf::Vector2f position, float height)
+{
+    sf::Sprite crown(SpriteManager::get_piece_texture("crown"));
+    crown.setOrigin(sf::Vector2f(-10,16));
+    crown.setPosition(sf::Vector2f(position.x, position.y + (96 - height)));
+    window.draw(crown);
+}
 void Board::on_resize()
 {
     for (auto piece : elements)

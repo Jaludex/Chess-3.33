@@ -81,4 +81,5 @@ void SpriteManager::init()
     SpriteManager::load_texture_piece("black_archer", route + "BlackArcher.png");
     SpriteManager::load_texture_piece("black_trapper", route + "BlackTrapper.png");
     SpriteManager::load_texture_piece("black_trap", route + "BlackTrap.png");
+    SpriteManager::load_texture_piece("crown", route + "Crown.png");
 }

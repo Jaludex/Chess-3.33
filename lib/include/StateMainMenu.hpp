@@ -3,20 +3,27 @@
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <iostream>
-
+struct Button
+{
+    sf::Sprite btn_sprite;
+    sf::Text btn_text;
+    Button(const sf::Texture& texture, const sf::Font& font)
+        : btn_sprite(texture), btn_text(font)
+    {
+    }
+};
 class StateMainMenu : public IGameState
 {
 private:
     sf::Font font;
+    sf::Texture button_texture;
     sf::Text* text_title = nullptr;
     
-    sf::Text* btn_play = nullptr;
-    sf::Text* btn_tutorial = nullptr;
-    sf::Text* btn_exit = nullptr;
+    Button* btn_play = nullptr;
+    Button* btn_tutorial = nullptr;
+    Button* btn_exit = nullptr;
 
-    void setupText(sf::Text* text, const std::string& str, float yPos);
-    
-    bool isMouseOver(const sf::Text& text, const sf::Vector2i& mousePos);
+    void setup_button(Button* button, const std::string& str, float y_pos);
 
 public:
     StateMainMenu(sf::RenderWindow* _window); 
