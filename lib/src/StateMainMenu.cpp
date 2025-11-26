@@ -136,7 +136,7 @@ void StateMainMenu::update(float dt)
         }
         else if (is_mouse_over(btn_exit->btn_sprite, mouse_pos) && time_elapsed > INPUT_COOLDOWN)
         {
-             //window->close(); 
+            //window->close(); 
         }
     }
 }
