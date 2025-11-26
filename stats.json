@@ -1,0 +1,20 @@
+[
+    {
+        "name": "Master",
+        "score": 9500,
+        "total_lost_pieces": 2,
+        "total_rounds": 50
+    },
+    {
+        "name": "JugadorPromedio",
+        "score": 1200,
+        "total_lost_pieces": 15,
+        "total_rounds": 10
+    },
+    {
+        "name": "Principiante",
+        "score": 300,
+        "total_lost_pieces": 8,
+        "total_rounds": 2
+    }
+]

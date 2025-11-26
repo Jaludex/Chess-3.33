@@ -1,6 +1,14 @@
 #pragma once
 #include <SFML/Graphics.hpp>
-
+struct Button
+{
+    sf::Sprite btn_sprite;
+    sf::Text btn_text;
+    Button(const sf::Texture& texture, const sf::Font& font)
+        : btn_sprite(texture), btn_text(font)
+    {
+    }
+};
 enum class StateType
 {
     MainMenu,
@@ -21,8 +29,8 @@ class IGameState
 {
 protected:
     sf::RenderWindow* window;
-    //sf::Sprite background;
 public:
+
     StateType type;
     StateType go_to;
     virtual void init() = 0;                // inicializar aspectos del gamestate
@@ -33,6 +41,7 @@ public:
     virtual void on_resize() = 0;
     bool is_mouse_over(const sf::Text& text, const sf::Vector2i& mouse_pos);
     bool is_mouse_over(const sf::Sprite& sprite, const sf::Vector2i& mouse_pos);
+    void setup_button(Button* button, const std::string& str, float y_pos,const sf::Font& font, const sf::Texture& button_texture);
 };
 using GameStatePtr = std::shared_ptr<IGameState>;
 

@@ -2,7 +2,7 @@
 #include"StateTutorial.hpp"
 #include <Board.hpp>
 #include<GameStateManager.hpp>
-
+#include<Stats.hpp>
 int main()
 {
     SpriteManager::init();
@@ -25,7 +25,14 @@ int main()
 
     GameStateManager manager(window);
     manager.init();
-
+    std::cout << "Generando datos de prueba..." << std::endl;
+    
+    Stats s1("Master", 9500, 50, 2);
+    s1.save_or_update();
+    Stats s2("JugadorPromedio", 1200, 10, 15);
+    s2.save_or_update();
+    Stats s3("Principiante", 300, 2, 8);
+    s3.save_or_update();
     while (window.isOpen())
     {
         while (const std::optional event = window.pollEvent())

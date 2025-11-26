@@ -1,6 +1,6 @@
 #include"StateTutorial.hpp"
 #include <iostream>
-StateTutorial::StateTutorial(sf::RenderWindow* _window) : current_sprite(texExit), btn_next(texNext), btn_prev(texPrev), btn_exit(texExit) 
+StateTutorial::StateTutorial(sf::RenderWindow* _window) :background_sprite(background_tex), current_sprite(texExit), btn_next(texNext), btn_prev(texPrev), btn_exit(texExit) 
 {
     window = _window;
     current_indx = 0;
@@ -18,6 +18,13 @@ void StateTutorial::init()
 {
     slides_tutorial.clear();
     progress_dots.clear();
+
+    if (!background_tex.loadFromFile("assets/background_tutorial.png")) 
+    {
+        std::cerr << "ERROR: No se pudo cargar el fondo del tutorial" << std::endl;
+    }
+    background_tex.setSmooth(true);
+    background_sprite.setTexture(background_tex, true);
 
     std::string route = "assets/tutorial/";
     for(int i = 1; i <= 8; i++) 
@@ -73,17 +80,38 @@ void StateTutorial::init()
 
 void StateTutorial::setup_layout()
 {
-    if(!window) return;
-    
+    if (!window) return;
+
     sf::Vector2u sizeU = window->getSize();
     sf::Vector2f winSize((float)sizeU.x, (float)sizeU.y);
+
+    if (background_tex.getSize().x > 0)
+    {
+        sf::Vector2u bgSize = background_tex.getSize();
+        float scaleX = winSize.x / (float)bgSize.x;
+        float scaleY = winSize.y / (float)bgSize.y;
+
+        background_sprite.setScale(sf::Vector2f(scaleX, scaleY));
+        background_sprite.setPosition(sf::Vector2f(0.0f, 0.0f));
+    }
     
     float margin = 30.0f;
-    float btn_scale = 0.8f;
 
-    btn_exit.setScale(sf::Vector2f(btn_scale, btn_scale)); 
-    btn_next.setScale(sf::Vector2f(btn_scale, btn_scale));
-    btn_prev.setScale(sf::Vector2f(btn_scale, btn_scale));
+    float target_btn_height = winSize.y * 0.08f; 
+
+    auto scale_button = [&](sf::Sprite& btn, const sf::Texture& tex) 
+    {
+        sf::Vector2u original_size = tex.getSize();
+        if (original_size.y > 0) 
+        {
+            float scale = target_btn_height / original_size.y;
+            btn.setScale(sf::Vector2f(scale, scale));
+        }
+    };
+    
+    scale_button(btn_exit, texExit);
+    scale_button(btn_next, texNext);
+    scale_button(btn_prev, texPrev);
 
     if (!slides_tutorial.empty()) 
     {
@@ -202,7 +230,9 @@ void StateTutorial::update_dots()
 
 void StateTutorial::render(sf::RenderWindow& window) {
 
-    window.clear(sf::Color(130,130,200,255));
+    //window.clear(sf::Color(130,130,200,255));
+    window.clear(sf::Color::Magenta);
+    window.draw(background_sprite);   
 
     window.draw(current_sprite);
     
@@ -215,7 +245,6 @@ void StateTutorial::render(sf::RenderWindow& window) {
         window.draw(dot);
     }
 }
-
 void StateTutorial::save_tutorial_completed()
 {
     std::ofstream file("game_config.dat");

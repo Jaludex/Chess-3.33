@@ -7,6 +7,7 @@
 #include <IGameState.hpp>
 #include <StateGameplay.hpp>
 #include <StateMainMenu.hpp>
+#include "StateStats.hpp"
 
 class GameStateManager
 {
