@@ -11,6 +11,8 @@ StateGameplay::~StateGameplay() {}
 
 void StateGameplay::init()
 {
+    srand(time(0));
+    
         if(!background_texture.loadFromFile("assets/game_background.png"))
     {
         std::cerr << "ERROR: No se pudo cargar fondo en Gameplay" << std::endl;
@@ -251,10 +253,36 @@ void StateGameplay::on_resize()
 
 bool StateGameplay::set_up_black_team()
 {
-    json pieces;
-    pieces.push_back({{"piece", PieceType::Horse}, {"team", false}, {"x", 3}, {"y",0}});
-    pieces.push_back({{"piece", PieceType::Archer}, {"team", false}, {"x", 2}, {"y",0}});
-    pieces.push_back({{"piece", PieceType::Tower}, {"team", false}, {"x", 3}, {"y",1}});
+    int type = rand() % 9;
+
+    FileManager presets("kingpresets.json");
+    
+    std::string _s;
+    if(!presets.read_line(_s))
+        return false;
+    json index_values = json::parse(_s);
+
+    std::string piece_name;
+    switch(type)
+    {
+        case (int)PieceType::Pawn: piece_name = "Pawn"; break;
+        case (int)PieceType::Horse: piece_name = "Horse"; break;
+        case (int)PieceType::Bishop: piece_name = "Bishop"; break;
+        case (int)PieceType::Tower: piece_name = "Rook"; break;
+        case (int)PieceType::Queen: piece_name = "Queen"; break;
+        case (int)PieceType::Trapper: piece_name = "Trapper"; break;
+        case (int)PieceType::Crook: piece_name = "Crook"; break;
+        case (int)PieceType::Archer: piece_name = "Archer"; break;
+        case (int)PieceType::Portal: piece_name = "Portal"; break;
+    }
+
+    int chosen_preset_index = (int)index_values.at(piece_name + "Start") + (rand() % (int)index_values.at(piece_name + "Amount"));
+    
+    std::string piece_array_string;
+    if(!presets.goto_line(chosen_preset_index) || !presets.read_line(piece_array_string))
+        return false;
+
+    json pieces = json::parse(piece_array_string);
 
     for (auto p : pieces)
     {
