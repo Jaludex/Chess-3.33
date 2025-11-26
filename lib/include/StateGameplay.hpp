@@ -18,8 +18,11 @@
 #include "Bishop.hpp"
 #include "PieceInstantiator.hpp"
 #include <FileManager.hpp>
+#include "../include/json.hpp" 
+#include <exception>
 
 using PieceInstantPtr = std::shared_ptr<PieceInstantiator>;
+using json = nlohmann::json;
 
 class StateGameplay : public IGameState
 {
@@ -41,6 +44,9 @@ private:
 
     sf::Texture tex_exit;       
     sf::Sprite btn_back_sprite;
+    sf::Font font; 
+    sf::Text* btn_back = nullptr;
+    bool set_up_black_team();
     // Challenges
     
 public:
