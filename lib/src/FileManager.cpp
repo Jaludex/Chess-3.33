@@ -133,7 +133,8 @@ bool FileManager::goto_char(int number)
     if(!filestream.is_open())
         return false;
 
-    filestream.seekp(0);
+    //filestream.seekp(0);
+    filestream.seekg(0);
 
     int i = 0;
     while (i < number)
