@@ -54,6 +54,11 @@ void GameStateManager::update(float dt)
                     go_to(std::make_shared<StateGameplay>(this->window));
                 }    
                 break;
+            case StateType::Stats:
+            {
+                go_to(std::make_shared<StateStats>(this->window)); 
+            }
+            break;
             case StateType::Tutorial:
                 {
                     go_to(std::make_shared<StateTutorial>(this->window)); 
