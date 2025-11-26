@@ -26,6 +26,7 @@ void StateGameplay::init()
     tex_exit.setSmooth(true);
     btn_back_sprite.setTexture(tex_exit, true);
     this->on_resize();
+    this->set_up_black_team();
 
     //board.add_piece(std::make_shared<InBoardObject>(Position(3, 5), std::make_shared<Queen>(true, SpriteManager::get_piece_texture("white_queen"))));
     //board.add_piece(std::make_shared<InBoardObject>(Position(1, 4), std::make_shared<Archer>(true, SpriteManager::get_piece_texture("white_archer"))));
@@ -246,4 +247,23 @@ void StateGameplay::on_resize()
     instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Crook, false, sf::Vector2f(width - (xmargin + 100) - xoffset, ymargin + 2*yoffset), SpriteManager::get_piece_texture("black_crook"))); 
     instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Archer, false, sf::Vector2f(width - (xmargin + 100) - xoffset, ymargin + 3*yoffset), SpriteManager::get_piece_texture("black_archer"))); 
     instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Portal, false, sf::Vector2f(width - (xmargin + 100) - xoffset, ymargin + 4*yoffset), SpriteManager::get_piece_texture("black_portal"))); 
+}
+
+bool StateGameplay::set_up_black_team()
+{
+    json pieces;
+    pieces.push_back({{"piece", PieceType::Horse}, {"team", false}, {"x", 3}, {"y",0}});
+    pieces.push_back({{"piece", PieceType::Archer}, {"team", false}, {"x", 2}, {"y",0}});
+    pieces.push_back({{"piece", PieceType::Tower}, {"team", false}, {"x", 3}, {"y",1}});
+
+    for (auto p : pieces)
+    {
+        auto type = p.at("piece");
+        int column = p.at("x");
+        int row = p.at("y");
+
+        board.add_piece(make_board_object(type, false, column, row));
+    }
+
+    return true;
 }
