@@ -47,9 +47,6 @@ const sf::Texture& SpriteManager::get_type_texture(PieceType type, bool team)
     case PieceType::Trapper:
         return (team) ? get_piece_texture("white_trapper") : get_piece_texture("black_trapper") ;
         break;
-    case PieceType::King:
-        return (team) ? get_piece_texture("white_king") : get_piece_texture("black_king") ;
-        break;
     case PieceType::Horse:
         return (team) ? get_piece_texture("white_horse") : get_piece_texture("black_horse") ;
         break;

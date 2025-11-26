@@ -198,10 +198,21 @@ bool StateGameplay::set_up_black_team()
 
     FileManager presets("kingpresets.json");
     
-    std::string _s;
-    if(!presets.read_line(_s))
+    // Leer la PRIMERA línea que contiene los índices
+    std::string index_line;
+    if(!presets.read_line(index_line))
+    {
+        std::cerr << "Error: No se pudo leer la línea de índices de kingpresets.json" << std::endl;
         return false;
-    json index_values = json::parse(_s);
+    }
+
+    json index_values;
+    try {
+        index_values = json::parse(index_line);
+    } catch (const json::parse_error& e) {
+        std::cerr << "Error parseando índices JSON: " << e.what() << std::endl;
+        return false;
+    }
 
     std::string piece_name;
     switch(type)
@@ -217,21 +228,57 @@ bool StateGameplay::set_up_black_team()
         case (int)PieceType::Portal: piece_name = "Portal"; break;
     }
 
-    int chosen_preset_index = (int)index_values.at(piece_name + "Start") + (rand() % (int)index_values.at(piece_name + "Amount"));
+    // Verificar que las claves existen
+    std::string start_key = piece_name + "Start";
+    std::string amount_key = piece_name + "Amount";
+    
+    if (!index_values.contains(start_key) || !index_values.contains(amount_key)) {
+        std::cerr << "Error: Claves faltantes en kingpresets.json para: " << piece_name << std::endl;
+        std::cerr << "Claves disponibles: ";
+        for (auto& [key, value] : index_values.items()) {
+            std::cerr << key << " ";
+        }
+        std::cerr << std::endl;
+        return false;
+    }
+
+    int start_index = index_values[start_key];
+    int amount = index_values[amount_key];
+
+    if (amount <= 0) {
+        std::cerr << "Error: Amount es 0 o negativo para " << piece_name << std::endl;
+        return false;
+    }
+
+    // IMPORTANTE: Sumar 1 porque la línea 0 es el objeto de índices
+    // Las configuraciones de piezas empiezan desde la línea 1
+    int chosen_preset_index = start_index + (rand() % amount);
+    
+    std::cout << "Buscando preset en línea: " << chosen_preset_index << std::endl;
     
     std::string piece_array_string;
     if(!presets.goto_line(chosen_preset_index) || !presets.read_line(piece_array_string))
+    {
+        std::cerr << "Error: No se pudo leer la línea " << chosen_preset_index << " en kingpresets.json" << std::endl;
         return false;
+    }
 
-    json pieces = json::parse(piece_array_string);
+    json pieces;
+    try {
+        pieces = json::parse(piece_array_string);
+    } catch (const json::parse_error& e) {
+        std::cerr << "Error parseando array de piezas: " << e.what() << std::endl;
+        std::cerr << "Línea leída: " << piece_array_string << std::endl;
+        return false;
+    }
 
     for (auto p : pieces)
     {
-        auto type = p.at("piece");
+        auto piece_type = p.at("piece");
         int column = p.at("x");
         int row = p.at("y");
 
-        board.add_piece(make_board_object(type, false, column, row));
+        board.add_piece(make_board_object(piece_type, false, column, row));
     }
 
     if (btn_start) btn_start->setPosition(static_cast<sf::Vector2f>(window->getSize()) - sf::Vector2f(100, 100));
