@@ -1,6 +1,6 @@
 #include <FileManager.hpp>
 
-FileManager::FileManager(std::string filename) : filestream(filename, std::ios::in | std::ios::out)
+FileManager::FileManager(std::string filename) : filestream(filename)
 {}
 
 FileManager::~FileManager()
@@ -92,6 +92,7 @@ bool FileManager::goto_line(int number)
         std::getline(filestream, _s);
         if(filestream.eof())
             return false;
+        i++;
     }
 
     return true;
@@ -121,6 +122,7 @@ bool FileManager::goto_char_inline(int number)
         filestream.get(c);
         if(filestream.eof())
             return false;
+        i++;
     }
 
     return true;
@@ -140,6 +142,7 @@ bool FileManager::goto_char(int number)
         filestream.get(_c);
         if(filestream.eof())
             return false;
+        i++;
     }
 
     return true;

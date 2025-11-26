@@ -40,7 +40,6 @@ enum class PieceType
     Bishop,
     Tower,
     Queen,
-    King,
     Trapper,
     Crook,
     Archer,
