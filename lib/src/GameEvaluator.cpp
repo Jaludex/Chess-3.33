@@ -1,5 +1,4 @@
 #include <GameEvaluator.hpp>
-#include <iostream>
 
 int GameEvaluator::initial_material_sum_w = 0;
 
@@ -63,8 +62,7 @@ int GameEvaluator::eval(BoardL& pieces)
     }
 
     if(!king_w)
-    {
-                std::cout << "wk death" << std::endl;            
+    {          
         return 800;
     }
     else
@@ -74,7 +72,6 @@ int GameEvaluator::eval(BoardL& pieces)
     
     if(!king_b)
     {
-                std::cout << "Bk death" << std::endl;
         return 0;
     }
     else

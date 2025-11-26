@@ -17,8 +17,8 @@
 #include "Trapper.hpp"
 #include "Bishop.hpp"
 #include "PieceInstantiator.hpp"
+#include <FileManager.hpp>
 
-#include <exception>
 using PieceInstantPtr = std::shared_ptr<PieceInstantiator>;
 
 class StateGameplay : public IGameState
