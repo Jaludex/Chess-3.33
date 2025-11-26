@@ -1,6 +1,6 @@
 #include "PieceInstantiator.hpp"
 
-PieceInstantiator::PieceInstantiator(PieceType _type, bool _team, sf::Vector2f position, sf::Texture texture) : IGameObject(texture), type{_type}, team{_team}
+PieceInstantiator::PieceInstantiator(PieceType _type, bool _team, sf::Vector2f position) : IGameObject(SpriteManager::get_type_texture(_type, _team)), type{_type}, team{_team}
 {
     this->set_sprite_position(position);
     originalposition = position;
@@ -33,27 +33,26 @@ void PieceInstantiator::return_to_origin()
 
 BoardObjectPtr PieceInstantiator::make_piece(int startx, int starty)
 {
-    sf::Texture texture = this->texture;
     switch(type)
     {
         case PieceType::Pawn :
-            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Pawn>(team, texture));
+            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Pawn>(team));
         case PieceType::Horse :
-            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Horse>(team, texture));
+            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Horse>(team));
         case PieceType::Bishop :
-            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Bishop>(team, texture));
+            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Bishop>(team));
         case PieceType::Tower :
-            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Tower>(team, texture));
+            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Tower>(team));
         case PieceType::Queen :
-            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Queen>(team, texture));
+            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Queen>(team));
         case PieceType::Trapper :
-            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Trapper>(team, texture));
+            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Trapper>(team));
         case PieceType::Crook :
-            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Crook>(team, texture));
+            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Crook>(team));
         case PieceType::Archer :
-            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Archer>(team, texture));
+            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Archer>(team));
         case PieceType::Portal :
-            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Portal>(team, texture));
+            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Portal>(team));
         default :
             return nullptr;
     }

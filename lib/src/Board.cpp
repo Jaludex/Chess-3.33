@@ -242,6 +242,10 @@ bool Board::drop_piece(BoardObjectPtr element, long& score)
 
 void Board::add_piece(BoardObjectPtr board_object)
 {
+    auto possible_conflictor = std::find_if(elements.begin(), elements.end(), [board_object] (const BoardObjectPtr& actual) { return board_object->pos == actual->pos; });
+    if (possible_conflictor != elements.end()) elements.erase(possible_conflictor);
+    
+
     if (board_object->piece->get_piece_type() != PieceType::Bomb)
     {
         if (board_object->piece->get_team())
@@ -315,7 +319,7 @@ void Board::update_bombs(BoardObjectPtr moved_piece, Position old_position)
 {
     if (moved_piece->piece->get_piece_type() == PieceType::Trapper)
         {
-            add_piece(std::make_shared<InBoardObject>(old_position, std::make_shared<Bomb>(moved_piece->piece->get_team(), (moved_piece->piece->get_team()) ? SpriteManager::get_piece_texture("white_trap") : SpriteManager::get_piece_texture("black_trap"))));
+            add_piece(std::make_shared<InBoardObject>(old_position, std::make_shared<Bomb>(moved_piece->piece->get_team())));
         }
         
         bool team_of_bombs_to_remove = !moved_piece->piece->get_team(); 

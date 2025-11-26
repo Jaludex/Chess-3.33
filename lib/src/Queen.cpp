@@ -12,7 +12,7 @@ return (_team)? Queen::white : Queen::black;
 }
                                                     
 
-Queen::Queen(bool team, sf::Texture texture) : IGameObject(texture)
+Queen::Queen(bool team) : IGameObject(SpriteManager::get_type_texture(PieceType::Queen, team))
 {
     height = 96;
     set_team(team);

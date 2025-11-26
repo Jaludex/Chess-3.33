@@ -105,18 +105,38 @@ PieceInstantPtr IStatePlayable::clicked_instantiator(sf::Vector2i mouse_position
 
 void IStatePlayable::end_turn()
 {
+
+    auto elements = board.get_elements();
+    for (auto element : elements)
+    {
+        if (element->piece->get_piece_type() == PieceType::Pawn && ((element->piece->get_team() && element->pos.y == 0) || (!element->piece->get_team() && element->pos.y == 5)))
+        {
+            board.add_piece(std::make_shared<InBoardObject>(element->pos, std::make_shared<Queen>(element->piece->get_team()), element->king));
+        }
+    }
+
     bot.initial_game_eval();
     board.update_avaiable_moves();
 
     //std::cout << score << std::endl;
 
-    //Esto se cambiara por el del arbitro si al final se implementa
+    //Aqui se implementa el arbitro mejoe
     auto possible_winner = check_winner();
     if (possible_winner != PlayerType::None)
     {
         this->end_fight(possible_winner);
     }
+
+    possible_winner = check_stalemate();
+    if (possible_winner != PlayerType::None)
+    {
+        this->end_fight(possible_winner);
+    }
+
     player_turn = !player_turn;
+
+    round++;
+    // std::cout << round << std::endl;
 }
 
 PlayerType IStatePlayable::check_winner()
@@ -137,6 +157,13 @@ PlayerType IStatePlayable::check_winner()
     if (!P1_King) return PlayerType::P2;
     if (!P2_King) return PlayerType::P1;
     return PlayerType::None;
+}
+
+PlayerType IStatePlayable::check_stalemate()
+{
+    //Primero revisa que no te hayas quedado sin ningun movimiento posible
+    return PlayerType::None;
+    //Luego if con las situaciones particulares
 }
 
 void IStatePlayable::start_fight()

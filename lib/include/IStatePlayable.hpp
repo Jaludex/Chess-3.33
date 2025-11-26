@@ -60,6 +60,7 @@ protected:
     float fix_offset(const sf::Sprite& _sprite, char t);
     PieceInstantPtr clicked_instantiator(sf::Vector2i mouse_position);
     PlayerType check_winner();
+    PlayerType check_stalemate();
     void drag();
     void start_fight();
     void end_turn();

@@ -21,7 +21,7 @@ void StateGameplay::init()
     difficulty = 1;
     round = 1;
     score = 0;
-    board.add_piece(std::make_shared<InBoardObject>(Position(1, 1), std::make_shared<Queen>(false, SpriteManager::get_type_texture(PieceType::Queen, false))));
+    board.add_piece(std::make_shared<InBoardObject>(Position(1, 1), std::make_shared<Archer>(false)));
     
     
     if (!font.openFromFile("assets/fonts/arial.ttf")) 
@@ -202,7 +202,7 @@ void StateGameplay::load_instanciators()
 
         for (auto piecetype : inventory)
         {
-            instantiators.push_back(std::make_shared<PieceInstantiator>(piecetype, true, sf::Vector2f(xmargin + ((even_piece) ? xoffset : 0), ymargin + (Ymultiplier*yoffset)), SpriteManager::get_type_texture(piecetype, true)));
+            instantiators.push_back(std::make_shared<PieceInstantiator>(piecetype, true, sf::Vector2f(xmargin + ((even_piece) ? xoffset : 0), ymargin + (Ymultiplier*yoffset))));
             
             if (even_piece) Ymultiplier++;
             even_piece = !even_piece;
