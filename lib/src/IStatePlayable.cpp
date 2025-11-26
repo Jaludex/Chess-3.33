@@ -118,7 +118,8 @@ void IStatePlayable::end_turn()
     board.update_avaiable_moves();
 
     //std::cout << score << std::endl;
-
+    
+    player_turn = !player_turn;
     //Aqui se implementa el arbitro mejoe
     auto possible_winner = check_winner();
     if (possible_winner != PlayerType::None)
@@ -132,9 +133,7 @@ void IStatePlayable::end_turn()
         this->end_fight(possible_winner);
     }
 
-    player_turn = !player_turn;
-
-    round++;
+    
     // std::cout << round << std::endl;
 }
 

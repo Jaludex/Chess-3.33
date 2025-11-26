@@ -24,6 +24,7 @@ protected:
     void dropped_inst() override;
     void returned_piece() override;
     void end_fight(PlayerType winner) override;
+    void new_game();
     
 public:
     StateGameplay(sf::RenderWindow* _window);

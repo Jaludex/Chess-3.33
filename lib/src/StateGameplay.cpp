@@ -12,7 +12,7 @@ StateGameplay::~StateGameplay() {}
 
 void StateGameplay::init()
 {
-    srand(time(0));
+    srand(time(NULL));
     
     if(!background_texture.loadFromFile("assets/game_background.png"))
     {
@@ -37,19 +37,7 @@ void StateGameplay::init()
     btn_back_sprite.setTexture(tex_exit, true);
 
     //Aqui se intenta cargar una partida anterior que se haya guardado, sino se carga este cacho
-    this->actual_phase = PhaseType::Preparing;
-    if (inventory.empty())
-    {
-        for (size_t i = 0; i < 5; i++)
-        {
-            inventory.push_front(PieceType::Pawn);
-        }
-        inventory.push_front(PieceType::Bishop);
-    }
-    difficulty = 2;
-    round = 1;
-    score = 0;
-    this->set_up_black_team();
+    new_game();
     
     
     if (!font.openFromFile("assets/fonts/arial.ttf")) 
@@ -192,17 +180,31 @@ void StateGameplay::adjust_elements()
     
 }
 
+void StateGameplay::new_game()
+{
+    this->actual_phase = PhaseType::Preparing;
+    if (inventory.empty())
+    {
+        for (size_t i = 0; i < 5; i++)
+        {
+            inventory.push_front(PieceType::Queen);
+        }
+    }
+    difficulty = 2;
+    round = 1;
+    score = 0;
+    enemy_king = static_cast<PieceType>(rand() % 9);
+    this->set_up_black_team();
+}
+
 bool StateGameplay::set_up_black_team()
 {
-    int type = rand() % 9;
-
     FileManager presets("kingpresets.json");
-    
-    // Leer la PRIMERA línea que contiene los índices
+
     std::string index_line;
     if(!presets.read_line(index_line))
     {
-        std::cerr << "Error: No se pudo leer la línea de índices de kingpresets.json" << std::endl;
+        std::cerr << "Error: Can't read index line in kingpresets.json" << std::endl;
         return false;
     }
 
@@ -210,31 +212,30 @@ bool StateGameplay::set_up_black_team()
     try {
         index_values = json::parse(index_line);
     } catch (const json::parse_error& e) {
-        std::cerr << "Error parseando índices JSON: " << e.what() << std::endl;
+        std::cerr << "Error parsing JSON index: " << e.what() << std::endl;
         return false;
     }
 
     std::string piece_name;
-    switch(type)
+    switch(enemy_king)
     {
-        case (int)PieceType::Pawn: piece_name = "Pawn"; break;
-        case (int)PieceType::Horse: piece_name = "Horse"; break;
-        case (int)PieceType::Bishop: piece_name = "Bishop"; break;
-        case (int)PieceType::Tower: piece_name = "Rook"; break;
-        case (int)PieceType::Queen: piece_name = "Queen"; break;
-        case (int)PieceType::Trapper: piece_name = "Trapper"; break;
-        case (int)PieceType::Crook: piece_name = "Crook"; break;
-        case (int)PieceType::Archer: piece_name = "Archer"; break;
-        case (int)PieceType::Portal: piece_name = "Portal"; break;
+        case PieceType::Pawn: piece_name = "Pawn"; break;
+        case PieceType::Horse: piece_name = "Horse"; break;
+        case PieceType::Bishop: piece_name = "Bishop"; break;
+        case PieceType::Tower: piece_name = "Rook"; break;
+        case PieceType::Queen: piece_name = "Queen"; break;
+        case PieceType::Trapper: piece_name = "Trapper"; break;
+        case PieceType::Crook: piece_name = "Crook"; break;
+        case PieceType::Archer: piece_name = "Archer"; break;
+        case PieceType::Portal: piece_name = "Portal"; break;
     }
 
-    // Verificar que las claves existen
     std::string start_key = piece_name + "Start";
     std::string amount_key = piece_name + "Amount";
     
     if (!index_values.contains(start_key) || !index_values.contains(amount_key)) {
-        std::cerr << "Error: Claves faltantes en kingpresets.json para: " << piece_name << std::endl;
-        std::cerr << "Claves disponibles: ";
+        std::cerr << "Error: No keys in kingpresets.json for: " << piece_name << std::endl;
+        std::cerr << "Available keys: ";
         for (auto& [key, value] : index_values.items()) {
             std::cerr << key << " ";
         }
@@ -246,20 +247,16 @@ bool StateGameplay::set_up_black_team()
     int amount = index_values[amount_key];
 
     if (amount <= 0) {
-        std::cerr << "Error: Amount es 0 o negativo para " << piece_name << std::endl;
+        std::cerr << "Error: Negative or 0 amount " << piece_name << std::endl;
         return false;
     }
 
-    // IMPORTANTE: Sumar 1 porque la línea 0 es el objeto de índices
-    // Las configuraciones de piezas empiezan desde la línea 1
     int chosen_preset_index = start_index + (rand() % amount);
-    
-    std::cout << "Buscando preset en línea: " << chosen_preset_index << std::endl;
     
     std::string piece_array_string;
     if(!presets.goto_line(chosen_preset_index) || !presets.read_line(piece_array_string))
     {
-        std::cerr << "Error: No se pudo leer la línea " << chosen_preset_index << " en kingpresets.json" << std::endl;
+        std::cerr << "Error: Can't read line " << chosen_preset_index << " in kingpresets.json" << std::endl;
         return false;
     }
 
@@ -267,8 +264,8 @@ bool StateGameplay::set_up_black_team()
     try {
         pieces = json::parse(piece_array_string);
     } catch (const json::parse_error& e) {
-        std::cerr << "Error parseando array de piezas: " << e.what() << std::endl;
-        std::cerr << "Línea leída: " << piece_array_string << std::endl;
+        std::cerr << "Error parsing piece array " << e.what() << std::endl;
+        std::cerr << "Read line: " << piece_array_string << std::endl;
         return false;
     }
 
@@ -297,6 +294,7 @@ void StateGameplay::dropped_inst()
 void StateGameplay::returned_piece()
 {
     if (!selected_piece) return;
+    if (selected_piece->piece->get_team() != true) return;
 
     inventory.push_front(selected_piece->piece->get_piece_type());
     board.remove_piece(selected_piece);
@@ -308,6 +306,8 @@ void StateGameplay::end_fight(PlayerType winner)
 {
     actual_phase = PhaseType::Preparing;
 
+    
+
     if (winner == PlayerType::P1)
     {
         auto elements = board.get_elements();
@@ -315,17 +315,35 @@ void StateGameplay::end_fight(PlayerType winner)
         {
             if (element->piece->get_team()) inventory.push_front(element->piece->get_piece_type());
         }
-    }
-    
-    board.clear();
-    round++;
-    //Aqui le falta escojer un nuevo equipo enemigo (Si la ronda es multiplo de 3 cambia el lider), puede ser con algo como
-    //prepare_enemy();
-    //O algo asi
-    //Tambien, si el calculo de (3^(dificultad+1)) / 2 es igual al numero de ronda actual, sumar 1 a la dificultad.
-    //Asi la dificultad que ahora arranca en uno va a subir a un ritmo cada vez mas largo
+        round++;
+        if (difficulty <= 5 && round % 5 == 0) difficulty++;
 
-    this->adjust_elements();
+        if (round % 3 == 1)
+        {
+            inventory.push_front(enemy_king);
+            PieceType new_enemy_king;
+            do
+            {
+                int index = rand() % 9;
+                new_enemy_king = static_cast<PieceType>(index);
+            } while (new_enemy_king == enemy_king);
+            enemy_king = new_enemy_king;
+        }
+
+        //Mostrar pantalla de victoria, tal vez
+        player_turn = true;
+
+        board.clear();
+        set_up_black_team();
+        this->adjust_elements();
+    }
+    else if (winner == PlayerType::P2)
+    {   
+        //Mostrar pantalla de derrota, pedir registrar tu nombre para el statsy luego esto
+        board.clear();
+
+        go_to = StateType::Return;
+    }    
 }
 
 void StateGameplay::load_instanciators()
