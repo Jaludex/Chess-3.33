@@ -67,7 +67,7 @@ void StateGameplay::update(float dt)
 
         if (bot_play.moving_piece)
         {
-            Position old_position = bot_play.moving_piece->pos;
+            Position old_position(bot_play.moving_piece->pos);
 
             board.move_piece(bot_play.moving_piece, bot_play.destination);
             board.set_piece_sprite(bot_play.moving_piece);

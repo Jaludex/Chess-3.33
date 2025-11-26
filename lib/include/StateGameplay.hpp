@@ -7,7 +7,7 @@ class StateGameplay : public IStatePlayable
 protected:
     std::list<PieceType> inventory;
     PieceType enemy_king; //Este sera la pieza que mantendra el rey enemigo
-    uint difficulty;
+    unsigned int difficulty;
 
 
     void load_instanciators() override;

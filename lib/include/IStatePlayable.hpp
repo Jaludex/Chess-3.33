@@ -46,7 +46,6 @@ protected:
     BoardObjectPtr selected_piece;
     PieceInstantPtr selected_inst;
     Board board;
-    sf::Clock elapsed_time;
     long score;
     bool player_turn;
     int round;
