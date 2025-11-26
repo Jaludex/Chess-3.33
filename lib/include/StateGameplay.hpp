@@ -11,29 +11,14 @@ protected:
     sf::Texture background_texture; 
     sf::Sprite background_sprite;
 
-    BoardObjectPtr selected_piece;
-    PieceInstantPtr selected_inst;
-    Board board;
-    sf::Clock elapsed_time;
-
-    long score;
-    bool player_turn;
-    std::vector<PieceInstantPtr> instantiators;
-    GameTree bot; 
-    PieceInstantPtr clicked_instantiator(sf::Vector2i mouse_position);
-    bool check_winner();
-
     sf::Texture tex_exit;       
     sf::Sprite btn_back_sprite;
-    sf::Font font; 
-    sf::Text* btn_back = nullptr;
-    bool set_up_black_team();
     
     std::list<PieceType> inventory;
     PieceType enemy_king; //Este sera la pieza que mantendra el rey enemigo
     unsigned int difficulty;
 
-
+    bool set_up_black_team();
     void load_instanciators() override;
     void adjust_elements() override;
     void dropped_inst() override;

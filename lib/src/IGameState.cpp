@@ -12,9 +12,10 @@ bool IGameState::is_mouse_over(const sf::Text& text, const sf::Vector2i& mouse_p
 }
 bool IGameState::is_mouse_over(const sf::Sprite& sprite, const sf::Vector2i& mousePos)
 {
-    sf::Vector2f mouseF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
+    sf::Vector2f mouseF(static_cast<sf::Vector2f>(mousePos));
     return sprite.getGlobalBounds().contains(mouseF);
 }
+
 void IGameState::setup_button(Button* button, const std::string& str, float y_pos,const sf::Font& font, const sf::Texture& button_texture)
 {
     sf::Vector2u win_size = window->getSize();

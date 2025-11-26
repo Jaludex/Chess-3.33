@@ -1,11 +1,11 @@
 #include <StateGameplay.hpp>
 
-StateGameplay::StateGameplay(sf::RenderWindow* _window) :btn_back_sprite(tex_exit), board(sf::Texture(sf::Vector2u((unsigned int)(Board::side_lenght * Board::cell_lenght),
-                                                                              (unsigned int)(Board::side_lenght * Board::cell_lenght)))), player_turn(true), bot(BoardL(), GameEvaluator()),background_sprite(background_texture), 
-                                                                              IStatePlayable(_window)
+StateGameplay::StateGameplay(sf::RenderWindow* _window) :btn_back_sprite(tex_exit),background_sprite(background_texture), IStatePlayable(_window)
 {
     type = StateType::Gameplay;
     go_to = StateType::None;
+
+
 }
 
 StateGameplay::~StateGameplay() {}
@@ -14,7 +14,7 @@ void StateGameplay::init()
 {
     srand(time(0));
     
-        if(!background_texture.loadFromFile("assets/game_background.png"))
+    if(!background_texture.loadFromFile("assets/game_background.png"))
     {
         std::cerr << "ERROR: No se pudo cargar fondo en Gameplay" << std::endl;
     }
@@ -22,25 +22,22 @@ void StateGameplay::init()
     background_sprite.setTexture(background_texture);
     background_sprite.setTextureRect({{0, 0}, {static_cast<int>(size.x), static_cast<int>(size.y)}});
 
+    //Como es temporal, por ahora solo tomo todo esto y lo copio para el boton de empezar
+    btn_start = new sf::Text(font, "->", 30);
+    btn_start->setFillColor(sf::Color::White);
+    btn_start->setOutlineThickness(2);
+    btn_start->setOutlineColor(sf::Color::Black);
+
     if (!tex_exit.loadFromFile("assets/back_button.png")) // Usa la ruta de tu imagen de botón
     {
         std::cerr << "Error cargando textura de boton de regreso en Gameplay" << std::endl;
     }
+
     tex_exit.setSmooth(true);
     btn_back_sprite.setTexture(tex_exit, true);
-    this->set_up_black_team();
-
-    //board.add_piece(std::make_shared<InBoardObject>(Position(3, 5), std::make_shared<Queen>(true, SpriteManager::get_piece_texture("white_queen"))));
-    //board.add_piece(std::make_shared<InBoardObject>(Position(1, 4), std::make_shared<Archer>(true, SpriteManager::get_piece_texture("white_archer"))));
-    //board.add_piece(std::make_shared<InBoardObject>(Position(5, 5), std::make_shared<Crook>(true, SpriteManager::get_piece_texture("white_crook"))));
-    //
-    //board.add_piece(std::make_shared<InBoardObject>(Position(0, 1), std::make_shared<Horse>(false, SpriteManager::get_piece_texture("black_horse"))));
-    //board.add_piece(std::make_shared<InBoardObject>(Position(2, 1), std::make_shared<Queen>(false, SpriteManager::get_piece_texture("black_queen"))));
-    //board.add_piece(std::make_shared<InBoardObject>(Position(1, 1), std::make_shared<Archer>(false, SpriteManager::get_piece_texture("black_archer"))));
-    //board.add_piece(std::make_shared<InBoardObject>(Position(1, 0), std::make_shared<Portal>(false, SpriteManager::get_piece_texture("black_portal"))));
-    //board.add_piece(std::make_shared<InBoardObject>(Position(5, 1), std::make_shared<Trapper>(false, SpriteManager::get_piece_texture("black_trapper"))));
 
     //Aqui se intenta cargar una partida anterior que se haya guardado, sino se carga este cacho
+    this->actual_phase = PhaseType::Preparing;
     if (inventory.empty())
     {
         for (size_t i = 0; i < 5; i++)
@@ -52,20 +49,13 @@ void StateGameplay::init()
     difficulty = 2;
     round = 1;
     score = 0;
-    board.add_piece(std::make_shared<InBoardObject>(Position(1, 1), std::make_shared<Bishop>(false)));
+    this->set_up_black_team();
     
     
     if (!font.openFromFile("assets/fonts/arial.ttf")) 
     {
          std::cerr << "ERROR: No se pudo cargar fuente en Gameplay" << std::endl;
     }
-  
-    //Como es temporal, por ahora solo tomo todo esto y lo copio para el boton de empezar
-    btn_start = new sf::Text(font, "->", 30);
-    btn_start->setFillColor(sf::Color::White);
-    btn_start->setPosition(static_cast<sf::Vector2f>(window->getSize()) - sf::Vector2f(100, 100));
-    btn_start->setOutlineThickness(2);
-    btn_start->setOutlineColor(sf::Color::Black);
 
     adjust_elements();
 
@@ -134,6 +124,10 @@ void StateGameplay::update(float dt)
 void StateGameplay::render(sf::RenderWindow& window)
 {
     window.draw(background_sprite);
+
+    window.draw(btn_back_sprite);
+    if (btn_start && actual_phase == PhaseType::Preparing) window.draw(*btn_start);
+
     board.render(window);
     if (actual_phase == PhaseType::Fighting && selected_piece) board.render_move_highlights(window, selected_piece->piece->get_valid_moves());
     if (actual_phase == PhaseType::Preparing && selected_inst) board.render_instantiator_highlights(window, true);
@@ -144,8 +138,7 @@ void StateGameplay::render(sf::RenderWindow& window)
         inst->render(window);
     }
 
-    window.draw(btn_back_sprite);
-    if (btn_start && actual_phase == PhaseType::Preparing) window.draw(*btn_start);
+    
 }
 
 void StateGameplay::on_resize() 
@@ -169,11 +162,15 @@ void StateGameplay::adjust_elements()
                                   (float)(window->getSize().y/2 - halfboard_lenght));
     board.set_sprite_position(pos);
 
+    board.on_resize();
+
 
     sf::Vector2u winSizeU = window->getSize();
     sf::Vector2f winSize((float)winSizeU.x, (float)winSizeU.y);
 
     float target_btn_height = winSize.y * 0.08f;
+
+    btn_start->setPosition(static_cast<sf::Vector2f>(window->getSize()) - sf::Vector2f(100, 100));
     
     sf::Vector2u btn_texture_size = tex_exit.getSize();
     if (btn_texture_size.y > 0) 
@@ -238,8 +235,6 @@ bool StateGameplay::set_up_black_team()
     }
 
     if (btn_start) btn_start->setPosition(static_cast<sf::Vector2f>(window->getSize()) - sf::Vector2f(100, 100));
-
-    this->load_instanciators();
 
     return true;
 }
