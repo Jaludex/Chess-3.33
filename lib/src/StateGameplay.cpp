@@ -306,8 +306,6 @@ void StateGameplay::end_fight(PlayerType winner)
 {
     actual_phase = PhaseType::Preparing;
 
-    
-
     if (winner == PlayerType::P1)
     {
         auto elements = board.get_elements();
@@ -350,7 +348,7 @@ void StateGameplay::load_instanciators()
 {
     if (actual_phase == PhaseType::Preparing)
     {
-        int Ymultiplier = 0;
+        int Ymultiplier = 1;
 
         bool even_piece = false;
 
