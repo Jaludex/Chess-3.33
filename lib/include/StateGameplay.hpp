@@ -30,7 +30,7 @@ using json = nlohmann::json;
 
 class StateGameplay : public IGameState
 {
-private:
+protected:
     sf::Texture background_texture; 
     sf::Sprite background_sprite;
 
@@ -51,7 +51,17 @@ private:
     sf::Font font; 
     sf::Text* btn_back = nullptr;
     bool set_up_black_team();
-    // Challenges
+    
+    std::list<PieceType> inventory;
+    PieceType enemy_king; //Este sera la pieza que mantendra el rey enemigo
+    unsigned int difficulty;
+
+
+    void load_instanciators() override;
+    void adjust_elements() override;
+    void dropped_inst() override;
+    void returned_piece() override;
+    void end_fight(PlayerType winner) override;
     
 public:
     StateGameplay(sf::RenderWindow* _window);
@@ -59,10 +69,10 @@ public:
 
     void init() override;                // inicializar aspectos del gamestate
     void terminate() override;           // eliminar memoria reservada dinámicamente o cosas que se tengan que manejar al final de ese estado de juego.
-	void update(float dt) override;
+	  void update(float dt) override;
     void render(sf::RenderWindow& window) override;
-    void drag();
     void on_resize() override;
+    
 };
 
 

@@ -8,7 +8,7 @@
 class Tower : public IPiece
 {
     public:
-    Tower(bool team, sf::Texture texture);
+    Tower(bool team);
 
     virtual ~Tower() = default;
     virtual void update(float dt) override;

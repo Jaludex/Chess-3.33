@@ -176,7 +176,7 @@ BoardL GameTree::apply_play(const BoardL& original, const Play& move)
 
     if (new_moving_slot->piece->get_piece_type() == PieceType::Trapper)
     {
-        auto new_bomb_piece = std::make_shared<Bomb>(new_moving_slot->piece->get_team(), (new_moving_slot->piece->get_team()) ? SpriteManager::get_piece_texture("white_trap") : SpriteManager::get_piece_texture("black_trap")); 
+        auto new_bomb_piece = std::make_shared<Bomb>(new_moving_slot->piece->get_team()); 
         auto new_bomb_slot = std::make_shared<InBoardObject>(move.moving_piece->pos, new_bomb_piece);
         new_state.push_back(new_bomb_slot);
     }

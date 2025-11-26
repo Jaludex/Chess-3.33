@@ -1,12 +1,13 @@
 #include <StateGameplay.hpp>
 
 StateGameplay::StateGameplay(sf::RenderWindow* _window) :btn_back_sprite(tex_exit), board(sf::Texture(sf::Vector2u((unsigned int)(Board::side_lenght * Board::cell_lenght),
-                                                                              (unsigned int)(Board::side_lenght * Board::cell_lenght)))), player_turn(true), bot(BoardL(), GameEvaluator()),background_sprite(background_texture)
+                                                                              (unsigned int)(Board::side_lenght * Board::cell_lenght)))), player_turn(true), bot(BoardL(), GameEvaluator()),background_sprite(background_texture), 
+                                                                              IStatePlayable(_window)
 {
-    window = _window;
     type = StateType::Gameplay;
     go_to = StateType::None;
 }
+
 StateGameplay::~StateGameplay() {}
 
 void StateGameplay::init()
@@ -27,7 +28,6 @@ void StateGameplay::init()
     }
     tex_exit.setSmooth(true);
     btn_back_sprite.setTexture(tex_exit, true);
-    this->on_resize();
     this->set_up_black_team();
 
     //board.add_piece(std::make_shared<InBoardObject>(Position(3, 5), std::make_shared<Queen>(true, SpriteManager::get_piece_texture("white_queen"))));
@@ -40,6 +40,34 @@ void StateGameplay::init()
     //board.add_piece(std::make_shared<InBoardObject>(Position(1, 0), std::make_shared<Portal>(false, SpriteManager::get_piece_texture("black_portal"))));
     //board.add_piece(std::make_shared<InBoardObject>(Position(5, 1), std::make_shared<Trapper>(false, SpriteManager::get_piece_texture("black_trapper"))));
 
+    //Aqui se intenta cargar una partida anterior que se haya guardado, sino se carga este cacho
+    if (inventory.empty())
+    {
+        for (size_t i = 0; i < 5; i++)
+        {
+            inventory.push_front(PieceType::Pawn);
+        }
+        inventory.push_front(PieceType::Bishop);
+    }
+    difficulty = 2;
+    round = 1;
+    score = 0;
+    board.add_piece(std::make_shared<InBoardObject>(Position(1, 1), std::make_shared<Bishop>(false)));
+    
+    
+    if (!font.openFromFile("assets/fonts/arial.ttf")) 
+    {
+         std::cerr << "ERROR: No se pudo cargar fuente en Gameplay" << std::endl;
+    }
+  
+    //Como es temporal, por ahora solo tomo todo esto y lo copio para el boton de empezar
+    btn_start = new sf::Text(font, "->", 30);
+    btn_start->setFillColor(sf::Color::White);
+    btn_start->setPosition(static_cast<sf::Vector2f>(window->getSize()) - sf::Vector2f(100, 100));
+    btn_start->setOutlineThickness(2);
+    btn_start->setOutlineColor(sf::Color::Black);
+
+    adjust_elements();
 
     bot.set_current_board(board.get_elements());
     bot.initial_game_eval();
@@ -52,23 +80,24 @@ void StateGameplay::terminate()
 
 void StateGameplay::update(float dt)
 {
-    if (player_turn)
+    if (actual_phase != PhaseType::Fighting || player_turn)
     {
         drag();
     }
     else
     {
         sf::sleep(sf::seconds(1.f));
-        auto bot_play = bot.find_best_play(4);
+        auto bot_play = bot.find_best_play(difficulty);
 
         if (bot_play.moving_piece)
         {
-            Position old_position = bot_play.moving_piece->pos;
+            Position old_position(bot_play.moving_piece->pos);
 
             board.move_piece(bot_play.moving_piece, bot_play.destination);
             board.set_piece_sprite(bot_play.moving_piece);
 
             board.update_bombs(bot_play.moving_piece, old_position);
+            this->end_turn();
         }
 
         player_turn = true;
@@ -83,81 +112,31 @@ void StateGameplay::update(float dt)
         this->go_to = StateType::MainMenu;
         return;
     }
+
+    if (btn_start) 
+    {
+        if (is_mouse_over(*btn_start, mousePos)) btn_start->setFillColor(sf::Color::Yellow);
+        else btn_start->setFillColor(sf::Color::White);
+    }
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+    {
+        if (btn_start && is_mouse_over(*btn_start, mousePos) && board.is_white_king_in_board())
+        {
+            this->start_fight();
+
+            return;
+        }
+    }
     board.update(dt);
 }
-float fix_offset(const sf::Sprite& _sprite, char t)
-{
-    sf::FloatRect boundaries = _sprite.getGlobalBounds();
-    if(t == 'x') return boundaries.size.x / 2.0;
 
-    else return boundaries.size.y / 2.0;
-}
-void StateGameplay::drag()
-{
-    auto mouse_position = this->get_relative_mouse_position();
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
-    {        
-        if (selected_piece)
-        {   
-            selected_piece->piece->set_sprite_position({(float)mouse_position.x - fix_offset(selected_piece->piece->get_sprite(), 'x'), (float)mouse_position.y - fix_offset(selected_piece->piece->get_sprite(),'y')});
-            selected_inst = nullptr;
-        }
-        else if (selected_inst)
-        {
-            selected_inst->set_sprite_position({(float)mouse_position.x - fix_offset(selected_inst->get_sprite(), 'x'), (float)mouse_position.y - fix_offset(selected_inst->get_sprite(), 'y')});
-            selected_piece = nullptr;
-        }
-        else
-        {
-            selected_piece = board.clicked_piece(mouse_position);
-
-            if (selected_piece)
-            {
-                if (selected_piece->piece && selected_piece->piece->get_team() != player_turn) selected_piece = nullptr;                
-            }
-            else
-            {
-                selected_inst = clicked_instantiator(mouse_position);
-            }
-        }
-    }
-    else if (selected_piece)
-    {   
-        if (board.drop_piece(selected_piece)) 
-        {
-            player_turn = !player_turn;
-            bot.set_current_board(board.get_elements());
-            bot.initial_game_eval();
-        }
-
-        selected_piece = nullptr;
-    }
-    else if (selected_inst)
-    {
-        if(board.is_touching_mouse(mouse_position))
-        {
-            auto pos = board.get_square_by_coords(mouse_position);
-            if (!board.get_position(pos.x, pos.y))
-            {
-                board.add_piece(selected_inst->make_piece(pos.x, pos.y));
-            }
-            else
-            {
-                //Reproducir sonido de error tal vez, notificar que no es valido instanciar asi
-            }
-                
-        }
-        
-        selected_inst->return_to_origin();
-        selected_inst = nullptr;
-    }
-}
 
 void StateGameplay::render(sf::RenderWindow& window)
 {
     window.draw(background_sprite);
     board.render(window);
-    if (selected_piece) board.render_highlights(window, selected_piece->piece->get_valid_moves());
+    if (actual_phase == PhaseType::Fighting && selected_piece) board.render_move_highlights(window, selected_piece->piece->get_valid_moves());
+    if (actual_phase == PhaseType::Preparing && selected_inst) board.render_instantiator_highlights(window, true);
     board.render_pieces(window);
 
     for (auto inst : instantiators)
@@ -166,24 +145,15 @@ void StateGameplay::render(sf::RenderWindow& window)
     }
 
     window.draw(btn_back_sprite);
-}
-
-PieceInstantPtr StateGameplay::clicked_instantiator(sf::Vector2i mouse_position)
-{
-    sf::Vector2f pos = static_cast<sf::Vector2f>(mouse_position);
-    
-    for (auto instantiator : instantiators)
-    {
-        if (instantiator->get_sprite().getGlobalBounds().contains(pos))
-        {
-            return instantiator;
-        }
-    }
-
-    return nullptr;
+    if (btn_start && actual_phase == PhaseType::Preparing) window.draw(*btn_start);
 }
 
 void StateGameplay::on_resize() 
+{
+    adjust_elements();
+}
+
+void StateGameplay::adjust_elements()
 {
     sf::Vector2u win_size = window->getSize();
     sf::Vector2u original_size = background_texture.getSize();
@@ -198,13 +168,6 @@ void StateGameplay::on_resize()
     auto pos = sf::Vector2<float>((float)(window->getSize().x/2 - halfboard_lenght),
                                   (float)(window->getSize().y/2 - halfboard_lenght));
     board.set_sprite_position(pos);
-    board.on_resize();
-
-    float xmargin = Board::cell_lenght / 3;
-    float ymargin = Board::cell_lenght / 3;
-    float xoffset = Board::cell_lenght * 1.2f;
-    float yoffset = Board::cell_lenght * 1.2f;
-    float width = (float)window->getSize().x;
 
 
     sf::Vector2u winSizeU = window->getSize();
@@ -227,28 +190,9 @@ void StateGameplay::on_resize()
     float pos_y = margin + bounds.size.y * btn_back_sprite.getScale().y / 2.0f;
 
     btn_back_sprite.setPosition(sf::Vector2f(pos_x, pos_y));
-
-    //Esto deberia cambiarse cuando solo aparezcan los instanciadores de las piezas que tienes, pero por ahora resuelve
-    instantiators.clear();
-
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Pawn, true, sf::Vector2f(xmargin, ymargin), SpriteManager::get_piece_texture("white_pawn")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Horse, true, sf::Vector2f(xmargin, ymargin + yoffset), SpriteManager::get_piece_texture("white_horse")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Bishop, true, sf::Vector2f(xmargin, ymargin + 2*yoffset), SpriteManager::get_piece_texture("white_bishop")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Tower, true, sf::Vector2f(xmargin, ymargin + 3*yoffset), SpriteManager::get_piece_texture("white_rook"))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Queen, true, sf::Vector2f(xmargin, ymargin + 4*yoffset), SpriteManager::get_piece_texture("white_queen"))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Trapper, true, sf::Vector2f(xmargin + xoffset, ymargin + yoffset), SpriteManager::get_piece_texture("white_trapper"))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Crook, true, sf::Vector2f(xmargin + xoffset, ymargin + 2*yoffset), SpriteManager::get_piece_texture("white_crook"))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Archer, true, sf::Vector2f(xmargin + xoffset, ymargin + 3*yoffset), SpriteManager::get_piece_texture("white_archer")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Portal, true, sf::Vector2f(xmargin + xoffset, ymargin + 4*yoffset), SpriteManager::get_piece_texture("white_portal")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Pawn, false, sf::Vector2f(width - (xmargin + 100), ymargin), SpriteManager::get_piece_texture("black_pawn")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Horse, false, sf::Vector2f(width - (xmargin + 100), ymargin + yoffset), SpriteManager::get_piece_texture("black_horse")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Bishop, false, sf::Vector2f(width - (xmargin + 100), ymargin + 2*yoffset), SpriteManager::get_piece_texture("black_bishop"))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Tower, false, sf::Vector2f(width - (xmargin + 100), ymargin + 3*yoffset), SpriteManager::get_piece_texture("black_rook"))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Queen, false, sf::Vector2f(width - (xmargin + 100), ymargin + 4*yoffset), SpriteManager::get_piece_texture("black_queen"))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Trapper, false, sf::Vector2f(width - (xmargin + 100) - xoffset, ymargin + yoffset), SpriteManager::get_piece_texture("black_trapper"))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Crook, false, sf::Vector2f(width - (xmargin + 100) - xoffset, ymargin + 2*yoffset), SpriteManager::get_piece_texture("black_crook"))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Archer, false, sf::Vector2f(width - (xmargin + 100) - xoffset, ymargin + 3*yoffset), SpriteManager::get_piece_texture("black_archer"))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Portal, false, sf::Vector2f(width - (xmargin + 100) - xoffset, ymargin + 4*yoffset), SpriteManager::get_piece_texture("black_portal"))); 
+  
+    this->load_instantiators();
+    
 }
 
 bool StateGameplay::set_up_black_team()
@@ -294,4 +238,70 @@ bool StateGameplay::set_up_black_team()
     }
 
     return true;
+}
+    if (btn_start) btn_start->setPosition(static_cast<sf::Vector2f>(window->getSize()) - sf::Vector2f(100, 100));
+
+    this->load_instanciators();
+}
+
+void StateGameplay::dropped_inst()
+{
+    if (!selected_inst) return;
+
+    inventory.erase(std::find(inventory.begin(), inventory.end(), selected_inst->get_type()));
+    load_instanciators();
+}
+
+void StateGameplay::returned_piece()
+{
+    if (!selected_piece) return;
+
+    inventory.push_front(selected_piece->piece->get_piece_type());
+    board.remove_piece(selected_piece);
+    
+    load_instanciators();
+}
+
+void StateGameplay::end_fight(PlayerType winner)
+{
+    actual_phase = PhaseType::Preparing;
+
+    if (winner == PlayerType::P1)
+    {
+        auto elements = board.get_elements();
+        for (auto element : elements)
+        {
+            if (element->piece->get_team()) inventory.push_front(element->piece->get_piece_type());
+        }
+    }
+    
+    board.clear();
+    round++;
+    //Aqui le falta escojer un nuevo equipo enemigo (Si la ronda es multiplo de 3 cambia el lider), puede ser con algo como
+    //prepare_enemy();
+    //O algo asi
+    //Tambien, si el calculo de (3^(dificultad+1)) / 2 es igual al numero de ronda actual, sumar 1 a la dificultad.
+    //Asi la dificultad que ahora arranca en uno va a subir a un ritmo cada vez mas largo
+
+    this->adjust_elements();
+}
+
+void StateGameplay::load_instanciators()
+{
+    if (actual_phase == PhaseType::Preparing)
+    {
+        int Ymultiplier = 0;
+
+        bool even_piece = false;
+
+        instantiators.clear();
+
+        for (auto piecetype : inventory)
+        {
+            instantiators.push_back(std::make_shared<PieceInstantiator>(piecetype, true, sf::Vector2f(xmargin + ((even_piece) ? xoffset : 0), ymargin + (Ymultiplier*yoffset))));
+            
+            if (even_piece) Ymultiplier++;
+            even_piece = !even_piece;
+        }
+    }
 }
