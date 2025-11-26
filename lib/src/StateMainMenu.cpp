@@ -91,6 +91,15 @@ void StateMainMenu::on_resize()
     setup_button(btn_stats,    "PUNTAJES", win_size.y * 0.55f, font, btn_stats->btn_sprite.getTexture());
     setup_button(btn_tutorial, "TUTORIAL", win_size.y * 0.70f, font, btn_tutorial->btn_sprite.getTexture());
     setup_button(btn_exit,     "SALIR",    win_size.y * 0.85f, font, btn_exit->btn_sprite.getTexture());
+
+    btn_play->btn_text.setOutlineThickness(2);
+    btn_play->btn_text.setOutlineColor(sf::Color::Black);
+    btn_stats->btn_text.setOutlineThickness(2);
+    btn_stats->btn_text.setOutlineColor(sf::Color::Black);
+    btn_tutorial->btn_text.setOutlineThickness(2);
+    btn_tutorial->btn_text.setOutlineColor(sf::Color::Black);
+    btn_exit->btn_text.setOutlineThickness(2);
+    btn_exit->btn_text.setOutlineColor(sf::Color::Black);
 }
 
 void StateMainMenu::update(float dt)

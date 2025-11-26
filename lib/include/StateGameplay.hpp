@@ -26,18 +26,21 @@ class StateGameplay : public IGameState
 private:
     sf::Texture background_texture; 
     sf::Sprite background_sprite;
+
     BoardObjectPtr selected_piece;
     PieceInstantPtr selected_inst;
     Board board;
     sf::Clock elapsed_time;
+
     long score;
     bool player_turn;
     std::vector<PieceInstantPtr> instantiators;
     GameTree bot; 
     PieceInstantPtr clicked_instantiator(sf::Vector2i mouse_position);
     bool check_winner();
-    sf::Font font; 
-    sf::Text* btn_back = nullptr;
+
+    sf::Texture tex_exit;       
+    sf::Sprite btn_back_sprite;
     // Challenges
     
 public:
