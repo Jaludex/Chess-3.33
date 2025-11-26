@@ -115,12 +115,12 @@ void StateGameplay::update(float dt)
 
     if (btn_start) 
     {
-        if (is_mouse_over(*btn_start, mousePos)) btn_start->setFillColor(sf::Color::Yellow);
+        if (is_mouse_over(*btn_start, mouse_pos)) btn_start->setFillColor(sf::Color::Yellow);
         else btn_start->setFillColor(sf::Color::White);
     }
     if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
     {
-        if (btn_start && is_mouse_over(*btn_start, mousePos) && board.is_white_king_in_board())
+        if (btn_start && is_mouse_over(*btn_start, mouse_pos) && board.is_white_king_in_board())
         {
             this->start_fight();
 
@@ -191,7 +191,7 @@ void StateGameplay::adjust_elements()
 
     btn_back_sprite.setPosition(sf::Vector2f(pos_x, pos_y));
   
-    this->load_instantiators();
+    this->load_instanciators();
     
 }
 
@@ -237,11 +237,11 @@ bool StateGameplay::set_up_black_team()
         board.add_piece(make_board_object(type, false, column, row));
     }
 
-    return true;
-}
     if (btn_start) btn_start->setPosition(static_cast<sf::Vector2f>(window->getSize()) - sf::Vector2f(100, 100));
 
     this->load_instanciators();
+
+    return true;
 }
 
 void StateGameplay::dropped_inst()

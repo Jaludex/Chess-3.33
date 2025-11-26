@@ -17,7 +17,13 @@
 #include "Trapper.hpp"
 #include "Bishop.hpp"
 #include "PieceInstantiator.hpp"
+#include <FileManager.hpp>
+#include "../include/json.hpp" 
 #include <exception>
+#include <iostream>
+#include <cstdlib>
+#include <ctime>
+#include <string>
 
 using PieceInstantPtr = std::shared_ptr<PieceInstantiator>;
 

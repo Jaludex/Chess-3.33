@@ -1,34 +1,11 @@
 #pragma once
 
-#include <SpriteManager.hpp>
-#include "IGameState.hpp"
-#include <Gametree.hpp>
-#include <Board.hpp>
-#include <memory>
-#include <vector>
-#include "IPiece.hpp"
-#include "Archer.hpp"
-#include "Crook.hpp"
-#include "Horse.hpp"
-#include "Pawn.hpp"
-#include "Portal.hpp"
-#include "Queen.hpp"
-#include "Tower.hpp"
-#include "Trapper.hpp"
-#include "Bishop.hpp"
-#include "PieceInstantiator.hpp"
-#include <FileManager.hpp>
-#include "../include/json.hpp" 
-#include <exception>
-#include <iostream>
-#include <cstdlib>
-#include <ctime>
-#include <string>
+#include <IStatePlayable.hpp>
 
 using PieceInstantPtr = std::shared_ptr<PieceInstantiator>;
 using json = nlohmann::json;
 
-class StateGameplay : public IGameState
+class StateGameplay : public IStatePlayable
 {
 protected:
     sf::Texture background_texture; 
@@ -69,7 +46,7 @@ public:
 
     void init() override;                // inicializar aspectos del gamestate
     void terminate() override;           // eliminar memoria reservada dinámicamente o cosas que se tengan que manejar al final de ese estado de juego.
-	  void update(float dt) override;
+	void update(float dt) override;
     void render(sf::RenderWindow& window) override;
     void on_resize() override;
     
