@@ -24,6 +24,8 @@ using PieceInstantPtr = std::shared_ptr<PieceInstantiator>;
 class StateGameplay : public IGameState
 {
 private:
+    sf::Texture background_texture; 
+    sf::Sprite background_sprite;
     BoardObjectPtr selected_piece;
     PieceInstantPtr selected_inst;
     Board board;

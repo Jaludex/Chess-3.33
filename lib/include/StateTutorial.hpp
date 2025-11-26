@@ -7,6 +7,8 @@
 class StateTutorial : public IGameState
 {
 private:
+    sf::Texture background_tex;
+    sf::Sprite background_sprite;
     sf::RenderWindow* window;
     std::vector<sf::Texture> slides_tutorial;
     sf::Sprite current_sprite;

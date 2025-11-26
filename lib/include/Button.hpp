@@ -1,4 +1,4 @@
-#include <IGameObject.hpp>
+/*#include <IGameObject.hpp>
 
 class Button : public IGameObject
 {
@@ -15,3 +15,16 @@ public:
 private:
     bool activated;
 };
+
+#pragma once
+#include <SFML/Graphics.hpp>
+struct Button
+{
+    sf::Sprite btn_sprite;
+    sf::Text btn_text;
+    Button(const sf::Texture& texture, const sf::Font& font)
+        : btn_sprite(texture), btn_text(font)
+    {
+    }
+};
+*/
