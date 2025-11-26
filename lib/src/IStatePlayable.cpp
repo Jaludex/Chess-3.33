@@ -105,7 +105,6 @@ PieceInstantPtr IStatePlayable::clicked_instantiator(sf::Vector2i mouse_position
 
 void IStatePlayable::end_turn()
 {
-
     auto elements = board.get_elements();
     for (auto element : elements)
     {
