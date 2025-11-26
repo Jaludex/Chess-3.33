@@ -159,11 +159,90 @@ PlayerType IStatePlayable::check_winner()
     return PlayerType::None;
 }
 
+//Retorna el player que aun se puede mover, en caso de que uno no pueda
 PlayerType IStatePlayable::check_stalemate()
 {
-    //Primero revisa que no te hayas quedado sin ningun movimiento posible
-    return PlayerType::None;
-    //Luego if con las situaciones particulares
+    auto elements = board.get_elements();
+
+    // 1. Verificar si hay movimientos legales disponibles (Condición de derrota inmediata)
+    if (bot.generate_all_plays(elements, true).empty()) return PlayerType::P2;
+    if (bot.generate_all_plays(elements, false).empty()) return PlayerType::P1;
+
+    // Variables de estado (O(1) espacio)
+    bool p1_occupies_white = false;
+    bool p1_occupies_black = false;
+    bool p2_occupies_white = false;
+    bool p2_occupies_black = false;
+
+    bool p1_has_non_portal = false;
+    bool p2_has_non_portal = false;
+
+    bool has_freemove_piece = false;
+
+    // 2. Iteración única sobre los elementos (O(n) tiempo)
+    for (auto element : elements)
+    {
+        auto type = element->piece->get_piece_type();
+        bool team = element->piece->get_team(); // true = P1, false = P2
+        
+        // A. Detección de piezas de movimiento libre
+        // IMPORTANTE: El Peón (Pawn) NO debe estar en esta lista restringida.
+        // Si es Peón, Torre, Reina, Rey -> Es movimiento libre.
+        if (type != PieceType::Bishop && type != PieceType::Horse && type != PieceType::Trapper && type != PieceType::Portal) 
+        {
+            has_freemove_piece = true;
+            // No hacemos 'break' aquí porque necesitamos seguir validando la condición de "Solo Portales"
+        }
+
+        // B. Verificación de "Solo Portales"
+        if (type != PieceType::Portal)
+        {
+            if (team) p1_has_non_portal = true;
+            else      p2_has_non_portal = true;
+        }
+
+        // C. Mapeo de ocupación de colores
+        // No importa qué pieza sea, registramos en qué color está parada.
+        int sum = element->pos.x + element->pos.y; 
+        
+        if (sum % 2 != 0) // Casilla Blanca
+        {
+            if (team) p1_occupies_white = true;
+            else      p2_occupies_white = true;
+        }
+        else // Casilla Negra
+        {
+            if (team) p1_occupies_black = true;
+            else      p2_occupies_black = true;
+        }
+    }
+
+    // 3. Condiciones de Derrota por "Solo Portales"
+    // Si un jugador tiene piezas pero NINGUNA es distinta a un portal, pierde.
+    if (!p1_has_non_portal) return PlayerType::P2;
+    if (!p2_has_non_portal) return PlayerType::P1;
+
+    // 4. Análisis de Interacción (Stalemate)
+    
+    // CASO A: Hay una pieza libre (Peón, Torre, etc.)
+    // Si existe un Peón, el juego SIEMPRE continúa, no importa dónde esté.
+    if (has_freemove_piece) return PlayerType::None;
+
+    // CASO B: Intersección de Colores
+    // ¿Coinciden ambos jugadores en casillas blancas?
+    bool meet_on_white = (p1_occupies_white && p2_occupies_white);
+    
+    // ¿Coinciden ambos jugadores en casillas negras?
+    bool meet_on_black = (p1_occupies_black && p2_occupies_black);
+
+    if (meet_on_white || meet_on_black)
+    {
+        return PlayerType::None; // Hay interacción posible, el juego continúa.
+    }
+
+    // CASO C: No hay interacción posible (Stalemate)
+    // Ejemplo: P1 solo en negras, P2 solo en blancas.
+    return PlayerType::P2; 
 }
 
 void IStatePlayable::start_fight()

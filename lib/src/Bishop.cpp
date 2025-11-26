@@ -10,7 +10,7 @@ sf::Color Bishop::get_color(bool _team)
 return (_team)? Bishop::white : Bishop::black;
 }
 
-Bishop::Bishop(bool team) : IGameObject(SpriteManager::get_type_texture(PieceType::Archer, team))
+Bishop::Bishop(bool team) : IGameObject(SpriteManager::get_type_texture(PieceType::Bishop, team))
 {
     height = 80;
     set_team(team);

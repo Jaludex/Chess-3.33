@@ -17,11 +17,12 @@ void StateGameplay::init()
         {
             inventory.push_front(PieceType::Pawn);
         }
+        inventory.push_front(PieceType::Bishop);
     }
-    difficulty = 1;
+    difficulty = 2;
     round = 1;
     score = 0;
-    board.add_piece(std::make_shared<InBoardObject>(Position(1, 1), std::make_shared<Archer>(false)));
+    board.add_piece(std::make_shared<InBoardObject>(Position(1, 1), std::make_shared<Bishop>(false)));
     
     
     if (!font.openFromFile("assets/fonts/arial.ttf")) 
