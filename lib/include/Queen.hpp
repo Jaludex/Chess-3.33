@@ -8,7 +8,7 @@
 class Queen : public IPiece
 {
     public:
-    Queen(bool team, sf::Texture texture);
+    Queen(bool team);
 
     virtual ~Queen() = default;
     virtual void update(float dt) override;

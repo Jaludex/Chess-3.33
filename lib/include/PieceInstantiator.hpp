@@ -14,15 +14,21 @@
 #include "Tower.hpp"
 #include "Trapper.hpp"
 #include "Bishop.hpp"
+#include <SpriteManager.hpp>
+
+
+BoardObjectPtr make_board_object(PieceType type, bool team, int startX, int startY);
 
 class PieceInstantiator : public IGameObject
 {
-    public:
-    PieceInstantiator(PieceType _type, bool _team, sf::Vector2f position, sf::Texture texture);
+public:
+    PieceInstantiator(PieceType _type, bool _team, sf::Vector2f position);
     virtual void update(float dt) override;
     virtual void render(sf::RenderWindow& window) override;
     void return_to_origin();
     BoardObjectPtr make_piece(int startX, int startY);
+    PieceType get_type();
+    bool get_team();
     
 private:
     PieceType type;

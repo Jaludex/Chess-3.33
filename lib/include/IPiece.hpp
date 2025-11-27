@@ -22,29 +22,18 @@ struct InBoardObject
 {
     Position pos;
     PiecePtr piece;
-    bool leader;
+    bool king;
+        
+    InBoardObject(const InBoardObject& original) : pos(original.pos), piece(original.piece), king(original.king) {}
+    InBoardObject(Position _pos, PiecePtr _piece, bool _king) : pos(_pos), piece(_piece), king(_king) {}
+    InBoardObject(Position _pos, PiecePtr _piece) : pos(_pos), piece(_piece), king(false) {}
+    InBoardObject(Position _pos) : pos(_pos), piece(nullptr), king(false) {}
+    InBoardObject() : pos(Position(0,0)), piece(nullptr), king(false) {}
 
-    InBoardObject(Position _pos, PiecePtr _piece) : pos(_pos), piece(_piece), leader(false) {}
-    InBoardObject(Position _pos) : pos(_pos), piece(nullptr), leader(false) {}
-    InBoardObject() : pos(Position(0,0)), piece(nullptr), leader(false) {}
+    int get_points_value();
 };
 
 using BoardObjectPtr = std::shared_ptr<InBoardObject>;
-
-enum class PieceType
-{
-    Pawn ,
-    Horse,
-    Bishop,
-    Tower,
-    Queen,
-    King,
-    Trapper,
-    Crook,
-    Archer,
-    Portal,
-    Bomb
-};
 
 class IPiece : public virtual IGameObject
 {
@@ -63,8 +52,10 @@ public:
     virtual PiecePtr clone_piece() const = 0;
     IPiece();
     virtual ~IPiece() = default;
+    int get_height() const;
 
 protected:
+    int height;
     bool team;
     PieceType type;
     std::vector<BoardObjectPtr> valid_moves;

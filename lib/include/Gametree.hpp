@@ -40,8 +40,6 @@ private:
 
     int minimax(std::shared_ptr<GameNode> node, int deepness, int alpha, int beta, bool Maximizing);
     
-    std::list<Play> generate_all_plays(const BoardL& current, bool bot_turn);
-    
     BoardL apply_play(const BoardL& original, const Play& move);
 
 public:
@@ -50,4 +48,5 @@ public:
     Play find_best_play(int deepness);
     void set_current_board(const BoardL& current);
     void initial_game_eval();
+    std::list<Play> generate_all_plays(const BoardL& current, bool bot_turn);
 };

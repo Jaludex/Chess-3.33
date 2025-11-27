@@ -1,5 +1,13 @@
 #include <IPiece.hpp>
 
+int InBoardObject::get_points_value()
+{
+    int points = this->piece->get_material_value() * 100;
+    if (this->king) points += points * 0.3f;
+    return points;
+}
+
+
 Position::Position(int8_t _x, int8_t _y) : x(_x), y(_y) {}
 
 bool Position::operator==(const Position& right)
@@ -12,7 +20,7 @@ Position Position::operator+(Position it)
     return Position(x + it.x, y + it.y);
 }
 
-IPiece::IPiece()
+IPiece::IPiece() : height(0)
 {}
 
 void IPiece::set_piece_type(PieceType type)
@@ -52,4 +60,9 @@ bool IPiece::is_valid(Position pos)
 std::vector<BoardObjectPtr> IPiece::get_valid_moves()
 {
     return valid_moves;
+}
+
+int IPiece::get_height() const
+{
+    return height;
 }

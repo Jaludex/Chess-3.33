@@ -10,8 +10,9 @@ sf::Color Crook::get_color(bool _team)
 return (_team)? Crook::white : Crook::black;
 }
 
-Crook::Crook(bool team, sf::Texture texture) : IGameObject(texture)
+Crook::Crook(bool team) : IGameObject(SpriteManager::get_type_texture(PieceType::Crook, team))
 {
+    height = 76;
     set_team(team);
     set_piece_type(PieceType::Crook);
 }

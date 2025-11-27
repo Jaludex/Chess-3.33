@@ -7,6 +7,8 @@
 class StateTutorial : public IGameState
 {
 private:
+    sf::Texture background_tex;
+    sf::Sprite background_sprite;
     sf::RenderWindow* window;
     std::vector<sf::Texture> slides_tutorial;
     sf::Sprite current_sprite;
@@ -21,12 +23,11 @@ private:
 
     float input_cooldown;
 
-    void save_tutorial_completed();
     void setup_layout(); 
     void update_dots();  
 
 public:
-    StateTutorial(sf::RenderWindow& Window);
+    StateTutorial(sf::RenderWindow* Window);
     ~StateTutorial();
 
     void init() override;                
@@ -35,4 +36,5 @@ public:
     void render(sf::RenderWindow& window) override;
     
     bool is_clicked(sf::Sprite& sprite, sf::Vector2i mousePos);
+    void on_resize() override;
 };

@@ -10,7 +10,7 @@ sf::Color Bomb::get_color(bool _team)
 return (_team)? Bomb::white : Bomb::black;
 }
 
-Bomb::Bomb(bool team, sf::Texture texture) : IGameObject(texture)
+Bomb::Bomb(bool team) : IGameObject(SpriteManager::get_type_texture(PieceType::Bomb, team))
 {
     set_team(team);
     set_piece_type(PieceType::Bomb);
@@ -34,7 +34,7 @@ std::vector<BoardObjectPtr> Bomb::set_valid_moves(const std::list<BoardObjectPtr
 
 bool Bomb::hurt(PiecePtr attacker)
 {
-    attacker->hurt(std::make_shared<Bomb>(this, this->get_sprite().getTexture()));
+    attacker->hurt(std::make_shared<Bomb>(this));
     return true;
 }
 
@@ -61,8 +61,9 @@ sf::Color Trapper::get_color(bool _team)
 return (_team)? Trapper::white : Trapper::black;
 }
 
-Trapper::Trapper(bool team, sf::Texture texture) : IGameObject(texture)
+Trapper::Trapper(bool team) : IGameObject(SpriteManager::get_type_texture(PieceType::Trapper, team))
 {
+    height = 80;
     set_team(team);
     set_piece_type(PieceType::Trapper);
 }

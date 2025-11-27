@@ -9,8 +9,9 @@ sf::Color Portal::get_color(bool _team)
 return (_team)? Portal::white : Portal::black;
 }
 
-Portal::Portal(bool team, sf::Texture texture) : IGameObject(texture)
+Portal::Portal(bool team) : IGameObject(SpriteManager::get_type_texture(PieceType::Portal, team))
 {
+    height = 84;
     set_team(team);
     set_piece_type(PieceType::Portal);
 }

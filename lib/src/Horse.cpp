@@ -11,8 +11,9 @@ sf::Color Horse::get_color(bool _team)
 return (_team)? Horse::white : Horse::black;
 }
 
-Horse::Horse(bool team, sf::Texture texture) : IGameObject(texture)
+Horse::Horse(bool team) : IGameObject(SpriteManager::get_type_texture(PieceType::Horse, team))
 {
+    height = 80;
     set_team(team);
     set_piece_type(PieceType::Horse);
 }

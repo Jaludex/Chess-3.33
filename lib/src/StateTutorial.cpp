@@ -1,10 +1,12 @@
 #include"StateTutorial.hpp"
 #include <iostream>
-StateTutorial::StateTutorial(sf::RenderWindow& Window) : current_sprite(texExit), btn_next(texNext), btn_prev(texPrev), btn_exit(texExit) 
+StateTutorial::StateTutorial(sf::RenderWindow* _window) :background_sprite(background_tex), current_sprite(texExit), btn_next(texNext), btn_prev(texPrev), btn_exit(texExit) 
 {
-    window = &Window;
+    window = _window;
     current_indx = 0;
     input_cooldown = 0.0f;
+    go_to = StateType::None;
+    type = StateType::Tutorial;
 }
 
 StateTutorial::~StateTutorial() 
@@ -16,10 +18,19 @@ void StateTutorial::init()
 {
     slides_tutorial.clear();
     progress_dots.clear();
-    for(int i = 1; i <= 8; i++) 
+
+    if (!background_tex.loadFromFile("assets/background_tutorial.png")) 
+    {
+        std::cerr << "ERROR: No se pudo cargar el fondo del tutorial" << std::endl;
+    }
+    background_tex.setSmooth(true);
+    background_sprite.setTexture(background_tex, true);
+
+    std::string route = "assets/tutorial/";
+    for(int i = 1; i <= 6; i++) 
     {
         sf::Texture texture;
-        std::string path = "assets/tutorial/slide" + std::to_string(i) + ".png";
+        std::string path = route + "slide" + std::to_string(i) + ".png";
         if (texture.loadFromFile(path))
         {
             texture.setSmooth(true); 
@@ -38,9 +49,9 @@ void StateTutorial::init()
         current_sprite.setTextureRect({{0, 0}, {static_cast<int>(size.x), static_cast<int>(size.y)}});
     }
 
-    if (!texPrev.loadFromFile("assets/tutorial/prevBtn.png")) std::cerr << "Falta prevBtn.png" << std::endl;
-    if (!texNext.loadFromFile("assets/tutorial/nextBtn.png")) std::cerr << "Falta nextBtn.png" << std::endl;
-    if (!texExit.loadFromFile("assets/tutorial/exitBtn.png")) std::cerr << "Falta exitBtn.png" << std::endl;
+    if (!texPrev.loadFromFile(route + "prevBtn.png")) std::cerr << "Falta prevBtn.png" << std::endl;
+    if (!texNext.loadFromFile(route + "nextBtn.png")) std::cerr << "Falta nextBtn.png" << std::endl;
+    if (!texExit.loadFromFile(route + "exitBtn.png")) std::cerr << "Falta exitBtn.png" << std::endl;
 
     btn_prev.setTexture(texPrev);
     btn_next.setTexture(texNext);
@@ -69,17 +80,38 @@ void StateTutorial::init()
 
 void StateTutorial::setup_layout()
 {
-    if(!window) return;
-    
+    if (!window) return;
+
     sf::Vector2u sizeU = window->getSize();
     sf::Vector2f winSize((float)sizeU.x, (float)sizeU.y);
+
+    if (background_tex.getSize().x > 0)
+    {
+        sf::Vector2u bgSize = background_tex.getSize();
+        float scaleX = winSize.x / (float)bgSize.x;
+        float scaleY = winSize.y / (float)bgSize.y;
+
+        background_sprite.setScale(sf::Vector2f(scaleX, scaleY));
+        background_sprite.setPosition(sf::Vector2f(0.0f, 0.0f));
+    }
     
     float margin = 30.0f;
-    float btn_scale = 0.8f;
 
-    btn_exit.setScale(sf::Vector2f(btn_scale, btn_scale)); 
-    btn_next.setScale(sf::Vector2f(btn_scale, btn_scale));
-    btn_prev.setScale(sf::Vector2f(btn_scale, btn_scale));
+    float target_btn_height = winSize.y * 0.08f; 
+
+    auto scale_button = [&](sf::Sprite& btn, const sf::Texture& tex) 
+    {
+        sf::Vector2u original_size = tex.getSize();
+        if (original_size.y > 0) 
+        {
+            float scale = target_btn_height / original_size.y;
+            btn.setScale(sf::Vector2f(scale, scale));
+        }
+    };
+    
+    scale_button(btn_exit, texExit);
+    scale_button(btn_next, texNext);
+    scale_button(btn_prev, texPrev);
 
     if (!slides_tutorial.empty()) 
     {
@@ -131,6 +163,11 @@ void StateTutorial::setup_layout()
     }
 }
 
+void StateTutorial::on_resize()
+{
+    setup_layout();   
+}
+
 void StateTutorial::update(float dt)
 {
     if (input_cooldown > 0.0f) input_cooldown -= dt;
@@ -139,7 +176,7 @@ void StateTutorial::update(float dt)
     {
         sf::Vector2i mousePos = sf::Mouse::getPosition(*window);    
         float cooldown = 30;
-        if (is_clicked(btn_next, mousePos)) 
+        if (is_mouse_over(btn_next, mousePos)) 
         {
             input_cooldown = cooldown; 
             if (current_indx < (int)slides_tutorial.size() - 1) 
@@ -152,13 +189,11 @@ void StateTutorial::update(float dt)
             } 
             else 
             {
-                save_tutorial_completed();
-                //Linea tentativa a quitar dependiendo del manejador de states
-                window->close();
+                go_to = StateType::Return;
             }
         }
 
-        if (current_indx > 0 && is_clicked(btn_prev, mousePos)) 
+        if (current_indx > 0 && is_mouse_over(btn_prev, mousePos)) 
         {
             input_cooldown = cooldown;
             current_indx--;
@@ -168,12 +203,10 @@ void StateTutorial::update(float dt)
             setup_layout();
         }
 
-        if (is_clicked(btn_exit, mousePos)) 
+        if (is_mouse_over(btn_exit, mousePos)) 
         {
             input_cooldown = cooldown;
-            save_tutorial_completed();
-            //Linea se pudiera quitar o no, depende como hagamos el manejador de states
-            window->close();
+            go_to = StateType::Return;
         }
     }
     update_dots();
@@ -184,7 +217,7 @@ void StateTutorial::update_dots()
     {
         if ((int)i == current_indx) 
         {
-            progress_dots[i].setFillColor(sf::Color::White);
+            progress_dots[i].setFillColor(sf::Color::Yellow);
         }
         else 
         {
@@ -195,7 +228,9 @@ void StateTutorial::update_dots()
 
 void StateTutorial::render(sf::RenderWindow& window) {
 
-    window.clear(sf::Color(130,130,200,255));
+    //window.clear(sf::Color(130,130,200,255));
+    window.clear(sf::Color::Magenta);
+    window.draw(background_sprite);   
 
     window.draw(current_sprite);
     
@@ -206,24 +241,6 @@ void StateTutorial::render(sf::RenderWindow& window) {
     for(auto& dot : progress_dots)
     {
         window.draw(dot);
-    }
-    //Quito este display pq vi que en el main ya hay un .display, aun tenemos que definir el que manejara estos estados
-    //window.display();
-}
-
-bool StateTutorial::is_clicked(sf::Sprite& sprite, sf::Vector2i mousePos)
-{
-    sf::Vector2f mouseF(static_cast<float>(mousePos.x), static_cast<float>(mousePos.y));
-    return sprite.getGlobalBounds().contains(mouseF);
-}
-
-void StateTutorial::save_tutorial_completed()
-{
-    std::ofstream file("game_config.dat");
-    if (file.is_open())
-    {
-        file << "tutorial_seen=1";
-        file.close();
     }
 }
 

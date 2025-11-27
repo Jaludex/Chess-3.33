@@ -1,52 +1,39 @@
 #pragma once
 
-#include <SpriteManager.hpp>
-#include <IGameState.hpp>
-#include <Gametree.hpp>
-#include <Board.hpp>
-#include <memory>
-#include <vector>
-#include "IPiece.hpp"
-#include "Archer.hpp"
-#include "Crook.hpp"
-#include "Horse.hpp"
-#include "Pawn.hpp"
-#include "Portal.hpp"
-#include "Queen.hpp"
-#include "Tower.hpp"
-#include "Trapper.hpp"
-#include "Bishop.hpp"
-#include "PieceInstantiator.hpp"
+#include <IStatePlayable.hpp>
 
-#include <exception>
 using PieceInstantPtr = std::shared_ptr<PieceInstantiator>;
+using json = nlohmann::json;
 
-class StateGameplay : IGameState
+class StateGameplay : public IStatePlayable
 {
-private:
-    BoardObjectPtr selected_piece;
-    PieceInstantPtr selected_inst;
-    Board board;
-    sf::Clock elapsed_time;
-    long score;
-    sf::RenderWindow* window;
-    bool player_turn;
-    std::vector<PieceInstantPtr> instantiators;
-    GameTree bot; 
-    PieceInstantPtr clicked_instantiator(sf::Vector2i mouse_position);
-    bool check_winner();
-    // Challenges
+protected:
+    sf::Texture background_texture; 
+    sf::Sprite background_sprite;
+    
+    std::list<PieceType> inventory;
+    PieceType enemy_king; //Este sera la pieza que mantendra el rey enemigo
+    unsigned int difficulty;
+
+    bool set_up_black_team();
+    void load_instanciators() override;
+    void adjust_elements() override;
+    void dropped_inst() override;
+    void returned_piece() override;
+    void end_fight(PlayerType winner) override;
+    //void handle_event(const sf::Event& event) override;
+    void new_game();
     
 public:
-    StateGameplay(sf::RenderWindow& _window);
+    StateGameplay(sf::RenderWindow* _window);
     ~StateGameplay();
 
     void init() override;                // inicializar aspectos del gamestate
     void terminate() override;           // eliminar memoria reservada dinámicamente o cosas que se tengan que manejar al final de ese estado de juego.
 	void update(float dt) override;
-	void render(sf::RenderWindow& window) override;
-    sf::Vector2i get_relative_mouse_position();
-    void drag();
+    void render(sf::RenderWindow& window) override;
+    void on_resize() override;
+    
 };
 
 
