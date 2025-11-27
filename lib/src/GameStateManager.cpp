@@ -116,3 +116,4 @@ void GameStateManager::on_resize()
 {
     states.top()->on_resize();
 }
+
