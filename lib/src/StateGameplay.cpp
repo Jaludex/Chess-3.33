@@ -60,6 +60,7 @@ void StateGameplay::update(float dt)
     if (actual_phase != PhaseType::Fighting || player_turn)
     {
         drag();
+        if (selected_piece && !selected_piece->piece->get_team()) selected_piece = nullptr;
     }
     else
     {
