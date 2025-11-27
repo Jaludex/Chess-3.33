@@ -1,5 +1,5 @@
 #include <IStatePlayable.hpp>
-#include<Stats.hpp>
+#include <Stats.hpp>
 IStatePlayable::IStatePlayable(sf::RenderWindow* _window) : btn_back_sprite(tex_exit), btnStart(nullptr), board(sf::Texture(sf::Vector2u((unsigned int)(Board::side_lenght * Board::cell_lenght),
                                                                               (unsigned int)(Board::side_lenght * Board::cell_lenght)))), player_turn(true), bot(BoardL(), GameEvaluator()), round_display(font, "Round 1"), score_display(font, "0 Score"), result(font)
 {

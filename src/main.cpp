@@ -1,8 +1,8 @@
 #include <StateGameplay.hpp>
 #include"StateTutorial.hpp"
 #include <Board.hpp>
-#include<GameStateManager.hpp>
-#include<Stats.hpp>
+#include <GameStateManager.hpp>
+#include <Stats.hpp>
 int main()
 {
     SpriteManager::init();
@@ -24,6 +24,7 @@ int main()
 
     GameStateManager manager(window);
     manager.init();
+    SoundManager::init();
     
     while (window.isOpen())
     {
