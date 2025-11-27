@@ -45,8 +45,6 @@ void SoundManager::play(SoundType type)
     auto sound = std::make_unique<sf::Sound>(sound_buffers.at(sound_name));
     sound->play();
     active_sounds.push_back(std::move(sound));
-    
-    std::cout << "Play: " << sound_name << std::endl;
 }
 
 void SoundManager::clean_finished_sounds()

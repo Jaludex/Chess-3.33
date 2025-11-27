@@ -6,7 +6,7 @@
 int main()
 {
     SpriteManager::init();
-    auto window = sf::RenderWindow(sf::VideoMode({1080u, 810u}), "Chess 3.33 Alpha");
+    auto window = sf::RenderWindow(sf::VideoMode({1080u, 810u}), "Chess 3.33 v1");
     window.setFramerateLimit(144u);
     
     sf::Vector2u desktopSize = sf::VideoMode::getDesktopMode().size;

@@ -1,7 +1,7 @@
 build
 buildwin
 out
-buildwin
+buildwinRelease
 .cache
 .idea
 .vs
