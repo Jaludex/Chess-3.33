@@ -24,7 +24,6 @@ int main()
 
     GameStateManager manager(window);
     manager.init();
-    std::cout << "Generando datos de prueba..." << std::endl;
     
     while (window.isOpen())
     {
