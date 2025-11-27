@@ -68,6 +68,8 @@ void StateMainMenu::init()
     button_texture.setSmooth(true); 
 
     text_title = new sf::Text(font, "CHESS 3.33", 60);
+    text_title->setOutlineColor(sf::Color::Black);
+    text_title->setOutlineThickness(3);
     btn_stats = new Button(button_texture, font);
     btn_play = new Button(button_texture, font);
     btn_tutorial = new Button(button_texture, font);
