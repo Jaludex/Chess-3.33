@@ -144,6 +144,10 @@ void IStatePlayable::end_turn()
     if (possible_winner != PlayerType::None)
     {
         actual_winner = possible_winner;
+        
+        if (actual_winner == PlayerType::P1 || this->type == StateType::Versus) SoundManager::play(SoundType::Victory);
+        else if (this->type == StateType::Gameplay || this->type == StateType::Practice) SoundManager::play(SoundType::Defeat);
+        
         round_display.setString("Round " + std::to_string(round));
         transition.enter(10);
         return;
@@ -153,6 +157,10 @@ void IStatePlayable::end_turn()
     if (possible_winner != PlayerType::None)
     {
         actual_winner = possible_winner;
+
+        if (actual_winner == PlayerType::P1 || this->type == StateType::Versus) SoundManager::play(SoundType::Victory);
+        else if (this->type == StateType::Gameplay || this->type == StateType::Practice) SoundManager::play(SoundType::Defeat);
+
         round_display.setString("Round " + std::to_string(round));
         transition.enter(10);
         return;
