@@ -10,7 +10,7 @@ StatePractice::~StatePractice() {}
 
 void StatePractice::init()
 {
-    this->adjust_elements();
+
 
     //board.add_piece(std::make_shared<InBoardObject>(Position(3, 5), std::make_shared<Queen>(true, SpriteManager::get_piece_texture("white_queen"))));
     //board.add_piece(std::make_shared<InBoardObject>(Position(1, 4), std::make_shared<Archer>(true, SpriteManager::get_piece_texture("white_archer"))));
@@ -33,9 +33,10 @@ void StatePractice::init()
 
     tex_exit.setSmooth(true);
     btn_back_sprite.setTexture(tex_exit, true);
-
+    
     bot.set_current_board(board.get_elements());
     bot.initial_game_eval();
+    this->adjust_elements();
 }
 
 void StatePractice::terminate()
@@ -139,7 +140,7 @@ void StatePractice::adjust_elements()
 
     if (btn_texture_size.y > 0) 
     {
-        float scale = (target_btn_height / btn_texture_size.y) * 0.5;
+        float scale = (target_btn_height / btn_texture_size.y);
         btn_back_sprite.setScale(sf::Vector2f(scale, scale));
     }
 
