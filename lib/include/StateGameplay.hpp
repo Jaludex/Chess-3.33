@@ -11,7 +11,6 @@ protected:
     sf::Texture background_texture; 
     sf::Sprite background_sprite;
 
-    
     std::list<PieceType> inventory;
     PieceType enemy_king; //Este sera la pieza que mantendra el rey enemigo
     unsigned int difficulty;
