@@ -10,7 +10,7 @@ sf::Color Tower::get_color(bool _team)
 return (_team)? Tower::white : Tower::black;
 }
 
-Tower::Tower(bool team, sf::Texture texture) : IGameObject(texture)
+Tower::Tower(bool team) : IGameObject(SpriteManager::get_type_texture(PieceType::Tower, team))
 {
     height = 76;
     set_team(team);

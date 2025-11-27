@@ -19,8 +19,27 @@ void Board::update(float dt)
 {
     for (auto element : elements)
     {
-        element->piece->set_valid_moves(elements, element->pos);
         element->piece->update(dt);
+    }
+}
+
+void Board::clear()
+{
+    elements.clear();
+    white_king_in_board = false;
+    black_king_in_board = false;
+}
+
+bool Board::empty()
+{
+    return elements.empty();
+}
+
+void Board::update_avaiable_moves()
+{
+    for (auto element : elements)
+    {
+        element->piece->set_valid_moves(elements, element->pos);
     }
 }
 
@@ -38,7 +57,7 @@ void Board::render(sf::RenderWindow& window)
     }
 }
 
-void Board::render_highlights(sf::RenderWindow& window, const std::vector<BoardObjectPtr>& valid_moves)
+void Board::render_move_highlights(sf::RenderWindow& window, const std::vector<BoardObjectPtr>& valid_moves)
 {
     sf::RectangleShape cell({(float)(Board::cell_lenght),(float)(Board::cell_lenght)});
     auto origin = this->sprite.getPosition();
@@ -50,8 +69,36 @@ void Board::render_highlights(sf::RenderWindow& window, const std::vector<BoardO
         cell.setPosition(origin + pos);
         window.draw(cell);
     }
-
 }
+
+void Board::render_instantiator_highlights(sf::RenderWindow& window)
+{
+    render_instantiator_highlights(window, true);
+    render_instantiator_highlights(window, false);
+}
+
+void Board::render_instantiator_highlights(sf::RenderWindow& window, bool team)
+{
+    sf::RectangleShape cell({(float)(Board::cell_lenght),(float)(Board::cell_lenght)});
+    cell.setFillColor(sf::Color::Cyan);
+    auto origin = this->sprite.getPosition();
+
+    uint8_t start = ((team) ? Board::side_lenght - 1 : 1);
+
+    for (int i = start; i >= start - 1; i--)
+    {
+        for (size_t j = 0; j < 6; j++)
+        {
+            if (!this->get_position(j, i))
+            {
+                auto pos = sf::Vector2<float>({(float)(j * Board::cell_lenght), (float)(i * Board::cell_lenght)});
+                cell.setPosition(origin + pos);
+                window.draw(cell);
+            }
+        }
+    }
+}
+
 
 void Board::render_pieces(sf::RenderWindow& window)
 {
@@ -101,7 +148,7 @@ BoardL Board::get_elements()
 
 BoardObjectPtr Board::get_position(short x, short y)
 {
-    if ((x >= Board::side_lenght) || (y >= Board::side_lenght)) throw std::invalid_argument("Coordinate outside of board");
+    if ((x >= Board::side_lenght) || (y >= Board::side_lenght)) return nullptr;
 
     for (auto element : elements)
     {
@@ -109,6 +156,30 @@ BoardObjectPtr Board::get_position(short x, short y)
     }
     
     return nullptr;
+}
+
+void Board::remove_piece(BoardObjectPtr object)
+{
+    elements.erase(std::find(elements.begin(), elements.end(), object));
+    
+    if (object->king)
+    {   
+        bool found_substitute = false;
+        for (auto element : elements)
+        {
+            if (element->piece->get_team() == object->piece->get_team()) 
+            {
+                element->king = true;
+                found_substitute = true;
+                break;
+            }
+        }
+        if (!found_substitute)
+        {
+            if (object->piece->get_team()) white_king_in_board = false;
+            else black_king_in_board = false;
+        }
+    }
 }
 
 BoardObjectPtr Board::clicked_piece(sf::Vector2i mouse_position)
@@ -142,10 +213,11 @@ Position Board::get_square_by_coords(sf::Vector2i mouse_position)
 }
 
 //Retorna si la pieza se movio en el tablero
-bool Board::drop_piece(BoardObjectPtr element)
+bool Board::drop_piece(BoardObjectPtr element, long& score)
 {
     bool it_moves = false;
     auto old_pos = element->pos;
+    BoardObjectPtr attacked_piece;
     if (sprite.getGlobalBounds().contains(element->piece->get_sprite().getPosition()))
     {
         sf::FloatRect piece_center = element->piece->get_sprite().getLocalBounds();
@@ -153,10 +225,16 @@ bool Board::drop_piece(BoardObjectPtr element)
         float center_y = piece_center.size.y / 2.0;
         sf::Vector2f offset(center_x,center_y);
         Position position_on_board = get_square_by_coords(static_cast<sf::Vector2i>(element->piece->get_sprite().getPosition() + offset));
+        attacked_piece = this->get_position(position_on_board.x, position_on_board.y);
         it_moves = this->move_piece(element, position_on_board);
     }
 
-    if (it_moves) update_bombs(element, old_pos);
+    if (it_moves) 
+    {
+        update_bombs(element, old_pos);
+        if (attacked_piece) score += attacked_piece->get_points_value();
+    }
+
     
     set_piece_sprite(element);
     return it_moves;
@@ -164,6 +242,10 @@ bool Board::drop_piece(BoardObjectPtr element)
 
 void Board::add_piece(BoardObjectPtr board_object)
 {
+    auto possible_conflictor = std::find_if(elements.begin(), elements.end(), [board_object] (const BoardObjectPtr& actual) { return board_object->pos == actual->pos; });
+    if (possible_conflictor != elements.end()) elements.erase(possible_conflictor);
+    
+
     if (board_object->piece->get_piece_type() != PieceType::Bomb)
     {
         if (board_object->piece->get_team())
@@ -184,7 +266,7 @@ void Board::add_piece(BoardObjectPtr board_object)
         }
     }
 
-    elements.push_front(board_object);
+    elements.push_back(board_object);
     set_piece_sprite(board_object);
 }
 
@@ -237,7 +319,7 @@ void Board::update_bombs(BoardObjectPtr moved_piece, Position old_position)
 {
     if (moved_piece->piece->get_piece_type() == PieceType::Trapper)
         {
-            add_piece(std::make_shared<InBoardObject>(old_position, std::make_shared<Bomb>(moved_piece->piece->get_team(), (moved_piece->piece->get_team()) ? SpriteManager::get_piece_texture("white_trap") : SpriteManager::get_piece_texture("black_trap"))));
+            add_piece(std::make_shared<InBoardObject>(old_position, std::make_shared<Bomb>(moved_piece->piece->get_team())));
         }
         
         bool team_of_bombs_to_remove = !moved_piece->piece->get_team(); 
@@ -271,4 +353,6 @@ void Board::on_resize()
         set_piece_sprite(piece);
     }
 }
+
+
 

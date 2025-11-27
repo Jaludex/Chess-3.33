@@ -10,6 +10,9 @@
 #include "StateStats.hpp"
 #include <ScreenTransition.hpp>
 
+#include"StateTutorial.hpp"
+#include "StateVersus.hpp"
+#include "StatePractice.hpp"
 class GameStateManager
 {
 private:

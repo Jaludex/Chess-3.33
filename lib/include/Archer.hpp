@@ -8,7 +8,7 @@
 class Archer : public IPiece
 {
 public:
-    Archer(bool team, sf::Texture texture);
+    Archer(bool team);
 
     virtual ~Archer() = default;
     virtual void update(float dt) override;

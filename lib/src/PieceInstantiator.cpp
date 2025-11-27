@@ -1,6 +1,6 @@
 #include "PieceInstantiator.hpp"
 
-PieceInstantiator::PieceInstantiator(PieceType _type, bool _team, sf::Vector2f position, sf::Texture texture) : IGameObject(texture), type{_type}, team{_team}
+PieceInstantiator::PieceInstantiator(PieceType _type, bool _team, sf::Vector2f position) : IGameObject(SpriteManager::get_type_texture(_type, _team)), type{_type}, team{_team}
 {
     this->set_sprite_position(position);
     originalposition = position;
@@ -9,6 +9,16 @@ PieceInstantiator::PieceInstantiator(PieceType _type, bool _team, sf::Vector2f p
 void PieceInstantiator::update(float dt)
 {
     
+}
+
+PieceType PieceInstantiator::get_type()
+{
+    return this->type;
+}
+
+bool PieceInstantiator::get_team()
+{
+    return this->team;
 }
 
 void PieceInstantiator::render(sf::RenderWindow& window)
@@ -21,35 +31,34 @@ void PieceInstantiator::return_to_origin()
     this->set_sprite_position(originalposition);
 }
 
-BoardObjectPtr PieceInstantiator::make_piece(int startx, int starty)
+BoardObjectPtr make_board_object(PieceType type, bool team, int startX, int startY)
 {
-    return make_board_object(type, team, startx, starty);
-}
-
-BoardObjectPtr make_board_object(PieceType type, bool team, int startx, int starty)
-{
-    std::string color = (team)? "white_": "black_";
     switch(type)
     {
         case PieceType::Pawn :
-            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Pawn>(team, SpriteManager::get_piece_texture(color+"pawn")));
+            return std::make_shared<InBoardObject>(Position(startX, startY), std::make_shared<Pawn>(team));
         case PieceType::Horse :
-            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Horse>(team, SpriteManager::get_piece_texture(color+"horse")));
+            return std::make_shared<InBoardObject>(Position(startX, startY), std::make_shared<Horse>(team));
         case PieceType::Bishop :
-            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Bishop>(team, SpriteManager::get_piece_texture(color+"bishop")));
+            return std::make_shared<InBoardObject>(Position(startX, startY), std::make_shared<Bishop>(team));
         case PieceType::Tower :
-            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Tower>(team, SpriteManager::get_piece_texture(color+"rook")));
+            return std::make_shared<InBoardObject>(Position(startX, startY), std::make_shared<Tower>(team));
         case PieceType::Queen :
-            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Queen>(team, SpriteManager::get_piece_texture(color+"queen")));
+            return std::make_shared<InBoardObject>(Position(startX, startY), std::make_shared<Queen>(team));
         case PieceType::Trapper :
-            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Trapper>(team, SpriteManager::get_piece_texture(color+"trapper")));
+            return std::make_shared<InBoardObject>(Position(startX, startY), std::make_shared<Trapper>(team));
         case PieceType::Crook :
-            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Crook>(team, SpriteManager::get_piece_texture(color+"crook")));
+            return std::make_shared<InBoardObject>(Position(startX, startY), std::make_shared<Crook>(team));
         case PieceType::Archer :
-            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Archer>(team, SpriteManager::get_piece_texture(color+"archer")));
+            return std::make_shared<InBoardObject>(Position(startX, startY), std::make_shared<Archer>(team));
         case PieceType::Portal :
-            return std::make_shared<InBoardObject>(Position(startx, starty), std::make_shared<Portal>(team, SpriteManager::get_piece_texture(color+"portal")));
+            return std::make_shared<InBoardObject>(Position(startX, startY), std::make_shared<Portal>(team));
         default :
             return nullptr;
     }
+}
+
+BoardObjectPtr PieceInstantiator::make_piece(int startx, int starty)
+{
+    return make_board_object(this->type, this->team, startx, starty);
 }

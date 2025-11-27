@@ -8,7 +8,7 @@
 class Pawn : public IPiece
 {
     public:
-    Pawn(bool team, sf::Texture texture);
+    Pawn(bool team);
 
     virtual ~Pawn() = default;
     virtual void update(float dt) override;

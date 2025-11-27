@@ -1,7 +1,7 @@
 #include "StateMainMenu.hpp"
 
 StateMainMenu::StateMainMenu(sf::RenderWindow* _window)
-    : background_sprite(background_tex), text_title(nullptr), btn_play(nullptr), btn_tutorial(nullptr), btn_exit(nullptr)
+    : background_sprite(background_tex), text_title(nullptr), btn_play(nullptr), btn_tutorial(nullptr), btn_exit(nullptr), btn_versus(nullptr), btn_practice(nullptr)
 {
     window = _window;
     type = StateType::MainMenu;
@@ -30,6 +30,12 @@ void StateMainMenu::terminate()
 
     delete btn_exit;
     btn_exit = nullptr;
+
+    delete btn_practice;
+    btn_practice = nullptr;
+
+    delete btn_versus;
+    btn_versus = nullptr;
 }
 
 void StateMainMenu::init()
@@ -65,7 +71,8 @@ void StateMainMenu::init()
     btn_play = new Button(button_texture, font);
     btn_tutorial = new Button(button_texture, font);
     btn_exit = new Button(button_texture, font);
-
+    btn_versus = new Button(button_texture,font);
+    btn_practice = new Button(button_texture,font);
     text_title->setFillColor(sf::Color(89,220,219));
     text_title->setStyle(sf::Text::Bold);
     
@@ -87,10 +94,13 @@ void StateMainMenu::on_resize()
     background_sprite.setScale(sf::Vector2f(scale_x, scale_y));
     background_sprite.setOrigin(sf::Vector2f(0.0f, 0.0f)); 
     background_sprite.setPosition(sf::Vector2f(0.0f, 0.0f));
-    setup_button(btn_play,     "JUGAR",    win_size.y * 0.40f, font, btn_play->btn_sprite.getTexture());
-    setup_button(btn_stats,    "PUNTAJES", win_size.y * 0.55f, font, btn_stats->btn_sprite.getTexture());
-    setup_button(btn_tutorial, "TUTORIAL", win_size.y * 0.70f, font, btn_tutorial->btn_sprite.getTexture());
-    setup_button(btn_exit,     "SALIR",    win_size.y * 0.85f, font, btn_exit->btn_sprite.getTexture());
+    auto offset = btn_exit->btn_sprite.getTexture().getSize().x;
+    setup_button(btn_play,     "JUGAR", win_size.x / 2.0, win_size.y * 0.40f, font, btn_play->btn_sprite.getTexture());
+    setup_button(btn_stats,    "PUNTAJES", win_size.x / 2.0, win_size.y * 0.55f, font, btn_stats->btn_sprite.getTexture());
+    setup_button(btn_tutorial, "TUTORIAL", win_size.x / 2.0, win_size.y * 0.70f, font, btn_tutorial->btn_sprite.getTexture());
+    setup_button(btn_exit,     "SALIR", win_size.x / 2.0, win_size.y * 0.85f, font, btn_exit->btn_sprite.getTexture());
+    setup_button(btn_versus,"PVP",  (win_size.x / 2.0) + 2 * offset, win_size.y * 0.85, font, btn_versus->btn_sprite.getTexture());
+    setup_button(btn_practice,"PRACTICE", (win_size.x / 2.0)  - 2 * offset, win_size.y * 0.85, font, btn_practice->btn_sprite.getTexture());
 
     btn_play->btn_text.setOutlineThickness(2);
     btn_play->btn_text.setOutlineColor(sf::Color::Black);
@@ -100,6 +110,10 @@ void StateMainMenu::on_resize()
     btn_tutorial->btn_text.setOutlineColor(sf::Color::Black);
     btn_exit->btn_text.setOutlineThickness(2);
     btn_exit->btn_text.setOutlineColor(sf::Color::Black);
+    btn_practice->btn_text.setOutlineThickness(2);
+    btn_practice->btn_text.setOutlineColor(sf::Color::Black);
+    btn_versus->btn_text.setOutlineThickness(2);
+    btn_versus->btn_text.setOutlineColor(sf::Color::Black);
 }
 
 void StateMainMenu::update(float dt)
@@ -116,6 +130,8 @@ void StateMainMenu::update(float dt)
     update_button_color(btn_play);
     update_button_color(btn_tutorial);
     update_button_color(btn_exit);
+    update_button_color(btn_practice);
+    update_button_color(btn_versus);
     if (time_elapsed < INPUT_COOLDOWN) 
     {
         return; 
@@ -133,6 +149,14 @@ void StateMainMenu::update(float dt)
         else if (is_mouse_over(btn_tutorial->btn_sprite, mouse_pos))
         {
             this->go_to = StateType::Tutorial;
+        }
+        else if (is_mouse_over(btn_practice->btn_sprite, mouse_pos))
+        {
+            this->go_to = StateType::Practice;
+        }
+        else if (is_mouse_over(btn_versus->btn_sprite, mouse_pos))
+        {
+            this->go_to = StateType::Versus;
         }
         else if (is_mouse_over(btn_exit->btn_sprite, mouse_pos) && time_elapsed > INPUT_COOLDOWN)
         {
@@ -153,4 +177,8 @@ void StateMainMenu::render(sf::RenderWindow& target)
     target.draw(btn_tutorial->btn_text);
     target.draw(btn_exit->btn_sprite);
     target.draw(btn_exit->btn_text);
+    target.draw(btn_practice->btn_sprite);
+    target.draw(btn_practice->btn_text);
+    target.draw(btn_versus->btn_sprite);
+    target.draw(btn_versus->btn_text);
 }

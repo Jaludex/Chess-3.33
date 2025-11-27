@@ -8,7 +8,7 @@
 class Horse : public IPiece
 {
     public:
-    Horse(bool team, sf::Texture texture);
+    Horse(bool team);
 
     virtual ~Horse() = default;
     virtual void update(float dt) override;
