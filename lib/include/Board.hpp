@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SFML/Graphics.hpp>
+#include <SoundManager.hpp>
 #include <IPiece.hpp>
 #include <iostream>
 #include <algorithm>

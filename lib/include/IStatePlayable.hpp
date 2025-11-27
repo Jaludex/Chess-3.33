@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SpriteManager.hpp>
+#include <SoundManager.hpp>
 #include "IGameState.hpp"
 #include <Gametree.hpp>
 #include <Board.hpp>

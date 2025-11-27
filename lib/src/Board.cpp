@@ -279,6 +279,7 @@ bool Board::move_piece(BoardObjectPtr element, Position destination)
         if (move->pos == destination)
         {
             it_moves = true;
+            SoundManager::play(SoundType::MovePiece);
             if (move->piece)
             {
                 if (element->piece->get_piece_type() == PieceType::Portal && element->piece->get_team() == move->piece->get_team())

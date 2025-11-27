@@ -1,5 +1,5 @@
 #include <IStatePlayable.hpp>
-#include<Stats.hpp>
+#include <Stats.hpp>
 IStatePlayable::IStatePlayable(sf::RenderWindow* _window) : btn_back_sprite(tex_exit), btnStart(nullptr), board(sf::Texture(sf::Vector2u((unsigned int)(Board::side_lenght * Board::cell_lenght),
                                                                               (unsigned int)(Board::side_lenght * Board::cell_lenght)))), player_turn(true), bot(BoardL(), GameEvaluator()), round_display(font, "Round 1"), score_display(font, "0 Score"), result(font)
 {
@@ -144,6 +144,10 @@ void IStatePlayable::end_turn()
     if (possible_winner != PlayerType::None)
     {
         actual_winner = possible_winner;
+        
+        if (actual_winner == PlayerType::P1 || this->type == StateType::Versus) SoundManager::play(SoundType::Victory);
+        else if (this->type == StateType::Gameplay || this->type == StateType::Practice) SoundManager::play(SoundType::Defeat);
+        
         round_display.setString("Round " + std::to_string(round));
         transition.enter(10);
         return;
@@ -153,6 +157,10 @@ void IStatePlayable::end_turn()
     if (possible_winner != PlayerType::None)
     {
         actual_winner = possible_winner;
+
+        if (actual_winner == PlayerType::P1 || this->type == StateType::Versus) SoundManager::play(SoundType::Victory);
+        else if (this->type == StateType::Gameplay || this->type == StateType::Practice) SoundManager::play(SoundType::Defeat);
+
         round_display.setString("Round " + std::to_string(round));
         transition.enter(10);
         return;
