@@ -124,14 +124,14 @@ void IStatePlayable::end_turn()
     auto possible_winner = check_winner();
     if (possible_winner != PlayerType::None)
     {
-        this->end_fight(possible_winner);
+        transition.enter(10);
         return;
     }
 
     possible_winner = check_stalemate();
     if (possible_winner != PlayerType::None)
     {
-        this->end_fight(possible_winner);
+        transition.enter(10);
         return;
     }
     

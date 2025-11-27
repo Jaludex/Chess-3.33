@@ -57,6 +57,27 @@ void StateGameplay::terminate()
 
 void StateGameplay::update(float dt)
 {
+    transition.update(dt);
+
+    if (transition.is_staying() && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+    {
+        auto possible_winner = check_winner();
+        auto possible_stalemate = check_stalemate();        
+        if (possible_winner != PlayerType::None)
+        {
+            this->end_fight(possible_winner);
+        }
+        else if (possible_stalemate != PlayerType::None)
+        {
+            this->end_fight(possible_stalemate);
+        }
+        
+        transition.leave(10);
+    }
+
+    if (!transition.is_out())
+        return;
+
     if (actual_phase != PhaseType::Fighting || player_turn)
     {
         drag();
@@ -150,7 +171,7 @@ void StateGameplay::render(sf::RenderWindow& window)
         inst->render(window);
     }
 
-    
+    transition.render(window);
 }
 
 void StateGameplay::on_resize() 
