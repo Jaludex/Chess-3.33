@@ -1,5 +1,5 @@
 #include <GameStateManager.hpp>
-#include"StateTutorial.hpp"
+
 GameStateManager::GameStateManager(sf::RenderWindow& _window) : window(&_window)
 {
 
@@ -62,6 +62,16 @@ void GameStateManager::update(float dt)
             case StateType::Tutorial:
                 {
                     go_to(std::make_shared<StateTutorial>(this->window)); 
+                }
+            break;
+            case StateType::Practice:
+                {
+                    go_to(std::make_shared<StatePractice>(this->window)); 
+                }
+            break;
+            case StateType::Versus:
+                {
+                    go_to(std::make_shared<StateVersus>(this->window)); 
                 }
             break;
             case StateType::Return:

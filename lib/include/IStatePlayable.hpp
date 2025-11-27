@@ -58,8 +58,12 @@ protected:
     std::list<PieceInstantPtr> instantiators;
     GameTree bot; 
     sf::Font font; 
-    sf::Text* btn_back = nullptr;
-    sf::Text* btn_start = nullptr;
+    //sf::Text* btn_back = nullptr;
+    //sf::Text* btn_start = nullptr;
+    sf::Texture tex_exit;       
+    sf::Sprite btn_back_sprite;
+    sf::Texture start_texture;
+    Button* btnStart;
     PhaseType actual_phase;
 
     float fix_offset(const sf::Sprite& _sprite, char t);

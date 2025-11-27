@@ -8,7 +8,9 @@
 #include <StateGameplay.hpp>
 #include <StateMainMenu.hpp>
 #include "StateStats.hpp"
-
+#include"StateTutorial.hpp"
+#include "StateVersus.hpp"
+#include "StatePractice.hpp"
 class GameStateManager
 {
 private:

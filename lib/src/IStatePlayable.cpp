@@ -1,6 +1,6 @@
 #include <IStatePlayable.hpp>
 
-IStatePlayable::IStatePlayable(sf::RenderWindow* _window) : board(sf::Texture(sf::Vector2u((unsigned int)(Board::side_lenght * Board::cell_lenght),
+IStatePlayable::IStatePlayable(sf::RenderWindow* _window) : btn_back_sprite(tex_exit), btnStart(nullptr), board(sf::Texture(sf::Vector2u((unsigned int)(Board::side_lenght * Board::cell_lenght),
                                                                               (unsigned int)(Board::side_lenght * Board::cell_lenght)))), player_turn(true), bot(BoardL(), GameEvaluator())
 {
     window = _window;

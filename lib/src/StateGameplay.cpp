@@ -1,6 +1,6 @@
 #include <StateGameplay.hpp>
 
-StateGameplay::StateGameplay(sf::RenderWindow* _window) :btn_back_sprite(tex_exit),background_sprite(background_texture), IStatePlayable(_window)
+StateGameplay::StateGameplay(sf::RenderWindow* _window) : background_sprite(background_texture), IStatePlayable(_window)
 {
     type = StateType::Gameplay;
     go_to = StateType::None;
@@ -13,7 +13,7 @@ StateGameplay::~StateGameplay() {}
 void StateGameplay::init()
 {
     srand(time(NULL));
-    
+
     if(!background_texture.loadFromFile("assets/game_background.png"))
     {
         std::cerr << "ERROR: No se pudo cargar fondo en Gameplay" << std::endl;
@@ -21,12 +21,6 @@ void StateGameplay::init()
     auto size = background_texture.getSize();
     background_sprite.setTexture(background_texture);
     background_sprite.setTextureRect({{0, 0}, {static_cast<int>(size.x), static_cast<int>(size.y)}});
-
-    //Como es temporal, por ahora solo tomo todo esto y lo copio para el boton de empezar
-    btn_start = new sf::Text(font, "->", 30);
-    btn_start->setFillColor(sf::Color::White);
-    btn_start->setOutlineThickness(2);
-    btn_start->setOutlineColor(sf::Color::Black);
     
     if (!tex_exit.loadFromFile("assets/tutorial/exitBtn.png"))
     {
@@ -35,25 +29,30 @@ void StateGameplay::init()
 
     tex_exit.setSmooth(true);
     btn_back_sprite.setTexture(tex_exit, true);
-
     //Aqui se intenta cargar una partida anterior que se haya guardado, sino se carga este cacho
     new_game();
     
     
     if (!font.openFromFile("assets/fonts/arial.ttf")) 
     {
-         std::cerr << "ERROR: No se pudo cargar fuente en Gameplay" << std::endl;
+        std::cerr << "ERROR: No se pudo cargar fuente en Gameplay" << std::endl;
     }
-
+        
+    if(!start_texture.loadFromFile("assets/startBtn.png"))
+    {
+        std::cerr << "Error cargando textura de boton de start en Gameplay" << std::endl;
+    }
+    start_texture.setSmooth(true);
+    btnStart = new Button(start_texture, font);
     adjust_elements();
-
     bot.set_current_board(board.get_elements());
     bot.initial_game_eval();
 }
 
 void StateGameplay::terminate()
 {
-    //empty
+    delete btnStart;
+    btnStart = nullptr;
 }
 
 void StateGameplay::update(float dt)
@@ -87,18 +86,38 @@ void StateGameplay::update(float dt)
 
     if (is_mouse_over(btn_back_sprite, mouse_pos) && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
     {
-        this->go_to = StateType::MainMenu;
+        this->go_to = StateType::Return;
         return;
     }
 
-    if (btn_start) 
+    if (btnStart) 
     {
-        if (is_mouse_over(*btn_start, mouse_pos)) btn_start->setFillColor(sf::Color::Yellow);
-        else btn_start->setFillColor(sf::Color::White);
+        if (is_mouse_over(btnStart->btn_sprite, mouse_pos)) 
+        {
+            if(start_texture.loadFromFile("assets/startBtnR.png"))
+            {
+                btnStart->btn_sprite.setTexture(start_texture);
+            }
+            else 
+            {
+                std::cerr << "ERROR: No se pudo cargar boton rojo" << std::endl;
+            }
+        }
+        else 
+        {
+            if(start_texture.loadFromFile("assets/startBtn.png"))
+            {
+                btnStart->btn_sprite.setTexture(start_texture);
+            }
+            else 
+            {
+                std::cerr << "ERROR: No se pudo cargar boton estandar" << std::endl;
+            }
+        }
     }
     if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
     {
-        if (btn_start && is_mouse_over(*btn_start, mouse_pos) && board.is_white_king_in_board())
+        if (btnStart && is_mouse_over(btnStart->btn_sprite, mouse_pos) && board.is_white_king_in_board())
         {
             this->start_fight();
 
@@ -114,7 +133,9 @@ void StateGameplay::render(sf::RenderWindow& window)
     window.draw(background_sprite);
 
     window.draw(btn_back_sprite);
-    if (btn_start && actual_phase == PhaseType::Preparing) window.draw(*btn_start);
+
+    if (actual_phase == PhaseType::Preparing) window.draw(btnStart->btn_sprite);
+    if (actual_phase == PhaseType::Preparing) window.draw(btnStart->btn_text);
 
     board.render(window);
     if (actual_phase == PhaseType::Fighting && selected_piece) board.render_move_highlights(window, selected_piece->piece->get_valid_moves());
@@ -155,10 +176,7 @@ void StateGameplay::adjust_elements()
 
     sf::Vector2u winSizeU = window->getSize();
     sf::Vector2f winSize((float)winSizeU.x, (float)winSizeU.y);
-
     float target_btn_height = winSize.y * 0.08f;
-
-    btn_start->setPosition(static_cast<sf::Vector2f>(window->getSize()) - sf::Vector2f(100, 100));
     
     sf::Vector2u btn_texture_size = tex_exit.getSize();
     if (btn_texture_size.y > 0) 
@@ -175,7 +193,11 @@ void StateGameplay::adjust_elements()
     float pos_y = margin + bounds.size.y * btn_back_sprite.getScale().y / 2.0f;
 
     btn_back_sprite.setPosition(sf::Vector2f(pos_x, pos_y));
-  
+    
+    setup_button(btnStart,"START",winSize.x - pos_x * 1.8, winSize.y - pos_y,font,start_texture);
+    btnStart->btn_text.setOutlineThickness(2);
+    btnStart->btn_text.setOutlineColor(sf::Color::Black);
+
     this->load_instanciators();
     
 }
@@ -278,7 +300,7 @@ bool StateGameplay::set_up_black_team()
         board.add_piece(make_board_object(piece_type, false, column, row));
     }
 
-    if (btn_start) btn_start->setPosition(static_cast<sf::Vector2f>(window->getSize()) - sf::Vector2f(100, 100));
+    //if (btn_start) btn_start->setPosition(static_cast<sf::Vector2f>(window->getSize()) - sf::Vector2f(100, 100));
 
     return true;
 }

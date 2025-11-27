@@ -14,26 +14,30 @@ void StateVersus::init()
     {
          std::cerr << "ERROR: No se pudo cargar fuente en Gameplay" << std::endl;
     }
-    btn_back = new sf::Text(font, "<-", 30);
-    btn_back->setFillColor(sf::Color::White);
-    btn_back->setPosition(sf::Vector2f(20.f, 20.f));
-    
-    btn_back->setOutlineThickness(2);
-    btn_back->setOutlineColor(sf::Color::Black);
 
+    if (!tex_exit.loadFromFile("assets/tutorial/exitBtn.png"))
+    {
+        std::cerr << "Error cargando textura de boton de regreso en Gameplay" << std::endl;
+    }
+
+    tex_exit.setSmooth(true);
+    btn_back_sprite.setTexture(tex_exit, true);
+
+    if (!start_texture.loadFromFile("assets/startBtn.png"))
+    {
+        std::cerr << "Error cargando textura de boton de start en Gameplay" << std::endl;
+    }
+    start_texture.setSmooth(true);
+    btnStart = new Button(start_texture, font);
     //Como es temporal, por ahora solo tomo todo esto y lo copio para el boton de empezar
-    btn_start = new sf::Text(font, "->", 30);
-    btn_start->setFillColor(sf::Color::White);
-    btn_start->setPosition(static_cast<sf::Vector2f>(window->getSize()) - sf::Vector2f(100, 100));
-    btn_start->setOutlineThickness(2);
-    btn_start->setOutlineColor(sf::Color::Black);
 
     adjust_elements();
 }
 
 void StateVersus::terminate()
 {
-    //si usamos shared pointers entonces no necesitamos eliminar la pieza creada en init
+    delete btnStart;
+    btnStart == nullptr;
 }
 
 void StateVersus::update(float dt)
@@ -42,28 +46,46 @@ void StateVersus::update(float dt)
 
     sf::Vector2i mousePos = get_relative_mouse_position();
 
-    if (btn_back) 
-    {
-        if (is_mouse_over(*btn_back, mousePos)) btn_back->setFillColor(sf::Color::Yellow);
-        else btn_back->setFillColor(sf::Color::White);
-    }
+    if (is_mouse_over(btn_back_sprite, mousePos)) btn_back_sprite.setColor(sf::Color(200, 200, 200));
+    else btn_back_sprite.setColor(sf::Color::White);
+
     if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
     {
-        if (btn_back && is_mouse_over(*btn_back, mousePos))
+        if (is_mouse_over(btn_back_sprite, mousePos))
         {
             this->go_to = StateType::Return; 
             return;
         }
     }
 
-    if (btn_start) 
+    if (btnStart) 
     {
-        if (is_mouse_over(*btn_start, mousePos)) btn_start->setFillColor(sf::Color::Yellow);
-        else btn_start->setFillColor(sf::Color::White);
+        if (is_mouse_over(btnStart->btn_sprite, mousePos)) 
+        {
+            if(start_texture.loadFromFile("assets/startBtnR.png"))
+            {
+                btnStart->btn_sprite.setTexture(start_texture);
+            }
+            else 
+            {
+                std::cerr << "ERROR: No se pudo cargar boton rojo" << std::endl;
+            }
+        }
+        else 
+        {
+            if(start_texture.loadFromFile("assets/startBtn.png"))
+            {
+                btnStart->btn_sprite.setTexture(start_texture);
+            }
+            else 
+            {
+                std::cerr << "ERROR: No se pudo cargar boton estandar" << std::endl;
+            }
+        }
     }
     if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
     {
-        if (btn_start && is_mouse_over(*btn_start, mousePos) && board.is_white_king_in_board())
+        if (btnStart && is_mouse_over(btnStart->btn_sprite, mousePos) && board.is_white_king_in_board())
         {
             this->start_fight();
 
@@ -86,8 +108,13 @@ void StateVersus::render(sf::RenderWindow& window)
         inst->render(window);
     }
 
-    if (btn_back) window.draw(*btn_back);
-    if (btn_start && actual_phase == PhaseType::Preparing) window.draw(*btn_start);
+    window.draw(btn_back_sprite);
+
+    if (btnStart && actual_phase == PhaseType::Preparing) 
+    {
+        window.draw(btnStart->btn_sprite);
+        window.draw(btnStart->btn_text);
+    }
 }
 
 void StateVersus::on_resize() 
@@ -103,8 +130,29 @@ void StateVersus::adjust_elements()
     board.set_sprite_position(pos);
     board.on_resize();
 
-    if (btn_start) btn_start->setPosition(static_cast<sf::Vector2f>(window->getSize()) - sf::Vector2f(100, 100));
+    sf::Vector2u winSizeU = window->getSize();
+    sf::Vector2f winSize((float)winSizeU.x, (float)winSizeU.y);
+    float target_btn_height = winSize.y * 0.08f;
+    
+    sf::Vector2u btn_texture_size = tex_exit.getSize();
+    if (btn_texture_size.y > 0) 
+    {
+        float scale = target_btn_height / btn_texture_size.y;
+        btn_back_sprite.setScale(sf::Vector2f(scale, scale));
+    }
 
+    float margin = 20.0f;
+    sf::FloatRect bounds = btn_back_sprite.getLocalBounds(); 
+    btn_back_sprite.setOrigin(sf::Vector2f(bounds.size.x / 2.0f, bounds.size.y / 2.0f));
+    
+    float pos_x = margin + bounds.size.x * btn_back_sprite.getScale().x / 2.0f;
+    float pos_y = margin + bounds.size.y * btn_back_sprite.getScale().y / 2.0f;
+
+    btn_back_sprite.setPosition(sf::Vector2f(pos_x, pos_y));
+
+    setup_button(btnStart,"START",winSize.x - pos_x * 1.8, winSize.y - pos_y,font,start_texture);
+    btnStart->btn_text.setOutlineThickness(2);
+    btnStart->btn_text.setOutlineColor(sf::Color::Black);
     this->load_instanciators();
 }
 
