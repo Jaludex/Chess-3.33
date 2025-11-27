@@ -178,13 +178,15 @@ PlayerType IStatePlayable::check_winner()
 
     if (!P1_King) 
     {
-        
+        if (type == StateType::Gameplay)
+        {
+            Stats stats(score, round);
+            stats.save_or_update();
+        }
         return PlayerType::P2;
     }
     if (!P2_King) 
     {
-        Stats stats(score, round);
-        stats.save_or_update();
         return PlayerType::P1;
     }
     return PlayerType::None;
