@@ -8,6 +8,8 @@
 #include <StateGameplay.hpp>
 #include <StateMainMenu.hpp>
 #include "StateStats.hpp"
+#include <ScreenTransition.hpp>
+
 #include"StateTutorial.hpp"
 #include "StateVersus.hpp"
 #include "StatePractice.hpp"
@@ -16,6 +18,7 @@ class GameStateManager
 private:
     std::stack<GameStatePtr> states;
     sf::RenderWindow* window;
+    ScreenTransition transition;
 
 public:
     GameStateManager(sf::RenderWindow& _window);
