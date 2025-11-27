@@ -144,6 +144,12 @@ void IStatePlayable::end_turn()
     if (possible_winner != PlayerType::None)
     {
         actual_winner = possible_winner;
+
+        if (actual_winner == PlayerType::P2 && type == StateType::Gameplay)
+        {
+            Stats stats(score, round);
+            stats.save_or_update();
+        }
         
         if (actual_winner == PlayerType::P1 || this->type == StateType::Versus) SoundManager::play(SoundType::Victory);
         else if (this->type == StateType::Gameplay || this->type == StateType::Practice) SoundManager::play(SoundType::Defeat);
@@ -157,6 +163,12 @@ void IStatePlayable::end_turn()
     if (possible_winner != PlayerType::None)
     {
         actual_winner = possible_winner;
+
+        if (actual_winner == PlayerType::P2 && type == StateType::Gameplay)
+        {
+            Stats stats(score, round);
+            stats.save_or_update();
+        }
 
         if (actual_winner == PlayerType::P1 || this->type == StateType::Versus) SoundManager::play(SoundType::Victory);
         else if (this->type == StateType::Gameplay || this->type == StateType::Practice) SoundManager::play(SoundType::Defeat);
@@ -186,11 +198,6 @@ PlayerType IStatePlayable::check_winner()
 
     if (!P1_King) 
     {
-        if (type == StateType::Gameplay)
-        {
-            Stats stats(score, round);
-            stats.save_or_update();
-        }
         return PlayerType::P2;
     }
     if (!P2_King) 
