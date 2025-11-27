@@ -1,7 +1,7 @@
 #pragma once
 
 #include <IStatePlayable.hpp>
-#include<TextInput.hpp>
+
 using PieceInstantPtr = std::shared_ptr<PieceInstantiator>;
 using json = nlohmann::json;
 
@@ -10,10 +10,6 @@ class StateGameplay : public IStatePlayable
 protected:
     sf::Texture background_texture; 
     sf::Sprite background_sprite;
-
-    InputBox* name_input_box;
-    bool is_asking_name;
-    std::string player_name;
     
     std::list<PieceType> inventory;
     PieceType enemy_king; //Este sera la pieza que mantendra el rey enemigo

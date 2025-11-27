@@ -44,6 +44,52 @@ void StateVersus::terminate()
 
 void StateVersus::update(float dt)
 {
+    transition.update(dt);
+
+    if (transition.is_staying())
+    {
+        sf::Vector2u win_size = window->getSize();
+        switch (actual_winner)
+        {
+        case PlayerType::P1:
+            result.setString("P1 wins this round");
+            result.setFillColor(sf::Color::Cyan);
+            center_sftext(result, win_size, -200);
+            break;
+        case PlayerType::P2:
+            result.setString("P2 wins this round");
+            result.setFillColor(sf::Color::Red);
+            center_sftext(result, win_size, -200);
+            break;
+        default:
+            result.setString("What Happend??");
+            result.setFillColor(sf::Color::Cyan);
+            break;
+        }
+
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+        {
+            auto possible_winner = check_winner();
+            auto possible_stalemate = check_stalemate();        
+            if (possible_winner != PlayerType::None)
+            {
+                this->end_fight(possible_winner);
+            }
+            else if (possible_stalemate != PlayerType::None)
+            {
+                this->end_fight(possible_stalemate);
+            }
+
+            transition.leave(10);
+            actual_winner = PlayerType::None;
+        }
+
+        
+    }
+
+    if (!transition.is_out())
+        return;
+
     drag();
 
     sf::Vector2i mousePos = get_relative_mouse_position();
@@ -116,6 +162,13 @@ void StateVersus::render(sf::RenderWindow& window)
     {
         window.draw(btnStart->btn_sprite);
         window.draw(btnStart->btn_text);
+    }
+
+    transition.render(window);
+
+    if (transition.is_staying())
+    {
+        window.draw(result);
     }
 }
 

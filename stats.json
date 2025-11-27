@@ -236,5 +236,35 @@
         "name": "Cyber_Ghost_346",
         "score": 300,
         "total_rounds": 8
+    },
+    {
+        "name": "Epic_King_917",
+        "score": 1380,
+        "total_rounds": 1
+    },
+    {
+        "name": "Epic_Ghost_722",
+        "score": 1380,
+        "total_rounds": 1
+    },
+    {
+        "name": "Iron_King_942",
+        "score": 1050935426,
+        "total_rounds": -49152
+    },
+    {
+        "name": "Epic_Ghost_17",
+        "score": 1050935426,
+        "total_rounds": -49152
+    },
+    {
+        "name": "Mega_Block_410",
+        "score": 1050935426,
+        "total_rounds": -49152
+    },
+    {
+        "name": "Mega_Bot_100",
+        "score": 1050935426,
+        "total_rounds": -49152
     }
 ]

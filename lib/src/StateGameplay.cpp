@@ -39,9 +39,6 @@ void StateGameplay::init()
 
     round_display.setFont(font);
     score_display.setFont(font);
-    name_input_box = new InputBox(font, "Diga su nombre general:");
-    name_input_box->activate();
-    is_asking_name = true;
 
     if(!start_texture.loadFromFile("assets/startBtn.png"))
     {
@@ -64,20 +61,49 @@ void StateGameplay::update(float dt)
 {
     transition.update(dt);
 
-    if (transition.is_staying() && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+    if (transition.is_staying())
     {
-        auto possible_winner = check_winner();
-        auto possible_stalemate = check_stalemate();        
-        if (possible_winner != PlayerType::None)
+        sf::Vector2u win_size = window->getSize();
+        switch (actual_winner)
         {
-            this->end_fight(possible_winner);
+        case PlayerType::P1:
+            result.setString("You win this round");
+            result.setFillColor(sf::Color::Cyan);
+            center_sftext(result, win_size, -200);
+            center_sftext(score_display, win_size, 0);
+            center_sftext(round_display, win_size, 100);
+            break;
+        case PlayerType::P2:
+            result.setString("You Lose");
+            result.setFillColor(sf::Color::Red);
+            center_sftext(result, win_size, -200);
+            center_sftext(score_display, win_size, 0);
+            center_sftext(round_display, win_size, 100);
+            break;
+        default:
+            result.setString("What Happend??");
+            result.setFillColor(sf::Color::Cyan);
+            break;
         }
-        else if (possible_stalemate != PlayerType::None)
+
+        if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
         {
-            this->end_fight(possible_stalemate);
+            auto possible_winner = check_winner();
+            auto possible_stalemate = check_stalemate();        
+            if (possible_winner != PlayerType::None)
+            {
+                this->end_fight(possible_winner);
+            }
+            else if (possible_stalemate != PlayerType::None)
+            {
+                this->end_fight(possible_stalemate);
+            }
+
+            transition.leave(10);
+            actual_winner = PlayerType::None;
         }
+
         
-        transition.leave(10);
     }
 
     if (!transition.is_out())
@@ -181,6 +207,12 @@ void StateGameplay::render(sf::RenderWindow& window)
     window.draw(round_display);
     
     transition.render(window);
+    if (transition.is_staying())
+    {
+        window.draw(result);
+        window.draw(score_display);
+        window.draw(round_display);
+    }
 }
 
 void StateGameplay::on_resize() 
@@ -407,7 +439,7 @@ void StateGameplay::end_fight(PlayerType winner)
         board.clear();
 
         go_to = StateType::Return;
-    }    
+    }
 }
 
 void StateGameplay::load_instanciators()
