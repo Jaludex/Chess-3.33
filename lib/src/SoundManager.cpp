@@ -1,11 +1,12 @@
 #include "SoundManager.hpp"
 
 std::map<std::string, sf::SoundBuffer> SoundManager::sound_buffers;
-std::unique_ptr<sf::Sound> SoundManager::last_sound;
+std::vector<std::unique_ptr<sf::Sound>> SoundManager::active_sounds;
 
 void SoundManager::init()
 {
-    last_sound = nullptr;
+    
+
     std::string route = "assets/sounds/";
     sound_buffers["victory"] = load_file(route + "victory.ogg");
     sound_buffers["defeat"] = load_file(route + "defeat.ogg");
@@ -24,19 +25,37 @@ sf::SoundBuffer SoundManager::load_file(std::string route)
 
 void SoundManager::play(SoundType type)
 {
+    clean_finished_sounds();
+    
+    std::string sound_name;
     switch (type)
     {
     case SoundType::Victory:
-        last_sound = std::make_unique<sf::Sound>(sound_buffers.at("victory"));
+        sound_name = "victory";
         break;
     case SoundType::Defeat:
-        last_sound = std::make_unique<sf::Sound>(sound_buffers.at("defeat"));
+        sound_name = "defeat";
         break;
     case SoundType::MovePiece:
     default:
-        last_sound = std::make_unique<sf::Sound>(sound_buffers.at("move_piece"));
+        sound_name = "move_piece";
         break;
     }
-    std::cout << "Play" << std::endl;
-    last_sound->play();
+    
+    auto sound = std::make_unique<sf::Sound>(sound_buffers.at(sound_name));
+    sound->play();
+    active_sounds.push_back(std::move(sound));
+    
+    std::cout << "Play: " << sound_name << std::endl;
+}
+
+void SoundManager::clean_finished_sounds()
+{
+    active_sounds.erase(
+        std::remove_if(active_sounds.begin(), active_sounds.end(),
+            [](const std::unique_ptr<sf::Sound>& sound) {
+                return sound->getStatus() == sf::SoundSource::Status::Stopped;
+            }),
+        active_sounds.end()
+    );
 }

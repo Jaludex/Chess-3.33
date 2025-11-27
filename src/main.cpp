@@ -6,8 +6,6 @@
 int main()
 {
     SpriteManager::init();
-    SoundManager::init();
-
     auto window = sf::RenderWindow(sf::VideoMode({1080u, 810u}), "Chess 3.33 Alpha");
     window.setFramerateLimit(144u);
     
@@ -26,6 +24,7 @@ int main()
 
     GameStateManager manager(window);
     manager.init();
+    SoundManager::init();
     
     while (window.isOpen())
     {
