@@ -62,7 +62,7 @@ void StatePractice::update(float dt)
         switch (actual_winner)
         {
         case PlayerType::P1:
-            result.setString("You win this round");
+            result.setString("You Win");
             result.setFillColor(sf::Color::Cyan);
             center_sftext(result, win_size, -200);
             break;

@@ -18,3 +18,13 @@ add_executable(main ${gamefiles})
 include_directories(main PRIVATE lib/include)
 target_compile_features(main PRIVATE cxx_std_17)
 target_link_libraries(main PRIVATE SFML::Graphics)
+
+file(
+    COPY assets
+    DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+)
+
+file(
+    COPY kingpresets.json
+    DESTINATION ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}
+)

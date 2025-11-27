@@ -23,7 +23,6 @@ private:
 
     float input_cooldown;
 
-    void save_tutorial_completed();
     void setup_layout(); 
     void update_dots();  
 

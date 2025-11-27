@@ -189,7 +189,6 @@ void StateTutorial::update(float dt)
             } 
             else 
             {
-                save_tutorial_completed();
                 go_to = StateType::Return;
             }
         }
@@ -207,7 +206,6 @@ void StateTutorial::update(float dt)
         if (is_mouse_over(btn_exit, mousePos)) 
         {
             input_cooldown = cooldown;
-            save_tutorial_completed();
             go_to = StateType::Return;
         }
     }
@@ -243,15 +241,6 @@ void StateTutorial::render(sf::RenderWindow& window) {
     for(auto& dot : progress_dots)
     {
         window.draw(dot);
-    }
-}
-void StateTutorial::save_tutorial_completed()
-{
-    std::ofstream file("game_config.dat");
-    if (file.is_open())
-    {
-        file << "tutorial_seen=1";
-        file.close();
     }
 }
 
