@@ -21,6 +21,8 @@ private:
     Button* btn_tutorial = nullptr;
     Button* btn_exit = nullptr;
     Button* btn_stats = nullptr;
+    // por si tengo que borrara
+    bool mouse_released = false;
 
 
 public:
