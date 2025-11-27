@@ -28,7 +28,7 @@ Get a copy of the latest source code from the releases section and extract it or
 ## Linux
 Make sure you have **G++, CMake, and Makefile** installed, as well as the libraries “libxrandr-dev”, “libxcursor-dev”, "libopengl-dev", "libgl1-mesa-dev", "libudev-dev", "libfreetype-dev" "libvorbis-dev" "libflac-dev", and “libxi-dev”. You can install each of these with:
 
-    sudo apt build-essential cmake libxrandr-dev libxcursor-dev libopengl-dev libxi-dev libgl1-mesa-dev libudev-dev libfreetype-dev libvorbis-dev libflac-dev
+    sudo apt install build-essential cmake libxrandr-dev libxcursor-dev libopengl-dev libxi-dev libgl1-mesa-dev libudev-dev libfreetype-dev libvorbis-dev libflac-dev
 
 Then, in the root directory of the project, run:
 
