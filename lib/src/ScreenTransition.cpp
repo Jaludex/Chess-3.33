@@ -1,5 +1,12 @@
 #include <ScreenTransition.hpp>
 
+void center_sftext(sf::Text& text, sf::Vector2u win_size, int Yoffset)
+{
+    auto bounds = text.getLocalBounds();
+    text.setOrigin({bounds.size.x / 2, bounds.size.y / 2});
+    text.setPosition({static_cast<float>(win_size.x) / 2, (static_cast<float>(win_size.y) / 2) + Yoffset});
+}
+
 ScreenTransition::ScreenTransition() : target_frames(0), elapsed_frames(0), phase(TransitionPhase::Out)
 {}
 

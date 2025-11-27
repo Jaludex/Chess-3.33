@@ -69,6 +69,8 @@ protected:
     sf::Texture start_texture;
     Button* btnStart;
     PhaseType actual_phase;
+    PlayerType actual_winner;
+    sf::Text result;
 
     sf::Text round_display;
     sf::Text score_display;

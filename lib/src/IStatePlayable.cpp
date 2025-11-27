@@ -1,10 +1,13 @@
 #include <IStatePlayable.hpp>
 #include<Stats.hpp>
 IStatePlayable::IStatePlayable(sf::RenderWindow* _window) : btn_back_sprite(tex_exit), btnStart(nullptr), board(sf::Texture(sf::Vector2u((unsigned int)(Board::side_lenght * Board::cell_lenght),
-                                                                              (unsigned int)(Board::side_lenght * Board::cell_lenght)))), player_turn(true), bot(BoardL(), GameEvaluator()), round_display(font, "Round 1"), score_display(font, "0 Score")
+                                                                              (unsigned int)(Board::side_lenght * Board::cell_lenght)))), player_turn(true), bot(BoardL(), GameEvaluator()), round_display(font, "Round 1"), score_display(font, "0 Score"), result(font)
 {
     window = _window;
     actual_phase = PhaseType::Preparing;
+    actual_winner = PlayerType::None;
+
+    result.setCharacterSize(100);
 
     amount_of_white_instances = 0;
     amount_of_black_instances = 0;
@@ -140,6 +143,7 @@ void IStatePlayable::end_turn()
     auto possible_winner = check_winner();
     if (possible_winner != PlayerType::None)
     {
+        actual_winner = possible_winner;
         round_display.setString("Round " + std::to_string(round));
         transition.enter(10);
         return;
@@ -148,6 +152,7 @@ void IStatePlayable::end_turn()
     possible_winner = check_stalemate();
     if (possible_winner != PlayerType::None)
     {
+        actual_winner = possible_winner;
         round_display.setString("Round " + std::to_string(round));
         transition.enter(10);
         return;
@@ -254,6 +259,7 @@ PlayerType IStatePlayable::check_stalemate()
 
 void IStatePlayable::start_fight()
 {
+    this->actual_winner = PlayerType::None;
     this->actual_phase = PhaseType::Fighting;
     instantiators.clear();
     amount_of_black_instances = 0;

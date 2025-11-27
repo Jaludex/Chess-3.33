@@ -10,13 +10,15 @@ enum TransitionPhase
     Leave
 };
 
+void center_sftext(sf::Text& text, sf::Vector2u win_size, int Yoffset);
+
 class ScreenTransition
 {
-    private:
+private:
     float elapsed_frames;
     float target_frames;
     TransitionPhase phase;
-    public:
+public:
     ScreenTransition();
     bool is_transitioning();
     bool is_staying();
