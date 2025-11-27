@@ -12,6 +12,7 @@ void StateGameplay::init()
 {
     srand(time(NULL));
 
+
     if(!background_texture.loadFromFile("assets/game_background.png"))
     {
         std::cerr << "ERROR: No se pudo cargar fondo en Gameplay" << std::endl;
@@ -38,6 +39,9 @@ void StateGameplay::init()
 
     round_display.setFont(font);
     score_display.setFont(font);
+    name_input_box = new InputBox(font, "Diga su nombre general:");
+    name_input_box->activate();
+    is_asking_name = true;
 
     if(!start_texture.loadFromFile("assets/startBtn.png"))
     {

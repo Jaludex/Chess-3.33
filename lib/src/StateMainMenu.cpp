@@ -6,6 +6,7 @@ StateMainMenu::StateMainMenu(sf::RenderWindow* _window)
     window = _window;
     type = StateType::MainMenu;
     go_to = StateType::None;
+    mouse_released = false;
 }
 
 StateMainMenu::~StateMainMenu()
@@ -67,6 +68,8 @@ void StateMainMenu::init()
     button_texture.setSmooth(true); 
 
     text_title = new sf::Text(font, "CHESS 3.33", 60);
+    text_title->setOutlineColor(sf::Color::Black);
+    text_title->setOutlineThickness(3);
     btn_stats = new Button(button_texture, font);
     btn_play = new Button(button_texture, font);
     btn_tutorial = new Button(button_texture, font);
@@ -132,11 +135,16 @@ void StateMainMenu::update(float dt)
     update_button_color(btn_exit);
     update_button_color(btn_practice);
     update_button_color(btn_versus);
+
+    if (!sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+    {
+        mouse_released = true;
+    }
     if (time_elapsed < INPUT_COOLDOWN) 
     {
         return; 
     }
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+    if (mouse_released && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
     {
         if (is_mouse_over(btn_play->btn_sprite, mouse_pos))
         {
@@ -160,7 +168,7 @@ void StateMainMenu::update(float dt)
         }
         else if (is_mouse_over(btn_exit->btn_sprite, mouse_pos) && time_elapsed > INPUT_COOLDOWN)
         {
-            //window->close(); 
+            window->close(); 
         }
     }
 }
