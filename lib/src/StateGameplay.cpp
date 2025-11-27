@@ -21,7 +21,7 @@ void StateGameplay::init()
     background_sprite.setTexture(background_texture);
     background_sprite.setTextureRect({{0, 0}, {static_cast<int>(size.x), static_cast<int>(size.y)}});
 
-    if (!tex_exit.loadFromFile("assets/back_button.png")) // Usa la ruta de tu imagen de botón
+    if (!tex_exit.loadFromFile("assets/tutorial/exitBtn.png"))
     {
         std::cerr << "Error cargando textura de boton de regreso en Gameplay" << std::endl;
     }

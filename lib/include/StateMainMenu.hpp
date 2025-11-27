@@ -15,6 +15,8 @@ private:
     sf::Texture button_texture;
     sf::Text* text_title = nullptr;
     
+    Button* btn_practice = nullptr;
+    Button* btn_versus = nullptr;
     Button* btn_play = nullptr;
     Button* btn_tutorial = nullptr;
     Button* btn_exit = nullptr;
