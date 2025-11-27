@@ -29,7 +29,7 @@ void StateStats::init()
 
     std::sort(loaded_stats.begin(), loaded_stats.end(), 
         [](const Stats& a, const Stats& b) {
-            return a.get_score() > b.get_score();
+            return a.get_score() < b.get_score();
         });
 
     total_height = loaded_stats.size() * row_height;
