@@ -1,11 +1,13 @@
 #include <StateGameplay.hpp>
 #include"StateTutorial.hpp"
 #include <Board.hpp>
-#include<GameStateManager.hpp>
-#include<Stats.hpp>
+#include <GameStateManager.hpp>
+#include <Stats.hpp>
 int main()
 {
     SpriteManager::init();
+    SoundManager::init();
+
     auto window = sf::RenderWindow(sf::VideoMode({1080u, 810u}), "Chess 3.33 Alpha");
     window.setFramerateLimit(144u);
     
