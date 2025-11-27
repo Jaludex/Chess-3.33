@@ -42,6 +42,7 @@ public:
     bool is_mouse_over(const sf::Text& text, const sf::Vector2i& mouse_pos);
     bool is_mouse_over(const sf::Sprite& sprite, const sf::Vector2i& mouse_pos);
     void setup_button(Button* button, const std::string& str,float x_pos, float y_pos,const sf::Font& font, const sf::Texture& button_texture);
+
 };
 using GameStatePtr = std::shared_ptr<IGameState>;
 
