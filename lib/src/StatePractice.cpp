@@ -10,7 +10,7 @@ StatePractice::~StatePractice() {}
 
 void StatePractice::init()
 {
-    actual_phase == PhaseType::Preparing;
+    actual_phase = PhaseType::Preparing;
 
     //board.add_piece(std::make_shared<InBoardObject>(Position(3, 5), std::make_shared<Queen>(true, SpriteManager::get_piece_texture("white_queen"))));
     //board.add_piece(std::make_shared<InBoardObject>(Position(1, 4), std::make_shared<Archer>(true, SpriteManager::get_piece_texture("white_archer"))));
@@ -49,7 +49,7 @@ void StatePractice::init()
 void StatePractice::terminate()
 {
     delete btnStart;
-    btnStart == nullptr;
+    btnStart = nullptr;
 }
 
 void StatePractice::update(float dt)

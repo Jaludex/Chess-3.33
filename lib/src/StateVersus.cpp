@@ -39,7 +39,7 @@ void StateVersus::init()
 void StateVersus::terminate()
 {
     delete btnStart;
-    btnStart == nullptr;
+    btnStart = nullptr;
 }
 
 void StateVersus::update(float dt)
