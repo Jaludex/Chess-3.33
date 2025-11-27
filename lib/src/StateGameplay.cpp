@@ -4,8 +4,6 @@ StateGameplay::StateGameplay(sf::RenderWindow* _window) : background_sprite(back
 {
     type = StateType::Gameplay;
     go_to = StateType::None;
-
-
 }
 
 StateGameplay::~StateGameplay() {}
@@ -39,6 +37,8 @@ void StateGameplay::init()
         std::cerr << "ERROR: No se pudo cargar fuente en Gameplay" << std::endl;
     }
 
+    round_display.setFont(font);
+    score_display.setFont(font);
     name_input_box = new InputBox(font, "Diga su nombre general:");
     name_input_box->activate();
     is_asking_name = true;
@@ -155,6 +155,10 @@ void StateGameplay::render(sf::RenderWindow& window)
     {
         inst->render(window);
     }
+
+    window.draw(score_display);
+    window.draw(round_display);
+    
 }
 
 void StateGameplay::on_resize() 
@@ -204,6 +208,17 @@ void StateGameplay::adjust_elements()
     setup_button(btnStart,"START",winSize.x - pos_x * 1.8, winSize.y - pos_y,font,start_texture);
     btnStart->btn_text.setOutlineThickness(2);
     btnStart->btn_text.setOutlineColor(sf::Color::Black);
+
+
+    pos_x = win_size.x - (Board::cell_lenght / 2);
+    
+    score_display.setPosition({pos_x, Board::cell_lenght/2});
+    round_display.setPosition({pos_x, Board::cell_lenght});
+
+    sf::FloatRect textRect = score_display.getLocalBounds();
+    score_display.setOrigin(sf::Vector2f(textRect.size.x, 0));
+    textRect = round_display.getLocalBounds();
+    round_display.setOrigin(sf::Vector2f(textRect.size.x, 0));
 
     this->load_instanciators();
     

@@ -1,7 +1,7 @@
 #include <IStatePlayable.hpp>
 #include<Stats.hpp>
 IStatePlayable::IStatePlayable(sf::RenderWindow* _window) : btn_back_sprite(tex_exit), btnStart(nullptr), board(sf::Texture(sf::Vector2u((unsigned int)(Board::side_lenght * Board::cell_lenght),
-                                                                              (unsigned int)(Board::side_lenght * Board::cell_lenght)))), player_turn(true), bot(BoardL(), GameEvaluator())
+                                                                              (unsigned int)(Board::side_lenght * Board::cell_lenght)))), player_turn(true), bot(BoardL(), GameEvaluator()), round_display(font, "Round 1"), score_display(font, "0 Score")
 {
     window = _window;
     actual_phase = PhaseType::Preparing;
@@ -127,12 +127,21 @@ void IStatePlayable::end_turn()
 
     //std::cout << score << std::endl;
 
+    score_display.setString(std::to_string(score) + " Score");
+
+    sf::FloatRect textRect = score_display.getLocalBounds();
+    score_display.setOrigin(sf::Vector2f(textRect.size.x, 0));
+    textRect = round_display.getLocalBounds();
+    round_display.setOrigin(sf::Vector2f(textRect.size.x, 0));
+
+
     player_turn = !player_turn;
     //Aqui se implementa el arbitro mejoe
     auto possible_winner = check_winner();
     if (possible_winner != PlayerType::None)
     {
         this->end_fight(possible_winner);
+        round_display.setString("Round " + std::to_string(round));
         return;
     }
 
@@ -140,6 +149,7 @@ void IStatePlayable::end_turn()
     if (possible_winner != PlayerType::None)
     {
         this->end_fight(possible_winner);
+        round_display.setString("Round " + std::to_string(round));
         return;
     }
     
@@ -181,8 +191,8 @@ PlayerType IStatePlayable::check_stalemate()
     auto elements = board.get_elements();
 
     //Verifica si no puedes jugar
-    if (bot.generate_all_plays(elements, true).empty()) return PlayerType::P2;
-    if (bot.generate_all_plays(elements, false).empty()) return PlayerType::P1;
+    if (player_turn && bot.generate_all_plays(elements, true).empty()) return PlayerType::P2;
+    if (!player_turn && bot.generate_all_plays(elements, false).empty()) return PlayerType::P1;
 
     bool p1_occupies_white = false;
     bool p1_occupies_black = false;

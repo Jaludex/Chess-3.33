@@ -68,6 +68,9 @@ protected:
     Button* btnStart;
     PhaseType actual_phase;
 
+    sf::Text round_display;
+    sf::Text score_display;
+
     float fix_offset(const sf::Sprite& _sprite, char t);
     PieceInstantPtr clicked_instantiator(sf::Vector2i mouse_position);
     PlayerType check_winner();
