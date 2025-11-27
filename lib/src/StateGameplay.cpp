@@ -4,8 +4,6 @@ StateGameplay::StateGameplay(sf::RenderWindow* _window) : background_sprite(back
 {
     type = StateType::Gameplay;
     go_to = StateType::None;
-
-
 }
 
 StateGameplay::~StateGameplay() {}
@@ -13,6 +11,7 @@ StateGameplay::~StateGameplay() {}
 void StateGameplay::init()
 {
     srand(time(NULL));
+
 
     if(!background_texture.loadFromFile("assets/game_background.png"))
     {
@@ -37,7 +36,13 @@ void StateGameplay::init()
     {
         std::cerr << "ERROR: No se pudo cargar fuente en Gameplay" << std::endl;
     }
-        
+
+    round_display.setFont(font);
+    score_display.setFont(font);
+    name_input_box = new InputBox(font, "Diga su nombre general:");
+    name_input_box->activate();
+    is_asking_name = true;
+
     if(!start_texture.loadFromFile("assets/startBtn.png"))
     {
         std::cerr << "Error cargando textura de boton de start en Gameplay" << std::endl;
@@ -81,6 +86,7 @@ void StateGameplay::update(float dt)
     if (actual_phase != PhaseType::Fighting || player_turn)
     {
         drag();
+        if (selected_piece && !selected_piece->piece->get_team()) selected_piece = nullptr;
     }
     else
     {
@@ -171,6 +177,9 @@ void StateGameplay::render(sf::RenderWindow& window)
         inst->render(window);
     }
 
+    window.draw(score_display);
+    window.draw(round_display);
+    
     transition.render(window);
 }
 
@@ -222,6 +231,17 @@ void StateGameplay::adjust_elements()
     btnStart->btn_text.setOutlineThickness(2);
     btnStart->btn_text.setOutlineColor(sf::Color::Black);
 
+
+    pos_x = win_size.x - (Board::cell_lenght / 2);
+    
+    score_display.setPosition({pos_x, Board::cell_lenght/2});
+    round_display.setPosition({pos_x, Board::cell_lenght});
+
+    sf::FloatRect textRect = score_display.getLocalBounds();
+    score_display.setOrigin(sf::Vector2f(textRect.size.x, 0));
+    textRect = round_display.getLocalBounds();
+    round_display.setOrigin(sf::Vector2f(textRect.size.x, 0));
+
     this->load_instanciators();
     
 }
@@ -233,7 +253,7 @@ void StateGameplay::new_game()
     {
         for (size_t i = 0; i < 5; i++)
         {
-            inventory.push_front(PieceType::Queen);
+            inventory.push_front(PieceType::Pawn);
         }
     }
     difficulty = 2;

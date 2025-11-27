@@ -1,10 +1,13 @@
 #include <IStatePlayable.hpp>
-
+#include<Stats.hpp>
 IStatePlayable::IStatePlayable(sf::RenderWindow* _window) : btn_back_sprite(tex_exit), btnStart(nullptr), board(sf::Texture(sf::Vector2u((unsigned int)(Board::side_lenght * Board::cell_lenght),
-                                                                              (unsigned int)(Board::side_lenght * Board::cell_lenght)))), player_turn(true), bot(BoardL(), GameEvaluator())
+                                                                              (unsigned int)(Board::side_lenght * Board::cell_lenght)))), player_turn(true), bot(BoardL(), GameEvaluator()), round_display(font, "Round 1"), score_display(font, "0 Score")
 {
     window = _window;
     actual_phase = PhaseType::Preparing;
+
+    amount_of_white_instances = 0;
+    amount_of_black_instances = 0;
 }
 
 IStatePlayable::~IStatePlayable() { }
@@ -49,6 +52,8 @@ void IStatePlayable::drag()
         }
         else if (actual_phase == PhaseType::Preparing)
         {
+            if (selected_piece->piece->get_team())   amount_of_white_instances--;
+            else                                     amount_of_black_instances--;
             returned_piece();
         }
 
@@ -57,7 +62,8 @@ void IStatePlayable::drag()
     }
     else if (selected_inst)
     {
-        if(board.is_touching_mouse(mouse_position))
+        auto amount = (selected_inst->get_team() ? amount_of_white_instances : amount_of_black_instances);
+        if(board.is_touching_mouse(mouse_position) && amount < 5)
         {
             auto pos = board.get_square_by_coords(mouse_position);
             auto new_piece = selected_inst->make_piece(pos.x, pos.y);
@@ -66,6 +72,8 @@ void IStatePlayable::drag()
                 if (!board.get_position(pos.x, pos.y))
                 {
                     board.add_piece(new_piece);
+                    if (new_piece->piece->get_team())   amount_of_white_instances++;
+                    else                                amount_of_black_instances++;
                     dropped_inst();
                 }
             }
@@ -119,11 +127,20 @@ void IStatePlayable::end_turn()
 
     //std::cout << score << std::endl;
 
+    score_display.setString(std::to_string(score) + " Score");
+
+    sf::FloatRect textRect = score_display.getLocalBounds();
+    score_display.setOrigin(sf::Vector2f(textRect.size.x, 0));
+    textRect = round_display.getLocalBounds();
+    round_display.setOrigin(sf::Vector2f(textRect.size.x, 0));
+
+
     player_turn = !player_turn;
     //Aqui se implementa el arbitro mejoe
     auto possible_winner = check_winner();
     if (possible_winner != PlayerType::None)
     {
+        round_display.setString("Round " + std::to_string(round));
         transition.enter(10);
         return;
     }
@@ -131,6 +148,7 @@ void IStatePlayable::end_turn()
     possible_winner = check_stalemate();
     if (possible_winner != PlayerType::None)
     {
+        round_display.setString("Round " + std::to_string(round));
         transition.enter(10);
         return;
     }
@@ -153,8 +171,17 @@ PlayerType IStatePlayable::check_winner()
         }
     }
 
-    if (!P1_King) return PlayerType::P2;
-    if (!P2_King) return PlayerType::P1;
+    if (!P1_King) 
+    {
+        
+        return PlayerType::P2;
+    }
+    if (!P2_King) 
+    {
+        Stats stats(score, round);
+        stats.save_or_update();
+        return PlayerType::P1;
+    }
     return PlayerType::None;
 }
 
@@ -164,8 +191,8 @@ PlayerType IStatePlayable::check_stalemate()
     auto elements = board.get_elements();
 
     //Verifica si no puedes jugar
-    if (bot.generate_all_plays(elements, true).empty()) return PlayerType::P2;
-    if (bot.generate_all_plays(elements, false).empty()) return PlayerType::P1;
+    if (player_turn && bot.generate_all_plays(elements, true).empty()) return PlayerType::P2;
+    if (!player_turn && bot.generate_all_plays(elements, false).empty()) return PlayerType::P1;
 
     bool p1_occupies_white = false;
     bool p1_occupies_black = false;
@@ -229,5 +256,7 @@ void IStatePlayable::start_fight()
 {
     this->actual_phase = PhaseType::Fighting;
     instantiators.clear();
+    amount_of_black_instances = 0;
+    amount_of_white_instances = 0;
     board.update_avaiable_moves();
 }

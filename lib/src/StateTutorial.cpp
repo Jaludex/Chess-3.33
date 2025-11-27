@@ -27,7 +27,7 @@ void StateTutorial::init()
     background_sprite.setTexture(background_tex, true);
 
     std::string route = "assets/tutorial/";
-    for(int i = 1; i <= 8; i++) 
+    for(int i = 1; i <= 6; i++) 
     {
         sf::Texture texture;
         std::string path = route + "slide" + std::to_string(i) + ".png";

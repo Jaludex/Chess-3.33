@@ -1,7 +1,7 @@
 #pragma once
 
 #include <IStatePlayable.hpp>
-
+#include<TextInput.hpp>
 using PieceInstantPtr = std::shared_ptr<PieceInstantiator>;
 using json = nlohmann::json;
 
@@ -11,6 +11,9 @@ protected:
     sf::Texture background_texture; 
     sf::Sprite background_sprite;
 
+    InputBox* name_input_box;
+    bool is_asking_name;
+    std::string player_name;
     
     std::list<PieceType> inventory;
     PieceType enemy_king; //Este sera la pieza que mantendra el rey enemigo
@@ -22,6 +25,7 @@ protected:
     void dropped_inst() override;
     void returned_piece() override;
     void end_fight(PlayerType winner) override;
+    //void handle_event(const sf::Event& event) override;
     void new_game();
     
 public:
