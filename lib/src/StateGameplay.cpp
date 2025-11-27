@@ -27,8 +27,8 @@ void StateGameplay::init()
     btn_start->setFillColor(sf::Color::White);
     btn_start->setOutlineThickness(2);
     btn_start->setOutlineColor(sf::Color::Black);
-
-    if (!tex_exit.loadFromFile("assets/back_button.png")) // Usa la ruta de tu imagen de botón
+    
+    if (!tex_exit.loadFromFile("assets/tutorial/exitBtn.png"))
     {
         std::cerr << "Error cargando textura de boton de regreso en Gameplay" << std::endl;
     }
