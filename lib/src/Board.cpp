@@ -64,7 +64,7 @@ void Board::render_move_highlights(sf::RenderWindow& window, const std::vector<B
 
     for (auto move : valid_moves)
     {
-        cell.setFillColor( (move->piece) ? sf::Color::Red : sf::Color::Cyan );
+        cell.setFillColor( (move->piece) ? sf::Color{255, 0, 127, 128} : sf::Color{0, 127, 255, 128} );
         auto pos = sf::Vector2<float>({(float)(move->pos.x * Board::cell_lenght), (float)(move->pos.y * Board::cell_lenght)});
         cell.setPosition(origin + pos);
         window.draw(cell);
@@ -80,7 +80,7 @@ void Board::render_instantiator_highlights(sf::RenderWindow& window)
 void Board::render_instantiator_highlights(sf::RenderWindow& window, bool team)
 {
     sf::RectangleShape cell({(float)(Board::cell_lenght),(float)(Board::cell_lenght)});
-    cell.setFillColor(sf::Color::Cyan);
+    cell.setFillColor(sf::Color{0, 127, 255, 128});
     auto origin = this->sprite.getPosition();
 
     uint8_t start = ((team) ? Board::side_lenght - 1 : 1);
