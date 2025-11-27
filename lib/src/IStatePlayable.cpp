@@ -32,7 +32,7 @@ void IStatePlayable::drag()
             {
                 if (selected_piece->piece && selected_piece->piece->get_team() != player_turn) selected_piece = nullptr;                
             }
-            else
+            else if (actual_phase == PhaseType::Preparing)
             {
                 selected_inst = clicked_instantiator(mouse_position);
             }
@@ -61,7 +61,7 @@ void IStatePlayable::drag()
         {
             auto pos = board.get_square_by_coords(mouse_position);
             auto new_piece = selected_inst->make_piece(pos.x, pos.y);
-            if ((new_piece->piece->get_team() && pos.y >= 4) || (!new_piece->piece->get_team() && pos.y <= 1))
+            if (this->type == StateType::Practice || (new_piece->piece->get_team() && pos.y >= 4) || (!new_piece->piece->get_team() && pos.y <= 1))
             {
                 if (!board.get_position(pos.x, pos.y))
                 {

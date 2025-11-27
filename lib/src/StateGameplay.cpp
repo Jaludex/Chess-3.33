@@ -134,8 +134,11 @@ void StateGameplay::render(sf::RenderWindow& window)
 
     window.draw(btn_back_sprite);
 
-    if (actual_phase == PhaseType::Preparing) window.draw(btnStart->btn_sprite);
-    if (actual_phase == PhaseType::Preparing) window.draw(btnStart->btn_text);
+    if (actual_phase == PhaseType::Preparing) 
+    {
+        window.draw(btnStart->btn_sprite);
+        window.draw(btnStart->btn_text);
+    }
 
     board.render(window);
     if (actual_phase == PhaseType::Fighting && selected_piece) board.render_move_highlights(window, selected_piece->piece->get_valid_moves());
@@ -340,7 +343,7 @@ void StateGameplay::end_fight(PlayerType winner)
 
         if (round % 3 == 1)
         {
-            inventory.push_front(enemy_king);
+            if (inventory.size() <= 10) inventory.push_front(enemy_king);
             PieceType new_enemy_king;
             do
             {

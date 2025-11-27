@@ -85,7 +85,7 @@ void Board::render_instantiator_highlights(sf::RenderWindow& window, bool team)
 
     uint8_t start = ((team) ? Board::side_lenght - 1 : 1);
 
-    for (size_t i = start; i >= start - 1; i--)
+    for (int i = start; i >= start - 1; i--)
     {
         for (size_t j = 0; j < 6; j++)
         {
@@ -148,7 +148,7 @@ BoardL Board::get_elements()
 
 BoardObjectPtr Board::get_position(short x, short y)
 {
-    if ((x >= Board::side_lenght) || (y >= Board::side_lenght)) throw std::invalid_argument("Coordinate outside of board");
+    if ((x >= Board::side_lenght) || (y >= Board::side_lenght)) return nullptr;
 
     for (auto element : elements)
     {
