@@ -5,6 +5,9 @@ IStatePlayable::IStatePlayable(sf::RenderWindow* _window) : btn_back_sprite(tex_
 {
     window = _window;
     actual_phase = PhaseType::Preparing;
+
+    amount_of_white_instances = 0;
+    amount_of_black_instances = 0;
 }
 
 IStatePlayable::~IStatePlayable() { }
@@ -49,6 +52,8 @@ void IStatePlayable::drag()
         }
         else if (actual_phase == PhaseType::Preparing)
         {
+            if (selected_piece->piece->get_team())   amount_of_white_instances--;
+            else                                     amount_of_black_instances--;
             returned_piece();
         }
 
@@ -57,7 +62,8 @@ void IStatePlayable::drag()
     }
     else if (selected_inst)
     {
-        if(board.is_touching_mouse(mouse_position))
+        auto amount = (selected_inst->get_team() ? amount_of_white_instances : amount_of_black_instances);
+        if(board.is_touching_mouse(mouse_position) && amount < 5)
         {
             auto pos = board.get_square_by_coords(mouse_position);
             auto new_piece = selected_inst->make_piece(pos.x, pos.y);
@@ -66,6 +72,8 @@ void IStatePlayable::drag()
                 if (!board.get_position(pos.x, pos.y))
                 {
                     board.add_piece(new_piece);
+                    if (new_piece->piece->get_team())   amount_of_white_instances++;
+                    else                                amount_of_black_instances++;
                     dropped_inst();
                 }
             }
@@ -229,5 +237,7 @@ void IStatePlayable::start_fight()
 {
     this->actual_phase = PhaseType::Fighting;
     instantiators.clear();
+    amount_of_black_instances = 0;
+    amount_of_white_instances = 0;
     board.update_avaiable_moves();
 }

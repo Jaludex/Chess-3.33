@@ -56,6 +56,8 @@ protected:
     bool player_turn;
     int round;
     std::list<PieceInstantPtr> instantiators;
+    size_t amount_of_white_instances;
+    size_t amount_of_black_instances;
     GameTree bot; 
     sf::Font font; 
     //sf::Text* btn_back = nullptr;

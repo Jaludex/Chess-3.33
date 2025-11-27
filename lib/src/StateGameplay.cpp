@@ -212,7 +212,7 @@ void StateGameplay::new_game()
     {
         for (size_t i = 0; i < 5; i++)
         {
-            inventory.push_front(PieceType::Queen);
+            inventory.push_front(PieceType::Pawn);
         }
     }
     difficulty = 2;
