@@ -10,7 +10,7 @@ StatePractice::~StatePractice() {}
 
 void StatePractice::init()
 {
-
+    actual_phase == PhaseType::Preparing;
 
     //board.add_piece(std::make_shared<InBoardObject>(Position(3, 5), std::make_shared<Queen>(true, SpriteManager::get_piece_texture("white_queen"))));
     //board.add_piece(std::make_shared<InBoardObject>(Position(1, 4), std::make_shared<Archer>(true, SpriteManager::get_piece_texture("white_archer"))));
@@ -33,6 +33,13 @@ void StatePractice::init()
 
     tex_exit.setSmooth(true);
     btn_back_sprite.setTexture(tex_exit, true);
+
+    if (!start_texture.loadFromFile("assets/startBtn.png"))
+    {
+        std::cerr << "Error cargando textura de boton de start en Gameplay" << std::endl;
+    }
+    start_texture.setSmooth(true);
+    btnStart = new Button(start_texture, font);
     
     bot.set_current_board(board.get_elements());
     bot.initial_game_eval();
@@ -41,7 +48,8 @@ void StatePractice::init()
 
 void StatePractice::terminate()
 {
-    //si usamos shared pointers entonces no necesitamos eliminar la pieza creada en init
+    delete btnStart;
+    btnStart == nullptr;
 }
 
 void StatePractice::update(float dt)
@@ -72,10 +80,45 @@ void StatePractice::update(float dt)
     if (is_mouse_over(btn_back_sprite, mousePos)) btn_back_sprite.setColor(sf::Color(200, 200, 200));
     else btn_back_sprite.setColor(sf::Color::White);
 
-   if (is_mouse_over(btn_back_sprite, mousePos) && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+    if (is_mouse_over(btn_back_sprite, mousePos) && sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
     {
         this->go_to = StateType::Return;
         return;
+    }
+
+    if (btnStart) 
+    {
+        if (is_mouse_over(btnStart->btn_sprite, mousePos)) 
+        {
+            if(start_texture.loadFromFile("assets/startBtnR.png"))
+            {
+                btnStart->btn_sprite.setTexture(start_texture);
+            }
+            else 
+            {
+                std::cerr << "ERROR: No se pudo cargar boton rojo" << std::endl;
+            }
+        }
+        else 
+        {
+            if(start_texture.loadFromFile("assets/startBtn.png"))
+            {
+                btnStart->btn_sprite.setTexture(start_texture);
+            }
+            else 
+            {
+                std::cerr << "ERROR: No se pudo cargar boton estandar" << std::endl;
+            }
+        }
+    }
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+    {
+        if (btnStart && is_mouse_over(btnStart->btn_sprite, mousePos) && board.is_white_king_in_board() && board.is_black_king_in_board())
+        {
+            this->start_fight();
+
+            return;
+        }
     }
     board.update(dt);
 }
@@ -93,6 +136,12 @@ void StatePractice::render(sf::RenderWindow& window)
     }
 
     window.draw(btn_back_sprite);
+
+    if (btnStart && actual_phase == PhaseType::Preparing) 
+    {
+        window.draw(btnStart->btn_sprite);
+        window.draw(btnStart->btn_text);
+    }
 }
 
 void StatePractice::on_resize() 
@@ -108,30 +157,8 @@ void StatePractice::adjust_elements()
     board.set_sprite_position(pos);
     board.on_resize();
 
-    float width = (float)window->getSize().x;
-
-    //Esto deberia cambiarse cuando solo aparezcan los instanciadores de las piezas que tienes, pero por ahora resuelve
-    instantiators.clear();
-
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Pawn, true, sf::Vector2f(xmargin, ymargin)));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Horse, true, sf::Vector2f(xmargin, ymargin + yoffset)));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Bishop, true, sf::Vector2f(xmargin, ymargin + 2*yoffset)));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Tower, true, sf::Vector2f(xmargin, ymargin + 3*yoffset))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Queen, true, sf::Vector2f(xmargin, ymargin + 4*yoffset))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Trapper, true, sf::Vector2f(xmargin + xoffset, ymargin + yoffset))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Crook, true, sf::Vector2f(xmargin + xoffset, ymargin + 2*yoffset))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Archer, true, sf::Vector2f(xmargin + xoffset, ymargin + 3*yoffset)));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Portal, true, sf::Vector2f(xmargin + xoffset, ymargin + 4*yoffset)));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Pawn, false, sf::Vector2f(width - (xmargin + 100), ymargin)));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Horse, false, sf::Vector2f(width - (xmargin + 100), ymargin + yoffset)));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Bishop, false, sf::Vector2f(width - (xmargin + 100), ymargin + 2*yoffset))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Tower, false, sf::Vector2f(width - (xmargin + 100), ymargin + 3*yoffset))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Queen, false, sf::Vector2f(width - (xmargin + 100), ymargin + 4*yoffset))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Trapper, false, sf::Vector2f(width - (xmargin + 100) - xoffset, ymargin + yoffset))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Crook, false, sf::Vector2f(width - (xmargin + 100) - xoffset, ymargin + 2*yoffset))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Archer, false, sf::Vector2f(width - (xmargin + 100) - xoffset, ymargin + 3*yoffset))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Portal, false, sf::Vector2f(width - (xmargin + 100) - xoffset, ymargin + 4*yoffset))); 
     
+
     sf::Vector2u winSizeU = window->getSize();
     sf::Vector2f winSize((float)winSizeU.x, (float)winSizeU.y);
     float target_btn_height = winSize.y * 0.08f;
@@ -152,25 +179,64 @@ void StatePractice::adjust_elements()
     float pos_y = margin + bounds.size.y * btn_back_sprite.getScale().y / 2.0f;
 
     btn_back_sprite.setPosition(sf::Vector2f(pos_x, pos_y));
-    
+    setup_button(btnStart,"START",winSize.x - pos_x * 1.8, winSize.y - pos_y,font,start_texture);
+    btnStart->btn_text.setOutlineThickness(2);
+    btnStart->btn_text.setOutlineColor(sf::Color::Black);
+    this->load_instanciators();
 }
 
 void StatePractice::dropped_inst()
 {
-    
+    if (!selected_inst) return;
+
+    load_instanciators();
 }
 
 void StatePractice::returned_piece()
 {
+    if (!selected_piece) return;
 
+    board.remove_piece(selected_piece);
+    
+    load_instanciators();
 }
 
 void StatePractice::end_fight(PlayerType winner)
 {
+    actual_phase = PhaseType::Preparing;
     
+    board.clear();
+    round++;
+    player_turn = true;
+
+    this->adjust_elements();
 }
 
 void StatePractice::load_instanciators()
 {
+    float width = (float)window->getSize().x;
 
+    instantiators.clear();
+
+    auto updated_ymargin = ymargin + 50; 
+
+    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Pawn, true, sf::Vector2f(xmargin, updated_ymargin)));
+    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Horse, true, sf::Vector2f(xmargin, updated_ymargin + yoffset)));
+    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Bishop, true, sf::Vector2f(xmargin, updated_ymargin + 2*yoffset)));
+    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Tower, true, sf::Vector2f(xmargin, updated_ymargin + 3*yoffset))); 
+    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Queen, true, sf::Vector2f(xmargin, updated_ymargin + 4*yoffset))); 
+    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Trapper, true, sf::Vector2f(xmargin + xoffset, updated_ymargin + yoffset))); 
+    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Crook, true, sf::Vector2f(xmargin + xoffset, updated_ymargin + 2*yoffset))); 
+    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Archer, true, sf::Vector2f(xmargin + xoffset, updated_ymargin + 3*yoffset)));
+    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Portal, true, sf::Vector2f(xmargin + xoffset, updated_ymargin + 4*yoffset)));
+    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Pawn, false, sf::Vector2f(width - (xmargin + 100), updated_ymargin)));
+    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Horse, false, sf::Vector2f(width - (xmargin + 100), updated_ymargin + yoffset)));
+    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Bishop, false, sf::Vector2f(width - (xmargin + 100), updated_ymargin + 2*yoffset))); 
+    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Tower, false, sf::Vector2f(width - (xmargin + 100), updated_ymargin + 3*yoffset))); 
+    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Queen, false, sf::Vector2f(width - (xmargin + 100), updated_ymargin + 4*yoffset))); 
+    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Trapper, false, sf::Vector2f(width - (xmargin + 100) - xoffset, updated_ymargin + yoffset))); 
+    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Crook, false, sf::Vector2f(width - (xmargin + 100) - xoffset, updated_ymargin + 2*yoffset))); 
+    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Archer, false, sf::Vector2f(width - (xmargin + 100) - xoffset, updated_ymargin + 3*yoffset))); 
+    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Portal, false, sf::Vector2f(width - (xmargin + 100) - xoffset, updated_ymargin + 4*yoffset)));
+    
 }

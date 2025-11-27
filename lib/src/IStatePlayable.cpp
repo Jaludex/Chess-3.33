@@ -30,7 +30,7 @@ void IStatePlayable::drag()
 
             if (selected_piece)
             {
-                if (selected_piece->piece && selected_piece->piece->get_team() != player_turn) selected_piece = nullptr;                
+                if (selected_piece->piece && (actual_phase == PhaseType::Fighting && selected_piece->piece->get_team() != player_turn)) selected_piece = nullptr;                
             }
             else if (actual_phase == PhaseType::Preparing)
             {
