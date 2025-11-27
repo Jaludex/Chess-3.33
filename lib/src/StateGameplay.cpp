@@ -1,19 +1,20 @@
 #include <StateGameplay.hpp>
 
-StateGameplay::StateGameplay(sf::RenderWindow* _window) :btn_back_sprite(tex_exit), board(sf::Texture(sf::Vector2u((unsigned int)(Board::side_lenght * Board::cell_lenght),
-                                                                              (unsigned int)(Board::side_lenght * Board::cell_lenght)))), player_turn(true), bot(BoardL(), GameEvaluator()),background_sprite(background_texture)
+StateGameplay::StateGameplay(sf::RenderWindow* _window) :btn_back_sprite(tex_exit),background_sprite(background_texture), IStatePlayable(_window)
 {
-    window = _window;
     type = StateType::Gameplay;
     go_to = StateType::None;
+
+
 }
+
 StateGameplay::~StateGameplay() {}
 
 void StateGameplay::init()
 {
-    srand(time(0));
+    srand(time(NULL));
     
-        if(!background_texture.loadFromFile("assets/game_background.png"))
+    if(!background_texture.loadFromFile("assets/game_background.png"))
     {
         std::cerr << "ERROR: No se pudo cargar fondo en Gameplay" << std::endl;
     }
@@ -21,25 +22,30 @@ void StateGameplay::init()
     background_sprite.setTexture(background_texture);
     background_sprite.setTextureRect({{0, 0}, {static_cast<int>(size.x), static_cast<int>(size.y)}});
 
+    //Como es temporal, por ahora solo tomo todo esto y lo copio para el boton de empezar
+    btn_start = new sf::Text(font, "->", 30);
+    btn_start->setFillColor(sf::Color::White);
+    btn_start->setOutlineThickness(2);
+    btn_start->setOutlineColor(sf::Color::Black);
+
     if (!tex_exit.loadFromFile("assets/back_button.png")) // Usa la ruta de tu imagen de botón
     {
         std::cerr << "Error cargando textura de boton de regreso en Gameplay" << std::endl;
     }
+
     tex_exit.setSmooth(true);
     btn_back_sprite.setTexture(tex_exit, true);
-    this->on_resize();
-    this->set_up_black_team();
 
-    //board.add_piece(std::make_shared<InBoardObject>(Position(3, 5), std::make_shared<Queen>(true, SpriteManager::get_piece_texture("white_queen"))));
-    //board.add_piece(std::make_shared<InBoardObject>(Position(1, 4), std::make_shared<Archer>(true, SpriteManager::get_piece_texture("white_archer"))));
-    //board.add_piece(std::make_shared<InBoardObject>(Position(5, 5), std::make_shared<Crook>(true, SpriteManager::get_piece_texture("white_crook"))));
-    //
-    //board.add_piece(std::make_shared<InBoardObject>(Position(0, 1), std::make_shared<Horse>(false, SpriteManager::get_piece_texture("black_horse"))));
-    //board.add_piece(std::make_shared<InBoardObject>(Position(2, 1), std::make_shared<Queen>(false, SpriteManager::get_piece_texture("black_queen"))));
-    //board.add_piece(std::make_shared<InBoardObject>(Position(1, 1), std::make_shared<Archer>(false, SpriteManager::get_piece_texture("black_archer"))));
-    //board.add_piece(std::make_shared<InBoardObject>(Position(1, 0), std::make_shared<Portal>(false, SpriteManager::get_piece_texture("black_portal"))));
-    //board.add_piece(std::make_shared<InBoardObject>(Position(5, 1), std::make_shared<Trapper>(false, SpriteManager::get_piece_texture("black_trapper"))));
+    //Aqui se intenta cargar una partida anterior que se haya guardado, sino se carga este cacho
+    new_game();
+    
+    
+    if (!font.openFromFile("assets/fonts/arial.ttf")) 
+    {
+         std::cerr << "ERROR: No se pudo cargar fuente en Gameplay" << std::endl;
+    }
 
+    adjust_elements();
 
     bot.set_current_board(board.get_elements());
     bot.initial_game_eval();
@@ -52,23 +58,24 @@ void StateGameplay::terminate()
 
 void StateGameplay::update(float dt)
 {
-    if (player_turn)
+    if (actual_phase != PhaseType::Fighting || player_turn)
     {
         drag();
     }
     else
     {
         sf::sleep(sf::seconds(1.f));
-        auto bot_play = bot.find_best_play(4);
+        auto bot_play = bot.find_best_play(difficulty);
 
         if (bot_play.moving_piece)
         {
-            Position old_position = bot_play.moving_piece->pos;
+            Position old_position(bot_play.moving_piece->pos);
 
             board.move_piece(bot_play.moving_piece, bot_play.destination);
             board.set_piece_sprite(bot_play.moving_piece);
 
             board.update_bombs(bot_play.moving_piece, old_position);
+            this->end_turn();
         }
 
         player_turn = true;
@@ -83,81 +90,35 @@ void StateGameplay::update(float dt)
         this->go_to = StateType::MainMenu;
         return;
     }
+
+    if (btn_start) 
+    {
+        if (is_mouse_over(*btn_start, mouse_pos)) btn_start->setFillColor(sf::Color::Yellow);
+        else btn_start->setFillColor(sf::Color::White);
+    }
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
+    {
+        if (btn_start && is_mouse_over(*btn_start, mouse_pos) && board.is_white_king_in_board())
+        {
+            this->start_fight();
+
+            return;
+        }
+    }
     board.update(dt);
 }
-float fix_offset(const sf::Sprite& _sprite, char t)
-{
-    sf::FloatRect boundaries = _sprite.getGlobalBounds();
-    if(t == 'x') return boundaries.size.x / 2.0;
 
-    else return boundaries.size.y / 2.0;
-}
-void StateGameplay::drag()
-{
-    auto mouse_position = this->get_relative_mouse_position();
-    if (sf::Mouse::isButtonPressed(sf::Mouse::Button::Left))
-    {        
-        if (selected_piece)
-        {   
-            selected_piece->piece->set_sprite_position({(float)mouse_position.x - fix_offset(selected_piece->piece->get_sprite(), 'x'), (float)mouse_position.y - fix_offset(selected_piece->piece->get_sprite(),'y')});
-            selected_inst = nullptr;
-        }
-        else if (selected_inst)
-        {
-            selected_inst->set_sprite_position({(float)mouse_position.x - fix_offset(selected_inst->get_sprite(), 'x'), (float)mouse_position.y - fix_offset(selected_inst->get_sprite(), 'y')});
-            selected_piece = nullptr;
-        }
-        else
-        {
-            selected_piece = board.clicked_piece(mouse_position);
-
-            if (selected_piece)
-            {
-                if (selected_piece->piece && selected_piece->piece->get_team() != player_turn) selected_piece = nullptr;                
-            }
-            else
-            {
-                selected_inst = clicked_instantiator(mouse_position);
-            }
-        }
-    }
-    else if (selected_piece)
-    {   
-        if (board.drop_piece(selected_piece)) 
-        {
-            player_turn = !player_turn;
-            bot.set_current_board(board.get_elements());
-            bot.initial_game_eval();
-        }
-
-        selected_piece = nullptr;
-    }
-    else if (selected_inst)
-    {
-        if(board.is_touching_mouse(mouse_position))
-        {
-            auto pos = board.get_square_by_coords(mouse_position);
-            if (!board.get_position(pos.x, pos.y))
-            {
-                board.add_piece(selected_inst->make_piece(pos.x, pos.y));
-            }
-            else
-            {
-                //Reproducir sonido de error tal vez, notificar que no es valido instanciar asi
-            }
-                
-        }
-        
-        selected_inst->return_to_origin();
-        selected_inst = nullptr;
-    }
-}
 
 void StateGameplay::render(sf::RenderWindow& window)
 {
     window.draw(background_sprite);
+
+    window.draw(btn_back_sprite);
+    if (btn_start && actual_phase == PhaseType::Preparing) window.draw(*btn_start);
+
     board.render(window);
-    if (selected_piece) board.render_highlights(window, selected_piece->piece->get_valid_moves());
+    if (actual_phase == PhaseType::Fighting && selected_piece) board.render_move_highlights(window, selected_piece->piece->get_valid_moves());
+    if (actual_phase == PhaseType::Preparing && selected_inst) board.render_instantiator_highlights(window, true);
     board.render_pieces(window);
 
     for (auto inst : instantiators)
@@ -165,25 +126,15 @@ void StateGameplay::render(sf::RenderWindow& window)
         inst->render(window);
     }
 
-    window.draw(btn_back_sprite);
-}
-
-PieceInstantPtr StateGameplay::clicked_instantiator(sf::Vector2i mouse_position)
-{
-    sf::Vector2f pos = static_cast<sf::Vector2f>(mouse_position);
     
-    for (auto instantiator : instantiators)
-    {
-        if (instantiator->get_sprite().getGlobalBounds().contains(pos))
-        {
-            return instantiator;
-        }
-    }
-
-    return nullptr;
 }
 
 void StateGameplay::on_resize() 
+{
+    adjust_elements();
+}
+
+void StateGameplay::adjust_elements()
 {
     sf::Vector2u win_size = window->getSize();
     sf::Vector2u original_size = background_texture.getSize();
@@ -198,19 +149,16 @@ void StateGameplay::on_resize()
     auto pos = sf::Vector2<float>((float)(window->getSize().x/2 - halfboard_lenght),
                                   (float)(window->getSize().y/2 - halfboard_lenght));
     board.set_sprite_position(pos);
-    board.on_resize();
 
-    float xmargin = Board::cell_lenght / 3;
-    float ymargin = Board::cell_lenght / 3;
-    float xoffset = Board::cell_lenght * 1.2f;
-    float yoffset = Board::cell_lenght * 1.2f;
-    float width = (float)window->getSize().x;
+    board.on_resize();
 
 
     sf::Vector2u winSizeU = window->getSize();
     sf::Vector2f winSize((float)winSizeU.x, (float)winSizeU.y);
 
     float target_btn_height = winSize.y * 0.08f;
+
+    btn_start->setPosition(static_cast<sf::Vector2f>(window->getSize()) - sf::Vector2f(100, 100));
     
     sf::Vector2u btn_texture_size = tex_exit.getSize();
     if (btn_texture_size.y > 0) 
@@ -227,71 +175,191 @@ void StateGameplay::on_resize()
     float pos_y = margin + bounds.size.y * btn_back_sprite.getScale().y / 2.0f;
 
     btn_back_sprite.setPosition(sf::Vector2f(pos_x, pos_y));
+  
+    this->load_instanciators();
+    
+}
 
-    //Esto deberia cambiarse cuando solo aparezcan los instanciadores de las piezas que tienes, pero por ahora resuelve
-    instantiators.clear();
-
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Pawn, true, sf::Vector2f(xmargin, ymargin), SpriteManager::get_piece_texture("white_pawn")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Horse, true, sf::Vector2f(xmargin, ymargin + yoffset), SpriteManager::get_piece_texture("white_horse")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Bishop, true, sf::Vector2f(xmargin, ymargin + 2*yoffset), SpriteManager::get_piece_texture("white_bishop")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Tower, true, sf::Vector2f(xmargin, ymargin + 3*yoffset), SpriteManager::get_piece_texture("white_rook"))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Queen, true, sf::Vector2f(xmargin, ymargin + 4*yoffset), SpriteManager::get_piece_texture("white_queen"))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Trapper, true, sf::Vector2f(xmargin + xoffset, ymargin + yoffset), SpriteManager::get_piece_texture("white_trapper"))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Crook, true, sf::Vector2f(xmargin + xoffset, ymargin + 2*yoffset), SpriteManager::get_piece_texture("white_crook"))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Archer, true, sf::Vector2f(xmargin + xoffset, ymargin + 3*yoffset), SpriteManager::get_piece_texture("white_archer")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Portal, true, sf::Vector2f(xmargin + xoffset, ymargin + 4*yoffset), SpriteManager::get_piece_texture("white_portal")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Pawn, false, sf::Vector2f(width - (xmargin + 100), ymargin), SpriteManager::get_piece_texture("black_pawn")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Horse, false, sf::Vector2f(width - (xmargin + 100), ymargin + yoffset), SpriteManager::get_piece_texture("black_horse")));
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Bishop, false, sf::Vector2f(width - (xmargin + 100), ymargin + 2*yoffset), SpriteManager::get_piece_texture("black_bishop"))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Tower, false, sf::Vector2f(width - (xmargin + 100), ymargin + 3*yoffset), SpriteManager::get_piece_texture("black_rook"))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Queen, false, sf::Vector2f(width - (xmargin + 100), ymargin + 4*yoffset), SpriteManager::get_piece_texture("black_queen"))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Trapper, false, sf::Vector2f(width - (xmargin + 100) - xoffset, ymargin + yoffset), SpriteManager::get_piece_texture("black_trapper"))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Crook, false, sf::Vector2f(width - (xmargin + 100) - xoffset, ymargin + 2*yoffset), SpriteManager::get_piece_texture("black_crook"))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Archer, false, sf::Vector2f(width - (xmargin + 100) - xoffset, ymargin + 3*yoffset), SpriteManager::get_piece_texture("black_archer"))); 
-    instantiators.push_back(std::make_shared<PieceInstantiator>(PieceType::Portal, false, sf::Vector2f(width - (xmargin + 100) - xoffset, ymargin + 4*yoffset), SpriteManager::get_piece_texture("black_portal"))); 
+void StateGameplay::new_game()
+{
+    this->actual_phase = PhaseType::Preparing;
+    if (inventory.empty())
+    {
+        for (size_t i = 0; i < 5; i++)
+        {
+            inventory.push_front(PieceType::Queen);
+        }
+    }
+    difficulty = 2;
+    round = 1;
+    score = 0;
+    enemy_king = static_cast<PieceType>(rand() % 9);
+    this->set_up_black_team();
 }
 
 bool StateGameplay::set_up_black_team()
 {
-    int type = rand() % 9;
-
     FileManager presets("kingpresets.json");
-    
-    std::string _s;
-    if(!presets.read_line(_s))
-        return false;
-    json index_values = json::parse(_s);
 
-    std::string piece_name;
-    switch(type)
+    std::string index_line;
+    if(!presets.read_line(index_line))
     {
-        case (int)PieceType::Pawn: piece_name = "Pawn"; break;
-        case (int)PieceType::Horse: piece_name = "Horse"; break;
-        case (int)PieceType::Bishop: piece_name = "Bishop"; break;
-        case (int)PieceType::Tower: piece_name = "Rook"; break;
-        case (int)PieceType::Queen: piece_name = "Queen"; break;
-        case (int)PieceType::Trapper: piece_name = "Trapper"; break;
-        case (int)PieceType::Crook: piece_name = "Crook"; break;
-        case (int)PieceType::Archer: piece_name = "Archer"; break;
-        case (int)PieceType::Portal: piece_name = "Portal"; break;
+        std::cerr << "Error: Can't read index line in kingpresets.json" << std::endl;
+        return false;
     }
 
-    int chosen_preset_index = (int)index_values.at(piece_name + "Start") + (rand() % (int)index_values.at(piece_name + "Amount"));
+    json index_values;
+    try {
+        index_values = json::parse(index_line);
+    } catch (const json::parse_error& e) {
+        std::cerr << "Error parsing JSON index: " << e.what() << std::endl;
+        return false;
+    }
+
+    std::string piece_name;
+    switch(enemy_king)
+    {
+        case PieceType::Pawn: piece_name = "Pawn"; break;
+        case PieceType::Horse: piece_name = "Horse"; break;
+        case PieceType::Bishop: piece_name = "Bishop"; break;
+        case PieceType::Tower: piece_name = "Rook"; break;
+        case PieceType::Queen: piece_name = "Queen"; break;
+        case PieceType::Trapper: piece_name = "Trapper"; break;
+        case PieceType::Crook: piece_name = "Crook"; break;
+        case PieceType::Archer: piece_name = "Archer"; break;
+        case PieceType::Portal: piece_name = "Portal"; break;
+    }
+
+    std::string start_key = piece_name + "Start";
+    std::string amount_key = piece_name + "Amount";
+    
+    if (!index_values.contains(start_key) || !index_values.contains(amount_key)) {
+        std::cerr << "Error: No keys in kingpresets.json for: " << piece_name << std::endl;
+        std::cerr << "Available keys: ";
+        for (auto& [key, value] : index_values.items()) {
+            std::cerr << key << " ";
+        }
+        std::cerr << std::endl;
+        return false;
+    }
+
+    int start_index = index_values[start_key];
+    int amount = index_values[amount_key];
+
+    if (amount <= 0) {
+        std::cerr << "Error: Negative or 0 amount " << piece_name << std::endl;
+        return false;
+    }
+
+    int chosen_preset_index = start_index + (rand() % amount);
     
     std::string piece_array_string;
     if(!presets.goto_line(chosen_preset_index) || !presets.read_line(piece_array_string))
+    {
+        std::cerr << "Error: Can't read line " << chosen_preset_index << " in kingpresets.json" << std::endl;
         return false;
+    }
 
-    json pieces = json::parse(piece_array_string);
+    json pieces;
+    try {
+        pieces = json::parse(piece_array_string);
+    } catch (const json::parse_error& e) {
+        std::cerr << "Error parsing piece array " << e.what() << std::endl;
+        std::cerr << "Read line: " << piece_array_string << std::endl;
+        return false;
+    }
 
     for (auto p : pieces)
     {
-        auto type = p.at("piece");
+        auto piece_type = p.at("piece");
         int column = p.at("x");
         int row = p.at("y");
 
-        board.add_piece(make_board_object(type, false, column, row));
+        board.add_piece(make_board_object(piece_type, false, column, row));
     }
 
+    if (btn_start) btn_start->setPosition(static_cast<sf::Vector2f>(window->getSize()) - sf::Vector2f(100, 100));
+
     return true;
+}
+
+void StateGameplay::dropped_inst()
+{
+    if (!selected_inst) return;
+
+    inventory.erase(std::find(inventory.begin(), inventory.end(), selected_inst->get_type()));
+    load_instanciators();
+}
+
+void StateGameplay::returned_piece()
+{
+    if (!selected_piece) return;
+    if (selected_piece->piece->get_team() != true) return;
+
+    inventory.push_front(selected_piece->piece->get_piece_type());
+    board.remove_piece(selected_piece);
+    
+    load_instanciators();
+}
+
+void StateGameplay::end_fight(PlayerType winner)
+{
+    actual_phase = PhaseType::Preparing;
+
+    if (winner == PlayerType::P1)
+    {
+        auto elements = board.get_elements();
+        for (auto element : elements)
+        {
+            if (element->piece->get_team()) inventory.push_front(element->piece->get_piece_type());
+        }
+        round++;
+        if (difficulty <= 5 && round % 5 == 0) difficulty++;
+
+        if (round % 3 == 1)
+        {
+            inventory.push_front(enemy_king);
+            PieceType new_enemy_king;
+            do
+            {
+                int index = rand() % 9;
+                new_enemy_king = static_cast<PieceType>(index);
+            } while (new_enemy_king == enemy_king);
+            enemy_king = new_enemy_king;
+        }
+
+        //Mostrar pantalla de victoria, tal vez
+        player_turn = true;
+
+        board.clear();
+        set_up_black_team();
+        this->adjust_elements();
+    }
+    else if (winner == PlayerType::P2)
+    {   
+        //Mostrar pantalla de derrota, pedir registrar tu nombre para el statsy luego esto
+        board.clear();
+
+        go_to = StateType::Return;
+    }    
+}
+
+void StateGameplay::load_instanciators()
+{
+    if (actual_phase == PhaseType::Preparing)
+    {
+        int Ymultiplier = 1;
+
+        bool even_piece = false;
+
+        instantiators.clear();
+
+        for (auto piecetype : inventory)
+        {
+            instantiators.push_back(std::make_shared<PieceInstantiator>(piecetype, true, sf::Vector2f(xmargin + ((even_piece) ? xoffset : 0), ymargin + (Ymultiplier*yoffset))));
+            
+            if (even_piece) Ymultiplier++;
+            even_piece = !even_piece;
+        }
+    }
 }

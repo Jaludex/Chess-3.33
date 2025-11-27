@@ -11,10 +11,8 @@ int main()
     
     sf::Vector2u desktopSize = sf::VideoMode::getDesktopMode().size;
     sf::Vector2u windowSize = window.getSize();
-
     int initial_posX = (static_cast<int>(desktopSize.x) - static_cast<int>(windowSize.x)) / 2;
     int initial_posY = (static_cast<int>(desktopSize.y) - static_cast<int>(windowSize.y)) / 2;
-
     window.setPosition(sf::Vector2i(initial_posX, initial_posY));
 
     sf::Clock clock; 

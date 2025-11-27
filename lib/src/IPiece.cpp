@@ -1,5 +1,13 @@
 #include <IPiece.hpp>
 
+int InBoardObject::get_points_value()
+{
+    int points = this->piece->get_material_value() * 100;
+    if (this->king) points += points * 0.3f;
+    return points;
+}
+
+
 Position::Position(int8_t _x, int8_t _y) : x(_x), y(_y) {}
 
 bool Position::operator==(const Position& right)

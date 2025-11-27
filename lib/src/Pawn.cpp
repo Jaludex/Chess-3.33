@@ -8,7 +8,7 @@ sf::Color Pawn::get_color(bool _team)
 return (_team)? Pawn::white : Pawn::black;
 }
 
-Pawn::Pawn(bool team, sf::Texture texture) : IGameObject(texture)
+Pawn::Pawn(bool team) : IGameObject(SpriteManager::get_type_texture(PieceType::Pawn, team))
 {
     height = 72;
     set_team(team);

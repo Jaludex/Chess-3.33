@@ -29,23 +29,11 @@ struct InBoardObject
     InBoardObject(Position _pos, PiecePtr _piece) : pos(_pos), piece(_piece), king(false) {}
     InBoardObject(Position _pos) : pos(_pos), piece(nullptr), king(false) {}
     InBoardObject() : pos(Position(0,0)), piece(nullptr), king(false) {}
+
+    int get_points_value();
 };
 
 using BoardObjectPtr = std::shared_ptr<InBoardObject>;
-
-enum class PieceType
-{
-    Pawn ,
-    Horse,
-    Bishop,
-    Tower,
-    Queen,
-    Trapper,
-    Crook,
-    Archer,
-    Portal,
-    Bomb
-};
 
 class IPiece : public virtual IGameObject
 {

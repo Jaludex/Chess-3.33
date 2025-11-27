@@ -5,12 +5,7 @@ const std::vector<Position> Archer::directions = {Position(0, -1), Position(0, 2
 sf::Color Archer::white = sf::Color(200,200,250,255);
 sf::Color Archer::black = sf::Color(100,100,150,255);
 
-sf::Color Archer::get_color(bool _team)
-{
-return (_team)? Archer::white : Archer::black;
-}
-
-Archer::Archer(bool team, sf::Texture texture) : IGameObject(texture) 
+Archer::Archer(bool team) : IGameObject(SpriteManager::get_type_texture(PieceType::Archer, team)) 
 {
     height = 76;
     set_team(team);
@@ -26,6 +21,12 @@ void Archer::render(sf::RenderWindow& window)
 {
     window.draw(sprite);
 }
+
+sf::Color Archer::get_color(bool _team)
+{
+    return (_team)? Archer::white : Archer::black;
+}
+
 
 std::vector<BoardObjectPtr> Archer::set_valid_moves(const std::list<BoardObjectPtr>& elements, Position current)
 {

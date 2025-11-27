@@ -13,6 +13,8 @@ enum class StateType
 {
     MainMenu,
     Gameplay,
+    Practice,
+    Versus,
     Options,
     Credits,
     Gameover,
