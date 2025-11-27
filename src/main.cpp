@@ -26,12 +26,6 @@ int main()
     manager.init();
     std::cout << "Generando datos de prueba..." << std::endl;
     
-    Stats s1(9500, 2);
-    s1.save_or_update();
-    Stats s2(1200,15);
-    s2.save_or_update();
-    Stats s3(300,8);
-    s3.save_or_update();
     while (window.isOpen())
     {
         while (const std::optional event = window.pollEvent())
