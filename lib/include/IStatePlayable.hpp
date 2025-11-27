@@ -24,6 +24,7 @@
 #include <cstdlib>
 #include <ctime>
 #include <string>
+#include <ScreenTransition.hpp>
 
 using PieceInstantPtr = std::shared_ptr<PieceInstantiator>;
 
@@ -49,6 +50,7 @@ protected:
     static constexpr float xoffset = Board::cell_lenght * 1.2f;
     static constexpr float yoffset = Board::cell_lenght * 1.2f;
 
+    ScreenTransition transition;
     BoardObjectPtr selected_piece;
     PieceInstantPtr selected_inst;
     Board board;
