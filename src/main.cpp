@@ -6,6 +6,7 @@
 int main()
 {
     SpriteManager::init();
+    
     auto window = sf::RenderWindow(sf::VideoMode({1080u, 810u}), "Chess 3.33 v1");
     window.setFramerateLimit(144u);
     
@@ -14,7 +15,11 @@ int main()
     int initial_posX = (static_cast<int>(desktopSize.x) - static_cast<int>(windowSize.x)) / 2;
     int initial_posY = (static_cast<int>(desktopSize.y) - static_cast<int>(windowSize.y)) / 2;
     window.setPosition(sf::Vector2i(initial_posX, initial_posY));
-
+    
+    sf::Time delay = sf::milliseconds(50);   
+    sf::sleep(delay);
+    window.setPosition(sf::Vector2i(initial_posX, initial_posY));
+    
     sf::Clock clock; 
     sf::Time last_time = clock.getElapsedTime();
     sf::Time delta_time = sf::Time::Zero;
