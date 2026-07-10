@@ -22,7 +22,7 @@ bool FileManager::append_line(std::string line)
 
 bool FileManager::read_line(std::string& line)
 {
-    if(!filestream.is_open())
+    if(!filestream.is_open()) 
         return false;
 
     if(std::getline(filestream, line))

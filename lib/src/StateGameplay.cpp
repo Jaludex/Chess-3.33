@@ -281,11 +281,19 @@ void StateGameplay::adjust_elements()
 void StateGameplay::new_game()
 {
     this->actual_phase = PhaseType::Preparing;
+    PieceType array[5];
+    array[0] = PieceType::Queen;
+    array[1] = PieceType::Archer;
+    array[2] = PieceType::Bishop;
+    array[3] = PieceType::Portal;
+    array[4] = PieceType::Pawn;
     if (inventory.empty())
     {
         for (size_t i = 0; i < 5; i++)
         {
-            inventory.push_front(PieceType::Pawn);
+            //inventory.push_front(PieceType::Queen);
+            
+            inventory.push_front(array[i]);
         }
     }
     difficulty = 2;

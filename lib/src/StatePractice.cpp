@@ -111,12 +111,13 @@ void StatePractice::update(float dt)
 
         if (bot_play.moving_piece)
         {
-            Position old_position = bot_play.moving_piece->pos;
+            Position old_position(bot_play.moving_piece->pos);
 
             board.move_piece(bot_play.moving_piece, bot_play.destination);
             board.set_piece_sprite(bot_play.moving_piece);
 
             board.update_bombs(bot_play.moving_piece, old_position);
+            this->end_turn();
         }
 
         player_turn = true;
