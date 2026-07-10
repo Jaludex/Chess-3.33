@@ -56,7 +56,7 @@ Make sure you have **G++, CMake, and Makefile** installed, as well as the librar
 ### Debian/Ubuntu  based Distros:
 
 
-    sudo apt build-essential cmake libxrandr-dev libxcursor-dev libopengl-dev libxi-dev libgl1-mesa-dev libudev-dev libfreetype-dev libvorbis-dev libflac-dev
+    sudo apt install build-essential cmake libxrandr-dev libxcursor-dev libopengl-dev libxi-dev libgl1-mesa-dev libudev-dev libfreetype-dev libvorbis-dev libflac-dev
 
 
 ### Fedora based DIstros:
