@@ -19,8 +19,6 @@ void SoundManager::init()
     music_paths[MusicType::Tutorial] = music_route + "tutorial.ogg";
     music_paths[MusicType::Battle] = music_route + "battle.ogg";
     music_paths[MusicType::Versus] = music_route + "versus.ogg";
-
-    set_music_volume(50.f);
 }
 
 sf::SoundBuffer SoundManager::load_file(std::string route)
@@ -76,6 +74,7 @@ void SoundManager::play_music(MusicType type, bool loop)
 
     current_music->setLooping(loop);
     current_music->play();
+    set_music_volume(50.f);
 }
 
 void SoundManager::stop_music()

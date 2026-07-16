@@ -148,7 +148,6 @@ void IStatePlayable::end_turn()
         if (actual_winner == PlayerType::P2 && type == StateType::Gameplay)
         {
             Stats stats(score, round);
-            stats.save_or_update();
         }
         
         if (actual_winner == PlayerType::P1 || this->type == StateType::Versus) SoundManager::play(SoundType::Victory);
