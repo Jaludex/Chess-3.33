@@ -58,4 +58,3 @@ void IGameState::setup_button(Button* button, const std::string& str, float x_po
     float vertical_correction = - (target_height * 0.05f); 
     button->btn_text.setPosition({x_pos, y_pos + vertical_correction});
 }
-
