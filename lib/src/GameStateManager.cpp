@@ -11,17 +11,21 @@ GameStateManager::~GameStateManager()
 
 void GameStateManager::go_back()
 {    
+    SoundManager::stop_music();
     states.top()->terminate();
     states.pop();
     this->on_resize();
     transition.leave(30);
+    SoundManager::play_music(states.top()->music, true);
 }
 
 void GameStateManager::go_to(GameStatePtr new_state)
 {
+    SoundManager::stop_music();
     states.push(new_state);
     new_state->init();
     transition.leave(30);
+    SoundManager::play_music(new_state->music, true);
 }
 
 void GameStateManager::init()
@@ -30,6 +34,7 @@ void GameStateManager::init()
     {
         states.push(std::make_shared<StateMainMenu>(window));
         states.top()->init();
+        SoundManager::play_music(MusicType::MainMenu, true);
     }
 }   
 
@@ -52,9 +57,11 @@ void GameStateManager::update(float dt)
         {
             case StateType::MainMenu:
                 {
+                    SoundManager::stop_music();
                     states.pop();
                     states.push(std::make_shared<StateMainMenu>(this->window));
                     states.top()->init();
+                    SoundManager::play_music(states.top()->music, true);
                 }       
                 break;
             case StateType::Gameplay:

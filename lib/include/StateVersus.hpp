@@ -5,11 +5,15 @@
 class StateVersus : public IStatePlayable
 {
 protected:
+    sf::Texture background_texture; 
+    sf::Sprite background_sprite;
+
     void load_instanciators() override;
     void adjust_elements() override;
     void dropped_inst() override;
     void returned_piece() override;
     void end_fight(PlayerType winner) override;
+    
     
 public:
     StateVersus(sf::RenderWindow* _window);

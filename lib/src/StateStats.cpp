@@ -21,6 +21,8 @@ void StateStats::init()
     }
     title_text = new sf::Text(font, "SCORES", 40); 
     title_text->setFillColor(sf::Color::Yellow);
+
+    this->music = MusicType::MainMenu;
     
     back_btn_text = new sf::Text(font, "<- VOLVER", 25);
     back_btn_text->setPosition(sf::Vector2f(20, 20));

@@ -13,6 +13,7 @@ protected:
     
     std::list<PieceType> inventory;
     PieceType enemy_king; //Este sera la pieza que mantendra el rey enemigo
+    bool bot_just_moved;
     unsigned int difficulty;
 
     bool set_up_black_team();

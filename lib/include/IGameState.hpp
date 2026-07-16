@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <SoundManager.hpp>
 struct Button
 {
     sf::Sprite btn_sprite;
@@ -33,6 +34,7 @@ public:
 
     StateType type;
     StateType go_to;
+    MusicType music;
     virtual void init() = 0;                // inicializar aspectos del gamestate
     virtual void terminate() = 0;           // eliminar memoria reservada dinámicamente o cosas que se tengan que manejar al final de ese estado de juego.
 	virtual void update(float dt) = 0;

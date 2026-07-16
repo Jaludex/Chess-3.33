@@ -19,6 +19,8 @@ void StateTutorial::init()
     slides_tutorial.clear();
     progress_dots.clear();
 
+    this->music = MusicType::Tutorial;
+
     if (!background_tex.loadFromFile("assets/background_tutorial.png")) 
     {
         std::cerr << "ERROR: No se pudo cargar el fondo del tutorial" << std::endl;
