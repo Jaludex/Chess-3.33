@@ -68,7 +68,7 @@ void StateMainMenu::init()
 
     this->music = MusicType::MainMenu;
 
-    text_title = new sf::Text(font, "CHESS 3.33", 60);
+    text_title = new sf::Text(font, "CHESS 3.33...", 60);
     text_title->setOutlineColor(sf::Color::Black);
     text_title->setOutlineThickness(3);
     btn_stats = new Button(button_texture, font);
@@ -99,10 +99,10 @@ void StateMainMenu::on_resize()
     background_sprite.setOrigin(sf::Vector2f(0.0f, 0.0f)); 
     background_sprite.setPosition(sf::Vector2f(0.0f, 0.0f));
     auto offset = btn_exit->btn_sprite.getTexture().getSize().x;
-    setup_button(btn_play,     "JUGAR", win_size.x / 2.0, win_size.y * 0.40f, font, btn_play->btn_sprite.getTexture());
-    setup_button(btn_stats,    "PUNTAJES", win_size.x / 2.0, win_size.y * 0.55f, font, btn_stats->btn_sprite.getTexture());
+    setup_button(btn_play,     "ARCADE", win_size.x / 2.0, win_size.y * 0.40f, font, btn_play->btn_sprite.getTexture());
+    setup_button(btn_stats,    "SCORES", win_size.x / 2.0, win_size.y * 0.55f, font, btn_stats->btn_sprite.getTexture());
     setup_button(btn_tutorial, "TUTORIAL", win_size.x / 2.0, win_size.y * 0.70f, font, btn_tutorial->btn_sprite.getTexture());
-    setup_button(btn_exit,     "SALIR", win_size.x / 2.0, win_size.y * 0.85f, font, btn_exit->btn_sprite.getTexture());
+    setup_button(btn_exit,     "EXIT", win_size.x / 2.0, win_size.y * 0.85f, font, btn_exit->btn_sprite.getTexture());
     setup_button(btn_versus,"PVP",  (win_size.x / 2.0) + 2 * offset, win_size.y * 0.85, font, btn_versus->btn_sprite.getTexture());
     setup_button(btn_practice,"PRACTICE", (win_size.x / 2.0)  - 2 * offset, win_size.y * 0.85, font, btn_practice->btn_sprite.getTexture());
 
