@@ -116,7 +116,7 @@ void StateStats::draw_row(sf::RenderWindow& window, const Stats& stat, int index
 void StateStats::render(sf::RenderWindow& window)
 {
     window.clear(sf::Color(20, 20, 30));
-
+    
     if (is_entering_name) 
     {
         sf::Text prompt_text(font, "¡NUEVO RECORD! Escribe tu nombre: ", 24);
@@ -171,6 +171,9 @@ void StateStats::save_current_player()
         final_record.save_or_update("stats.json");
 
         loaded_stats = Stats::load_all("stats.json");
+        std::sort(loaded_stats.begin(), loaded_stats.end(), 
+        [](const Stats& a, const Stats& b) {
+            return a.get_score() > b.get_score();        });
         is_entering_name = false;
         player_name = "";
     }
