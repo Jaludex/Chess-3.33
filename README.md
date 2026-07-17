@@ -59,16 +59,16 @@ Make sure you have **G++, CMake, and Makefile** installed, as well as the librar
     sudo apt install build-essential cmake libxrandr-dev libxcursor-dev libopengl-dev libxi-dev libgl1-mesa-dev libudev-dev libfreetype-dev libvorbis-dev libflac-dev
 
 
-### Fedora based DIstros:
+### Fedora based Distros:
   
 
     sudo dnf groupinstall "Development Tools" && \
     sudo dnf install cmake libXrandr-devel libXcursor-devel libglvnd-devel libXi-devel mesa-libGL-devel systemd-devel freetype-devel libvorbis-devel flac-devel
 
-### Arch based DIstros:
+### Arch based Distros:
 
     sudo pacman -Syu --needed base-devel cmake libxrandr libxcursor libglvnd libxi mesa systemd freetype2 libvorbis flac
- Yet to test.
+ Yet to test on Arch.
  
  ---
 Then, in the root directory of the project, run:
@@ -112,7 +112,7 @@ The project is licensed under the terms of the MIT License. You can find a copy 
 
 # Credits
 
-Chess 3.33 is developed as a final project for the “PR3” (Programming 3) course in the B2025 semester at the ULA (Universidad de los Andes).
+Chess 3.33 is developed as a final project for the “PR3” (Programming 3) course in the B2025 semester at the ULA (Universidad de los Andes). V2 was made for an engineering projects expo in the same university.
 
   
 
