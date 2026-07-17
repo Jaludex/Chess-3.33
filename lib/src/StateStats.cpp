@@ -137,7 +137,7 @@ void StateStats::render(sf::RenderWindow& window)
 
     float start_y_offset = is_entering_name ? 280.0f : 120.0f; 
 
-    for (size_t i = 0; i < loaded_stats.size(); ++i) 
+    for (size_t i = 0; i < loaded_stats.size() && i < 10; ++i) 
     {
         float y = start_y_offset + (i * row_height) - scroll_y;
         draw_row(window, loaded_stats[i], i, y);
