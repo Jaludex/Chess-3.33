@@ -14,7 +14,7 @@ void GameStateManager::go_back()
     SoundManager::stop_music();
     if (!states.empty())
     {
-        auto* playableState = dynamic_cast<IStatePlayable*>(states.top().get());
+        auto* playableState = dynamic_cast<StateGameplay*>(states.top().get());
         if (playableState != nullptr)
         {
             this->last_score = playableState->get_score(); 
