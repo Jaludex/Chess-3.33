@@ -218,13 +218,17 @@ bool Board::drop_piece(BoardObjectPtr element, long& score)
     bool it_moves = false;
     auto old_pos = element->pos;
     BoardObjectPtr attacked_piece;
-    if (sprite.getGlobalBounds().contains(element->piece->get_sprite().getPosition()))
+    
+    sf::FloatRect piece_bounds = element->piece->get_sprite().getLocalBounds();
+    float center_x = piece_bounds.size.x / 2.0f;
+    float center_y = piece_bounds.size.y / 2.0f;
+    sf::Vector2f offset(center_x, center_y);
+
+    sf::Vector2f drop_point = element->piece->get_sprite().getPosition() + offset;
+
+    if (sprite.getGlobalBounds().contains(drop_point))
     {
-        sf::FloatRect piece_center = element->piece->get_sprite().getLocalBounds();
-        float center_x = piece_center.size.x / 2.0;
-        float center_y = piece_center.size.y / 2.0;
-        sf::Vector2f offset(center_x,center_y);
-        Position position_on_board = get_square_by_coords(static_cast<sf::Vector2i>(element->piece->get_sprite().getPosition() + offset));
+        Position position_on_board = get_square_by_coords(static_cast<sf::Vector2i>(drop_point));
         attacked_piece = this->get_position(position_on_board.x, position_on_board.y);
         it_moves = this->move_piece(element, position_on_board);
     }
