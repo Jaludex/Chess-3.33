@@ -7,7 +7,7 @@ Stats::Stats(int _score, int _t_rounds)
 {
     score = _score;
     total_rounds = _t_rounds;
-    name = generate_random_name();
+    name = "NULL";
 }
 
 Stats::Stats(std::string _name, int _score, int _t_rounds)
@@ -23,28 +23,6 @@ std::string Stats::get_name() const { return name; }
 int Stats::get_score() const { return score; }
 int Stats::get_t_rounds() const { return total_rounds; }
 
-std::string Stats::generate_random_name()
-{
-    const std::vector<std::string> adjetivos = {
-        "Cyber", "Mega", "Super", "Neon", "Turbo", "Dark", "Iron", "Fast", "Epic", "Pixel"
-    };
-    
-    const std::vector<std::string> sustantivos = {
-        "Player", "Tetris", "Block", "Ninja", "Warrior", "Ghost", "Master", "King", "Bot", "Rider"
-    };
-
-    static bool seeded = false;
-    if(!seeded) {
-        std::srand(std::time(nullptr));
-        seeded = true;
-    }
-
-    int adj_idx = std::rand() % adjetivos.size();
-    int sus_idx = std::rand() % sustantivos.size();
-    int numero = std::rand() % 1000;
-
-    return adjetivos[adj_idx] + "_" + sustantivos[sus_idx] + "_" + std::to_string(numero);
-}
 
 Stats Stats::load_by_name(std::string name_to_find, std::string filepath)
 {

@@ -1,7 +1,6 @@
 #pragma once
 
 #include <SpriteManager.hpp>
-#include <SoundManager.hpp>
 #include "IGameState.hpp"
 #include <Gametree.hpp>
 #include <Board.hpp>
@@ -63,8 +62,6 @@ protected:
     size_t amount_of_black_instances;
     GameTree bot; 
     sf::Font font; 
-    //sf::Text* btn_back = nullptr;
-    //sf::Text* btn_start = nullptr;
     sf::Texture tex_exit;       
     sf::Sprite btn_back_sprite;
     sf::Texture start_texture;
@@ -93,4 +90,6 @@ protected:
 public:
     IStatePlayable(sf::RenderWindow* _window);
     ~IStatePlayable();
+    int get_score() const { return score; }
+    int get_round() const { return round; }
 };

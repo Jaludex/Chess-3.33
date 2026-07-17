@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML/Graphics.hpp>
+#include <SoundManager.hpp>
 struct Button
 {
     sf::Sprite btn_sprite;
@@ -33,6 +34,7 @@ public:
 
     StateType type;
     StateType go_to;
+    MusicType music;
     virtual void init() = 0;                // inicializar aspectos del gamestate
     virtual void terminate() = 0;           // eliminar memoria reservada dinámicamente o cosas que se tengan que manejar al final de ese estado de juego.
 	virtual void update(float dt) = 0;
@@ -42,7 +44,6 @@ public:
     bool is_mouse_over(const sf::Text& text, const sf::Vector2i& mouse_pos);
     bool is_mouse_over(const sf::Sprite& sprite, const sf::Vector2i& mouse_pos);
     void setup_button(Button* button, const std::string& str,float x_pos, float y_pos,const sf::Font& font, const sf::Texture& button_texture);
-
 };
 using GameStatePtr = std::shared_ptr<IGameState>;
 

@@ -1,6 +1,6 @@
 #include <StateVersus.hpp>
 
-StateVersus::StateVersus(sf::RenderWindow* _window) : IStatePlayable(_window)
+StateVersus::StateVersus(sf::RenderWindow* _window) : background_sprite(background_texture), IStatePlayable(_window)
 {
     type = StateType::Versus;
     go_to = StateType::None;
@@ -10,6 +10,14 @@ StateVersus::~StateVersus() {}
 
 void StateVersus::init()
 {    
+    if(!background_texture.loadFromFile("assets/versus_bg.png"))
+    {
+        std::cerr << "ERROR: No se pudo cargar fondo en Gameplay" << std::endl;
+    }
+    auto size = background_texture.getSize();
+    background_sprite.setTexture(background_texture);
+    background_sprite.setTextureRect({{0, 0}, {static_cast<int>(size.x), static_cast<int>(size.y)}});
+
     if (!font.openFromFile("assets/fonts/arial.ttf")) 
     {
          std::cerr << "ERROR: No se pudo cargar fuente en Gameplay" << std::endl;
@@ -146,6 +154,8 @@ void StateVersus::update(float dt)
 
 void StateVersus::render(sf::RenderWindow& window)
 {
+    window.draw(background_sprite);
+
     board.render(window);
     if (actual_phase == PhaseType::Fighting && selected_piece) board.render_move_highlights(window, selected_piece->piece->get_valid_moves());
     if (actual_phase == PhaseType::Preparing && selected_inst) board.render_instantiator_highlights(window, selected_inst->get_team());
@@ -179,6 +189,18 @@ void StateVersus::on_resize()
 
 void StateVersus::adjust_elements()
 {
+    sf::Vector2u win_size = window->getSize();
+    sf::Vector2u original_size = background_texture.getSize();
+    float scale_x = (float)win_size.x / original_size.x;
+    float scale_y = (float)win_size.y / original_size.y;
+
+    background_sprite.setScale(sf::Vector2f(scale_x, scale_y));
+    background_sprite.setOrigin(sf::Vector2f(0.0f, 0.0f)); 
+    background_sprite.setPosition(sf::Vector2f(0.0f, 0.0f));
+
+    this->music = MusicType::Versus;
+
+
     float halfboard_lenght = Board::side_lenght * Board::cell_lenght / 2;
     auto pos = sf::Vector2<float>((float)(window->getSize().x/2 - halfboard_lenght),
                                   (float)(window->getSize().y/2 - halfboard_lenght));

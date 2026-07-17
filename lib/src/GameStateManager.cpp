@@ -11,17 +11,30 @@ GameStateManager::~GameStateManager()
 
 void GameStateManager::go_back()
 {    
+    SoundManager::stop_music();
+    if (!states.empty())
+    {
+        auto* playableState = dynamic_cast<StateGameplay*>(states.top().get());
+        if (playableState != nullptr)
+        {
+            this->last_score = playableState->get_score(); 
+            this->last_round = playableState->get_round();
+        }
+    }
     states.top()->terminate();
     states.pop();
     this->on_resize();
     transition.leave(30);
+    SoundManager::play_music(states.top()->music, true);
 }
 
 void GameStateManager::go_to(GameStatePtr new_state)
 {
+    SoundManager::stop_music();
     states.push(new_state);
     new_state->init();
     transition.leave(30);
+    SoundManager::play_music(new_state->music, true);
 }
 
 void GameStateManager::init()
@@ -30,6 +43,7 @@ void GameStateManager::init()
     {
         states.push(std::make_shared<StateMainMenu>(window));
         states.top()->init();
+        SoundManager::play_music(MusicType::MainMenu, true);
     }
 }   
 
@@ -52,9 +66,11 @@ void GameStateManager::update(float dt)
         {
             case StateType::MainMenu:
                 {
+                    SoundManager::stop_music();
                     states.pop();
                     states.push(std::make_shared<StateMainMenu>(this->window));
                     states.top()->init();
+                    SoundManager::play_music(states.top()->music, true);
                 }       
                 break;
             case StateType::Gameplay:
@@ -64,8 +80,17 @@ void GameStateManager::update(float dt)
                 break;
             case StateType::Stats:
             {
-                go_to(std::make_shared<StateStats>(this->window)); 
+                auto stats_state = std::make_shared<StateStats>(this->window);
+                if (this->last_score > 0 || this->last_round > 1)
+                {
+                    stats_state->set_current_match(this->last_score, this->last_round);
+                    this->last_score = 0;
+                    this->last_round = 1;
+                }
+
+                go_to(stats_state); 
             }
+            break;
             break;
             case StateType::Tutorial:
                 {
@@ -85,6 +110,17 @@ void GameStateManager::update(float dt)
             case StateType::Return:
                 {
                     go_back();
+                    if (this->last_score > 0 || this->last_round > 1)
+                    {
+                        auto stats_state = std::make_shared<StateStats>(this->window);
+                        stats_state->set_current_match(this->last_score, this->last_round);
+                        
+                        this->last_score = 0;
+                        this->last_round = 1;
+                        
+                        states.push(stats_state);
+                        stats_state->init();
+                    }
                 }
                 break;
         
@@ -116,4 +152,7 @@ void GameStateManager::on_resize()
 {
     states.top()->on_resize();
 }
-
+IGameState* GameStateManager::get_current_state()
+{
+    return &(*states.top());
+}

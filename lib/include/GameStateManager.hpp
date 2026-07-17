@@ -19,7 +19,8 @@ private:
     std::stack<GameStatePtr> states;
     sf::RenderWindow* window;
     ScreenTransition transition;
-
+    int last_score = 0;
+    int last_round = 1;
 public:
     GameStateManager(sf::RenderWindow& _window);
     ~GameStateManager();
@@ -31,4 +32,5 @@ public:
 	void render(sf::RenderWindow& _window);
     void terminate();
     void on_resize();
+    IGameState* get_current_state();
 };

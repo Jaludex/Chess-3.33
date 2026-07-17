@@ -6,6 +6,7 @@
 int main()
 {
     SpriteManager::init();
+    SoundManager::init();
     
     auto window = sf::RenderWindow(sf::VideoMode({1080u, 810u}), "Chess 3.33 v1");
     window.setFramerateLimit(144u);
@@ -29,7 +30,6 @@ int main()
 
     GameStateManager manager(window);
     manager.init();
-    SoundManager::init();
     
     while (window.isOpen())
     {
@@ -39,6 +39,31 @@ int main()
             {
                 //Guardar partida rapidamente, tal vez aca
                 window.close();
+            }
+            if (const auto* textEntered = event->getIf<sf::Event::TextEntered>())
+            {
+                 IGameState* currentState = manager.get_current_state();
+    
+                if (currentState != nullptr)
+                {
+                    auto* statsState = dynamic_cast<StateStats*>(currentState);
+
+                    if (statsState != nullptr)
+                    {
+                        if (textEntered->unicode == 8)
+                        {
+                            statsState->remove_last_char(); 
+                        }
+                        else if (textEntered->unicode == 13)
+                        {
+                            statsState->save_current_player();
+                        }
+                        else if (textEntered->unicode >= 32 && textEntered->unicode <= 126)
+                        {
+                            statsState->add_char(static_cast<char>(textEntered->unicode));
+                        }
+                    }
+                }
             }
             if (const auto* resized = event->getIf<sf::Event::Resized>())
             {

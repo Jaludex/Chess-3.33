@@ -21,6 +21,8 @@ void StateStats::init()
     }
     title_text = new sf::Text(font, "SCORES", 40); 
     title_text->setFillColor(sf::Color::Yellow);
+
+    this->music = MusicType::MainMenu;
     
     back_btn_text = new sf::Text(font, "<- VOLVER", 25);
     back_btn_text->setPosition(sf::Vector2f(20, 20));
@@ -29,7 +31,7 @@ void StateStats::init()
 
     std::sort(loaded_stats.begin(), loaded_stats.end(), 
         [](const Stats& a, const Stats& b) {
-            return a.get_score() < b.get_score();
+            return a.get_score() > b.get_score();
         });
 
     total_height = loaded_stats.size() * row_height;
@@ -111,12 +113,29 @@ void StateStats::draw_row(sf::RenderWindow& window, const Stats& stat, int index
     line.setFillColor(sf::Color(100, 100, 100));
     window.draw(line);
 }
-
 void StateStats::render(sf::RenderWindow& window)
 {
     window.clear(sf::Color(20, 20, 30));
 
-    float start_y_offset = 120.0f; 
+    if (is_entering_name) 
+    {
+        sf::Text prompt_text(font, "¡NUEVO RECORD! Escribe tu nombre: ", 24);
+        prompt_text.setFillColor(sf::Color::Cyan);
+        prompt_text.setPosition({window.getSize().x * 0.15f, 120.0f});
+        window.draw(prompt_text);
+
+        sf::Text input_text(font, player_name + "_", 30); 
+        input_text.setFillColor(sf::Color::White);
+        input_text.setPosition({window.getSize().x * 0.15f, 160.0f});
+        window.draw(input_text);
+
+        sf::Text help_text(font, "Presiona ENTER para guardar tu puntuacion", 18);
+        help_text.setFillColor(sf::Color(150, 150, 150));
+        help_text.setPosition({window.getSize().x * 0.15f, 210.0f});
+        window.draw(help_text);
+    }
+
+    float start_y_offset = is_entering_name ? 280.0f : 120.0f; 
 
     for (size_t i = 0; i < loaded_stats.size(); ++i) 
     {
@@ -137,4 +156,22 @@ void StateStats::on_resize()
     sf::FloatRect bounds = title_text->getLocalBounds();
     title_text->setOrigin(sf::Vector2f(bounds.size.x / 2, bounds.size.y / 2));
     title_text->setPosition(sf::Vector2f(window->getSize().x / 2.0f, 50.0f));
+}
+
+void StateStats::save_current_player()
+{
+    if (player_name.empty()) {
+        player_name = "Anonymous";
+    }
+
+    if (is_entering_name) 
+    {
+        Stats final_record(player_name, current_match_stats.get_score(), current_match_stats.get_t_rounds());
+
+        final_record.save_or_update("stats.json");
+
+        loaded_stats = Stats::load_all("stats.json");
+        is_entering_name = false;
+        player_name = "";
+    }
 }

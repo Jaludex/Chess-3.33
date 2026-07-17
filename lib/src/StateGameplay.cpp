@@ -12,6 +12,7 @@ void StateGameplay::init()
 {
     srand(time(NULL));
 
+    this->music = MusicType::Battle;
 
     if(!background_texture.loadFromFile("assets/game_background.png"))
     {
@@ -49,6 +50,7 @@ void StateGameplay::init()
     adjust_elements();
     bot.set_current_board(board.get_elements());
     bot.initial_game_eval();
+    bot_just_moved = false;
 }
 
 void StateGameplay::terminate()
@@ -59,6 +61,15 @@ void StateGameplay::terminate()
 
 void StateGameplay::update(float dt)
 {
+    if (bot_just_moved)
+    {   
+        bot_just_moved = false;
+        sf::sleep(sf::seconds(1.f));
+        this->end_turn();
+        player_turn = true;
+        return;
+    }
+
     transition.update(dt);
 
     if (transition.is_staying())
@@ -116,7 +127,6 @@ void StateGameplay::update(float dt)
     }
     else
     {
-        sf::sleep(sf::seconds(1.f));
         auto bot_play = bot.find_best_play(difficulty);
 
         if (bot_play.moving_piece)
@@ -127,7 +137,9 @@ void StateGameplay::update(float dt)
             board.set_piece_sprite(bot_play.moving_piece);
 
             board.update_bombs(bot_play.moving_piece, old_position);
-            this->end_turn();
+
+            bot_just_moved = true;
+            //this->end_turn();
         }
 
         player_turn = true;
