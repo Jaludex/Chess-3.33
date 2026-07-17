@@ -1,6 +1,6 @@
-#include <StatePractice.hpp>
+#include "StatePractice.hpp"
 
-StatePractice::StatePractice(sf::RenderWindow* _window) : IStatePlayable(_window)
+StatePractice::StatePractice(sf::RenderWindow* _window) : background_sprite(background_texture), IStatePlayable(_window)
 {
     type = StateType::Practice;
     go_to = StateType::None;
@@ -10,6 +10,15 @@ StatePractice::~StatePractice() {}
 
 void StatePractice::init()
 {
+    if(!background_texture.loadFromFile("assets/practice_bg.png"))
+    {
+        std::cerr << "ERROR: No se pudo cargar fondo en Gameplay" << std::endl;
+    }
+    auto size = background_texture.getSize();
+    background_sprite.setTexture(background_texture);
+    background_sprite.setTextureRect({{0, 0}, {static_cast<int>(size.x), static_cast<int>(size.y)}});
+
+
     actual_phase = PhaseType::Preparing;
     this->music = MusicType::Practice;
 
@@ -173,6 +182,8 @@ void StatePractice::update(float dt)
 
 void StatePractice::render(sf::RenderWindow& window)
 {
+    window.draw(background_sprite);
+
     board.render(window);
     if (selected_piece) board.render_move_highlights(window, selected_piece->piece->get_valid_moves());
 
@@ -206,6 +217,16 @@ void StatePractice::on_resize()
 
 void StatePractice::adjust_elements()
 {
+    sf::Vector2u win_size = window->getSize();
+    sf::Vector2u original_size = background_texture.getSize();
+    float scale_x = (float)win_size.x / original_size.x;
+    float scale_y = (float)win_size.y / original_size.y;
+
+    background_sprite.setScale(sf::Vector2f(scale_x, scale_y));
+    background_sprite.setOrigin(sf::Vector2f(0.0f, 0.0f)); 
+    background_sprite.setPosition(sf::Vector2f(0.0f, 0.0f));
+
+
     float halfboard_lenght = Board::side_lenght * Board::cell_lenght / 2;
     auto pos = sf::Vector2<float>((float)(window->getSize().x/2 - halfboard_lenght),
                                   (float)(window->getSize().y/2 - halfboard_lenght));
