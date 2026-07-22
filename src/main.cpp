@@ -10,6 +10,15 @@ int main()
     
     auto window = sf::RenderWindow(sf::VideoMode({1080u, 810u}), "Chess 3.33 v1");
     window.setFramerateLimit(144u);
+
+    {
+        sf::Image app_icon;
+        if (app_icon.loadFromFile("assets/Gamelogo.png"))
+        {
+            window.setIcon(app_icon);
+        }
+    }
+    
     
     sf::Vector2u desktopSize = sf::VideoMode::getDesktopMode().size;
     sf::Vector2u windowSize = window.getSize();
