@@ -236,7 +236,7 @@ bool Board::drop_piece(BoardObjectPtr element, long& score)
     if (it_moves) 
     {
         update_bombs(element, old_pos);
-        if (attacked_piece) score += attacked_piece->get_points_value();
+        if (attacked_piece && attacked_piece->piece->get_team() != element->piece->get_team()) score += attacked_piece->get_points_value();
     }
 
     
